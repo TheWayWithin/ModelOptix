@@ -1,17 +1,38 @@
-# ModelOptix - Strategic Roadmap Extraction
-# Extracted from: foundations/strategic-roadmap.md
-# Extraction mode: SYNTHESIS MODE
-# Generated: 2026-01-15
+# ModelOptix Strategic Roadmap - Structured Extraction
+# Source: foundations/strategic-roadmap.md
+# Extraction Mode: SYNTHESIS MODE (Strategic Business Roadmap)
+# Generated: 2026-01-16
+# Schema: foundation-roadmap.schema.yaml v2.0
+#
+# COMPLETE EXTRACTION including:
+# - Implementation Framework (Section VII) - PREVIOUSLY MISSING
+# - Decision Framework (Section VIII) - PREVIOUSLY MISSING
+# - Resource Planning (Section X) - PREVIOUSLY MISSING
+# - Problem category sub-sections (solution_gaps, unique_angle) - PREVIOUSLY MISSING
+# - Trust-specific and pricing page metrics - PREVIOUSLY MISSING
+# - Risk monitoring framework - PREVIOUSLY MISSING
+# - Vision achievement with legacy_impact and BHAG - PREVIOUSLY MISSING
 
 metadata:
   version: "1.0"
   date: "January 7, 2026"
   purpose: "Strategic roadmap from Vision to Great through keystone product development"
 
+# ============================================================
+# SECTION I: STRATEGIC FOUNDATION
+# ============================================================
+
 strategic_foundation:
   vision: "To be the unbiased guide in a world where AI serves hidden interests."
+  vision_elaboration: "When AI can do everything instantly, the scarce resource isn't time - it's trust. We exist to ensure people always know what's truly best for them - not what profits someone else."
   mission: "Through radical transparency and independent analysis, we help developers optimize their AI stack today - building the foundation for AI truth everyone can trust tomorrow."
+  mission_elaboration: "We start with developers and solopreneurs choosing LLMs, but our mission extends to anyone who needs to know: whose interests does this AI really serve?"
   hedgehog_concept: "We are solopreneurs building truly independent AI intelligence for solopreneurs - growing by delivering so much value to indie hackers that they can't help but spread the word."
+  value_proposition: "For developers and solopreneurs building LLM-powered products who face an overwhelming, constantly-changing AI landscape with no unbiased guidance - we are an independent AI model advisor that continuously monitors your LLM stack and proactively recommends optimizations with full transparency on what's best for YOU, not us."
+
+# ============================================================
+# SECTION I: PROBLEM-SOLUTION MAPPING (Enhanced with solution_gaps + unique_angle)
+# ============================================================
 
 problem_categories:
   - name: "Portfolio Drift"
@@ -25,7 +46,16 @@ problem_categories:
       competitive: "Falling behind competitors who optimize their AI stack"
       emotional: "Nagging worry without time to verify"
       opportunity: "Missing better tools that could improve their product"
+    current_solution_gaps:
+      - "Leaderboards are generic, not personalized to their use case"
+      - "Enterprise tools are overkill and overpriced for solopreneurs"
+      - "Everything has hidden incentives (volume routing, affiliate deals, vendor relationships)"
+    unique_angle:
+      - "Structurally independent - no investors, no partners, can't be compromised"
+      - "Proactive alerts instead of passive data dumps"
+      - "Right-sized for solopreneurs, not bloated for enterprise"
     solution_opportunity: "An independent advisor that monitors continuously and tells them when something better exists for their specific use case"
+
   - name: "Information Overload"
     specific_problems:
       - "400+ models and growing - impossible to track manually"
@@ -34,10 +64,19 @@ problem_categories:
       - "No single source of truth for model comparisons"
     impact:
       time: "Hours lost to manual research that could be spent building"
-      decision: "Decision paralysis - too many options leads to sticking with 'safe' choices"
-      opportunity: "Better models exist but aren't on their radar"
-      cognitive: "Mental overhead of feeling like they should be tracking this"
+      decision_paralysis: "Too many options leads to sticking with 'safe' choices"
+      missed_opportunities: "Better models exist but aren't on their radar"
+      cognitive_load: "Mental overhead of feeling like they should be tracking this"
+    current_solution_gaps:
+      - "Leaderboards require you to check them manually"
+      - "No aggregation of pricing, performance, and availability in one place"
+      - "Data scattered across provider docs, Twitter, Discord, Reddit"
+    unique_angle:
+      - "We do the monitoring so they don't have to"
+      - "Aggregated intelligence from multiple sources"
+      - "Filtered to what matters for their specific use case"
     solution_opportunity: "Continuous monitoring and aggregation that cuts through the noise and surfaces only relevant changes"
+
   - name: "Trust Deficit"
     specific_problems:
       - "No transparent, independent source they can verify"
@@ -48,15 +87,31 @@ problem_categories:
       skepticism: "Analysis paralysis and delayed decisions"
       dismissal: "Dismiss good options because they can't verify claims"
       inertia: "Stick with suboptimal choices because switching feels risky"
-      time_waste: "Cross-referencing multiple sources to triangulate truth"
+      wasted_time: "Cross-referencing multiple sources to triangulate truth"
+    current_solution_gaps:
+      - "Leaderboards don't explain methodology"
+      - "Benchmarks are often gamed or vendor-influenced"
+      - "No way to test recommendations with your own prompts before switching"
+    unique_angle:
+      - "Structurally independent - literally cannot be compromised"
+      - "Show our work: data sources, reasoning, confidence levels"
+      - "Sanity check feature: test before you switch"
     solution_opportunity: "An advisor that earns trust through transparency and lets you verify before you commit"
+
+# ============================================================
+# SECTION II: STRATEGIC POSITIONING
+# ============================================================
 
 strategic_positioning:
   reframe:
-    old: "Kayak for LLMs - find the best deal"
-    new: "Consumer Reports for AI - find what you can trust"
+    old: "'Kayak for LLMs' - find the best deal"
+    new: "'Consumer Reports for AI' - find what you can trust"
   core_insight: "In a future where AI is ubiquitous, knowing what to trust will be of immense value. The question isn't 'which model is cheapest' - it's 'can I trust this AI with my data, my users, my business?'"
   opportunity: "Become the Trust Authority for AI - like Underwriters Laboratories (UL) for safety, Consumer Reports for independent ratings, or Moody's for risk assessment."
+
+# ============================================================
+# SECTION II: KEYSTONE PRODUCTS (Enhanced with honest_limitations + risks)
+# ============================================================
 
 keystone_products:
   primary:
@@ -65,49 +120,29 @@ keystone_products:
       target_people: "Solopreneur builders, indie developers, and startup CTOs who need to make informed AI decisions"
       core_features:
         - name: "Trust Dashboard"
-          priority: "Primary Value"
-          description: "Trust Scores across verifiable dimensions, Trust Transparency Reports for each model, Trust Requirements Matching"
+          priority: "P0"
+          description: "Trust Scores across verifiable dimensions, Trust Transparency Reports, Trust Requirements Matching, confidence levels"
         - name: "Trust Scoring Framework"
-          description: "Canonical 8 dimensions (3 Model + 5 Provider)"
-          model_dimensions:
-            - name: "Output Quality"
-              tracks: "Accuracy, consistency, benchmark performance"
-              verification: "Artificial Analysis, Arena ELO, MMLU"
-            - name: "Output Safety"
-              tracks: "Guardrails, refusal rates, jailbreak resistance"
-              verification: "Safety benchmarks, incident reports, our own testing"
-            - name: "Training Transparency"
-              tracks: "Openness about data, methods, limitations"
-              verification: "Provider documentation, model cards"
-          provider_dimensions:
-            - name: "Uptime"
-              tracks: "Service availability, reliability"
-              verification: "Status pages, own monitoring"
-            - name: "Data Privacy"
-              tracks: "Logging policy, retention, training on inputs"
-              verification: "ToS analysis, privacy policies"
-            - name: "API Stability"
-              tracks: "Error rates, deprecation history, breaking changes"
-              verification: "Own metrics, changelog analysis"
-            - name: "Pricing Transparency"
-              tracks: "Clear pricing, no hidden fees, advance notice"
-              verification: "Pricing pages, historical tracking"
-            - name: "Support Quality"
-              tracks: "Response times, documentation quality"
-              verification: "Community sentiment, own experience"
+          priority: "P0"
+          description: "Canonical 8 dimensions - 3 Model (Output Quality, Output Safety, Training Transparency) + 5 Provider (Uptime, Data Privacy, API Stability, Pricing Transparency, Support Quality)"
         - name: "Trust Transparency Reports"
-          description: "For each model: exactly what we know and don't know, sources for every claim, date of last verification, confidence level"
+          priority: "P0"
+          description: "For each model: what we know, don't know, sources, last verification date, confidence level"
         - name: "Opportunities Dashboard"
-          priority: "Secondary Value"
-          description: "Cost and performance optimization opportunities, recommendations personalized to use case, clear ROI projections"
+          priority: "P0"
+          description: "Cost and performance optimization opportunities with personalized recommendations and ROI projections"
         - name: "Savings Dashboard"
-          description: "Tracks actual savings since using ModelOptix, each model change logged with before/after, cumulative view"
+          priority: "P1"
+          description: "Tracks actual savings, each model change logged with before/after, cumulative view"
         - name: "Model Comparison"
-          description: "Side-by-side comparison on trust AND performance/cost, filter by trust requirements, use case, price, provider"
+          priority: "P0"
+          description: "Side-by-side on trust AND performance/cost, filter by requirements, tier-based slots"
         - name: "Trust Alerts"
-          description: "Proactive notifications for ToS changes, certifications, incidents, price changes, new models"
+          priority: "P0"
+          description: "Proactive notifications for ToS changes, certifications, incidents, regulations, price changes"
         - name: "Sanity Check"
-          description: "Run your prompts through current vs recommended model, side-by-side output comparison, confidence validation"
+          priority: "P0"
+          description: "Run your prompts through current vs recommended model, side-by-side output comparison"
       success_metrics:
         - metric: "Time to first trust insight"
           target: "< 10 minutes"
@@ -117,266 +152,372 @@ keystone_products:
           target: "> 45%"
         - metric: "Monthly churn"
           target: "< 4%"
+        - metric: "Trust reports cited/shared"
+          target: "Growing"
       keystone_effect: "Establishes ModelOptix as the trust authority. Users who rely on our trust assessments won't leave because no one else provides this."
+      competitive_advantage: "Structurally independent - can't be compromised. Rigorous verification, not repackaged marketing. Explicit about what we know, don't know, and can't verify."
+      honest_limitations:
+        - "Some claims (certifications, ToS) are verifiable; others require provider cooperation"
+        - "We must be explicit: 'This is what provider claims. This is what we verified. This is unknown.'"
+        - "Clear disclaimers: Trust scores are our assessment, not guarantees"
+      vision_alignment: "This IS the vision - 'the unbiased guide in a world where AI serves hidden interests'"
       future_extensions:
         - name: "Cost Anomaly Detection"
-          phase: "1.5"
+          phase: "Phase 1.5"
         - name: "Prompt Optimization Engine"
-          phase: "2-3"
+          phase: "Phase 2-3"
         - name: "A/B Testing Suite"
-          phase: "2"
+          phase: "Phase 2"
         - name: "Budget Controls"
-          phase: "2"
+          phase: "Phase 2"
         - name: "Team Collaboration"
-          phase: "2"
+          phase: "Phase 2"
+
     - name: "ModelOptix Router"
       problem_solved: "Developers need intelligent routing that enforces trust requirements AND optimizes every API call automatically"
       target_people: "Power users graduating from Core, plus developers who want trust and optimization baked into infrastructure"
-      core_capabilities:
-        - "Route based on trust requirements ('only use models where data isn't logged')"
-        - "Route based on data residency requirements ('EU processing only')"
-        - "Auto-selects optimal model per request (trust + performance + cost)"
-        - "Handles fallbacks automatically (to trusted alternatives only)"
-        - "Enforces compliance requirements at the infrastructure level"
-        - "Caches identical requests, enforces budget limits"
-        - "Logs everything for continuous optimization"
-        - "Unified API (Your App → ModelOptix Router → Provider APIs)"
-      business_model: "Usage-based revenue (0.5-2% of LLM spend)"
+      core_features:
+        - name: "Trust-based routing"
+          priority: "P0"
+          description: "Route based on trust requirements ('only use models where data isn't logged')"
+        - name: "Data residency routing"
+          priority: "P0"
+          description: "Route based on data residency requirements ('EU processing only')"
+        - name: "Auto-optimization"
+          priority: "P0"
+          description: "Auto-selects optimal model per request (trust + performance + cost)"
+        - name: "Trusted fallbacks"
+          priority: "P0"
+          description: "Handles fallbacks automatically to trusted alternatives only"
+        - name: "Compliance enforcement"
+          priority: "P0"
+          description: "Enforces compliance requirements at infrastructure level"
+        - name: "Caching and budgets"
+          priority: "P1"
+          description: "Caches identical requests, enforces budget limits"
+        - name: "Unified API"
+          priority: "P0"
+          description: "Your App → ModelOptix Router → Provider APIs"
+      success_metrics:
+        - metric: "API volume growth"
+          target: "Growing MoM"
+        - metric: "Trust requirements enforced"
+          target: "100%"
+        - metric: "Cost savings delivered"
+          target: "Measurable"
+        - metric: "Uptime/reliability"
+          target: "> 99.9%"
       keystone_effect: "Massive stickiness - you're in the critical path. Data flywheel - real usage data improves trust AND performance assessments."
       competitive_advantage: "Trust-aware routing. Competitors optimize for speed/cost. We optimize for trust + speed + cost."
+      business_model: "Usage-based revenue (0.5-2% of LLM spend)"
+      risks:
+        - "Competes with OpenRouter. Differentiate on trust intelligence, not just access."
+      vision_alignment: "Trust enforcement at the infrastructure level - you can't accidentally use an untrusted model"
+
     - name: "ModelOptix Platform (The Trust Authority)"
       problem_solved: "The AI ecosystem lacks a trusted, independent authority for model evaluation and certification"
       target_people: "Developers discovering models, enterprises needing due diligence, regulators needing standards, providers wanting credibility"
-      core_capabilities:
+      core_features:
         - name: "Trust Registry"
+          priority: "P0"
           description: "Comprehensive trust profiles for every major model"
         - name: "Model Marketplace"
+          priority: "P0"
           description: "Curated directory with trust ratings, reviews, verified benchmarks"
         - name: "Provider Dashboard"
+          priority: "P1"
           description: "Providers see their trust scores and how to improve"
         - name: "Certification Program"
+          priority: "P1"
           description: "'ModelOptix Certified' badge for providers meeting trust standards"
         - name: "Integration Ecosystem"
+          priority: "P2"
           description: "Plugins for LangChain, LlamaIndex, Vercel AI SDK"
         - name: "Open-Source Tooling"
+          priority: "P2"
           description: "CLI tools, SDKs, eval frameworks (freemium funnel)"
         - name: "Regulatory Intelligence"
+          priority: "P2"
           description: "EU AI Act compliance tracking, GDPR guidance"
-      keystone_effect: "Becomes the standard for AI trust assessment. SEO + discovery moat from being the definitive source. Network effects."
+      success_metrics:
+        - metric: "Trust Registry coverage"
+          target: "> 90% of major models"
+        - metric: "Citations in enterprise procurement"
+          target: "Regular mentions"
+        - metric: "Regulatory recognition"
+          target: "EU AI Act reference"
+        - metric: "Provider certification adoption"
+          target: "Growing"
+      keystone_effect: "Becomes the standard for AI trust assessment. SEO + discovery moat. Network effects."
+      competitive_advantage: "The only independent trust authority. We don't take provider money for recommendations."
+      business_model: "User subscriptions, enterprise contracts, consulting/audits. NO sponsored recommendations."
+      vision_alignment: "'The unbiased guide' at ecosystem scale"
+
   secondary:
     - name: "Trust Consulting/Audit"
-      description: "Assess your AI stack for trust and compliance risks"
+      description: "We'll assess your AI stack for trust and compliance risks"
+      builds_on: "Trust assessment expertise from Core product"
       business_model: "Project-based ($5-50K)"
       target: "Enterprises and funded startups with regulatory obligations"
+
     - name: "Benchmark-as-a-Service"
       description: "Custom eval suites including trust dimensions"
+      builds_on: "Testing infrastructure from Core product"
       business_model: "Enterprise contracts"
       target: "Companies needing rigorous model evaluation for compliance"
+
     - name: "Training/Courses"
-      description: "AI Trust & Compliance Masterclass - how to evaluate and select trustworthy AI"
+      description: "AI Trust & Compliance Masterclass"
+      builds_on: "Knowledge and authority from running ModelOptix"
       business_model: "Course sales ($200-500)"
       target: "Developers, CTOs, and compliance officers"
 
+# ============================================================
+# SECTION III: DEVELOPMENT PHASES
+# ============================================================
+
 development_phases:
-  phase_philosophy: "Volume Drives Upgrades - users upgrade because they hit volume limits, not for features"
-  phase_0:
-    name: "Pre-Launch Validation"
-    timeline: "Complete by January 12, 2026"
-    objective: "Get the landing page live and start building presence. Begin demand validation."
-    milestones:
-      - milestone: "Landing page live"
-        status: "Required"
-        proves: "Can articulate value prop clearly"
-      - milestone: "Build in public presence started"
-        status: "Required"
-        proves: "WIP.co, X/Twitter active"
-      - milestone: "Email capture working"
-        status: "Required"
-        proves: "Can collect waitlist signups"
-      - milestone: "First post announcing ModelOptix"
-        status: "Required"
-        proves: "Public commitment made"
-    ongoing_validation:
-      - milestone: "First 100 waitlist signups"
-        target: "Week 2-3"
-      - milestone: "First 10 user interviews"
-        target: "Week 3-4"
-      - milestone: "500 waitlist signups"
-        target: "Week 4-5"
-      - milestone: "Payment intent signals"
-        target: "Week 4-6"
-      - milestone: "1,000+ waitlist signups"
-        target: "Week 6-8"
-      - milestone: "Alpha testers recruited"
-        target: "Week 6-8"
-    success_criteria:
-      - "Messaging resonance: Landing page conversion > 20% (visitor → signup)"
-      - "Quality over quantity: 100+ signups who reply to emails / engage"
-      - "Payment intent: At least 50 people commit to pre-order or payment hold"
-      - "User interviews: 10+ conversations, clear patterns in pain points"
-      - "Positioning validated: Users can explain what ModelOptix does in their own words"
-  phase_1:
-    name: "Foundation"
-    timeline: "Year 1"
-    objective: "Build a core product so valuable that users want MORE of it."
-    focus: "Prove the value prop works - people actually save money, actually trust recommendations, and naturally want to monitor more products."
-    products: "ModelOptix Core MVP - Trust Dashboard, Opportunities Dashboard, Model Comparison, Sanity Check, Alerts"
-    strategic_objectives:
-      - "Validate demand: 100+ signups in first 30 days"
-      - "Validate clarity: Users understand what we do and why it's valuable"
-      - "Validate word-of-mouth: Organic referrals without incentives"
-      - "Prove independence positioning resonates"
-      - "First 100 paying customers"
-    go_to_market:
-      - "Build in public (WIP.co daily, X/Twitter ongoing)"
-      - "Waitlist → Alpha testers → Public launch"
-      - "Launch on Indie Hackers, Hacker News, Product Hunt"
-      - "Document own savings on personal projects (ultimate credibility)"
-    milestones:
-      product:
-        - milestone: "Alpha launch"
-          target: "Month 2-3"
-        - milestone: "Public MVP launch"
-          target: "Month 4-5"
-        - milestone: "100 paying customers"
-          target: "Month 6"
-        - milestone: "1,000 paying customers"
-          target: "Month 9"
-        - milestone: "Week-1 payback confirmed"
-          target: "Month 6+"
-      strategic:
-        - milestone: "First organic referral"
-          target: "Month 3"
-        - milestone: "Independence positioning cited"
-          target: "Month 4+"
-        - milestone: "First user testimonial/case study"
-          target: "Month 5"
-        - milestone: "Trial-to-paid > 45%"
-          target: "Month 6+"
-        - milestone: "NPS > 50"
-          target: "Month 6+"
-      revenue:
-        - milestone: "First $1K MRR"
-          target: "Month 4-5"
-          notes: "~100 Solo users"
-        - milestone: "$5K MRR"
-          target: "Month 7-8"
-          notes: "~350 users across tiers"
-        - milestone: "$10K MRR"
-          target: "Month 10-12"
-          notes: "~700 users, Growth tier growing"
-        - milestone: "$20K MRR"
-          target: "Month 12+"
-          notes: "Year 1 target ($240K ARR)"
-    revenue_target: "$140K-280K Year 1 (1,250-2,500 paid users)"
-  phase_2:
-    name: "Expansion"
-    timeline: "Years 2-3"
-    objective: "Make the core so sticky that users naturally hit Solo limits and upgrade to Growth/Pro."
-    focus: "Deepen the value of every interaction. More reasons to check, more reasons to test, more reasons to add products."
-    products:
-      enhanced_core:
-        - name: "Savings Dashboard"
-          description: "Cumulative value proof - the longer you use it, the bigger this number"
-        - name: "Cost Anomaly Detection"
-          description: "More alerts to act on"
-        - name: "Trust Alerts"
-          description: "ToS changes, certifications, incidents"
-        - name: "Migration Guides"
-          description: "Easier to act on recommendations"
-      new: "ModelOptix Router - For power users who want optimization baked into infrastructure"
-    strategic_objectives:
-      - "Solo → Growth upgrades driven by users hitting 3-product limit"
-      - "Growth → Pro upgrades driven by heavy testing usage"
-      - "Establish 'Growth' as the hero tier (60% of paying customers)"
-      - "Router product creates usage-based revenue stream"
-      - "Net Revenue Retention > 110%"
-    milestones:
-      product:
-        - milestone: "Savings Dashboard shipped"
-          target: "Year 2 Q1"
-        - milestone: "Trust Alerts shipped"
-          target: "Year 2 Q1"
-        - milestone: "Router beta"
-          target: "Year 2 Q2-3"
-        - milestone: "Router GA"
-          target: "Year 2 Q4"
-        - milestone: "API access launched"
-          target: "Year 2"
-      strategic:
-        - milestone: "Growth = 60% of paid users"
-          target: "Year 2"
-        - milestone: "Solo → Growth upgrade > 12%"
-          target: "Year 2"
-        - milestone: "Net Revenue Retention > 110%"
-          target: "Year 2+"
-        - milestone: "First enterprise customer"
-          target: "Year 2-3"
-        - milestone: "Router data improving recommendations"
-          target: "Year 2+"
-      revenue:
-        - milestone: "$50K MRR"
-          target: "Year 2"
-          notes: "~3,500 users"
-        - milestone: "$100K MRR"
-          target: "Year 2-3"
-          notes: "~7,000 users or fewer with upgrades"
-        - milestone: "Router revenue 10% of total"
-          target: "Year 2-3"
-        - milestone: "$1M ARR"
-          target: "Year 2-3"
-  phase_3:
-    name: "Dominance"
-    timeline: "Years 4-7"
-    objective: "Become the Trust Authority for AI - the institution everyone relies on."
-    focus: "Platform economics. Network effects. The definitive source for AI trust and optimization."
-    products:
-      - "ModelOptix Platform - Marketplace, Provider Dashboard, Trust Registry"
-      - "Certification Program - 'ModelOptix Certified' badge"
-      - "Integration Ecosystem - Plugins for LangChain, LlamaIndex, Vercel AI SDK"
-      - "Open-Source Tooling - CLI, SDKs, eval frameworks (freemium funnel)"
-    strategic_objectives:
-      - "Own the 'Independent AI Intelligence' category"
-      - "Become cited source in enterprise procurement decisions"
-      - "Regulatory recognition (EU AI Act compliance reference)"
-      - "Provider adoption of certification program"
-      - "Platform revenue streams (B2B, enterprise contracts)"
-    milestones:
-      product:
-        - milestone: "Platform/Marketplace live"
-          target: "Year 4"
-        - milestone: "Trust Registry comprehensive"
-          target: "Year 4-5"
-          notes: ">90% of major models covered"
-        - milestone: "Certification program launched"
-          target: "Year 5"
-        - milestone: "Integration ecosystem"
-          target: "Year 5-6"
-        - milestone: "Open-source tools adoption"
-          target: "Year 4+"
-      strategic:
-        - milestone: "Cited in enterprise procurement"
-          target: "Year 4+"
-        - milestone: "Regulatory recognition"
-          target: "Year 5+"
-        - milestone: "'ModelOptix Certified' in provider marketing"
-          target: "Year 5+"
-        - milestone: "Category 'Independent AI Intelligence' owned"
-          target: "Year 6-7"
-      revenue:
-        - milestone: "$5M ARR"
-          target: "Year 4-5"
-        - milestone: "Platform revenue 20% of total"
-          target: "Year 5+"
-        - milestone: "$10M+ ARR"
-          target: "Year 6-7"
+  phase_philosophy: "The value ladder is driven by volume, not features. Users upgrade because they hit volume limits. If the core isn't compelling enough to drive volume, no amount of tier-gated features will save us."
+
+  phases:
+    - phase_id: "phase_0"
+      name: "Pre-Launch Validation"
+      timeline: "Complete by January 12, 2026"
+      objective: "Get the landing page live and start building presence. Begin demand validation."
+      focus: "Ship fast, iterate based on feedback"
+      products: "Landing page, waitlist, build in public presence"
+      milestones:
+        product:
+          - milestone: "Landing page live"
+            target: "Jan 12"
+            significance: "Can articulate value prop clearly"
+          - milestone: "Build in public presence started"
+            target: "Jan 12"
+            significance: "WIP.co, X/Twitter active"
+          - milestone: "Email capture working"
+            target: "Jan 12"
+            significance: "Can collect waitlist signups"
+        strategic:
+          - milestone: "First 100 waitlist signups"
+            target: "Week 2-3"
+            significance: "Initial interest exists"
+          - milestone: "First 10 user interviews"
+            target: "Week 3-4"
+            significance: "Understand real pain points"
+          - milestone: "500 waitlist signups"
+            target: "Week 4-5"
+            significance: "Growing momentum"
+          - milestone: "1,000+ waitlist signups"
+            target: "Week 6-8"
+            significance: "Demand validated"
+      success_criteria:
+        - "Messaging resonance: Landing page conversion > 20%"
+        - "Quality over quantity: 100+ signups who reply to emails / engage"
+        - "Payment intent: At least 50 people commit to pre-order"
+        - "User interviews: 10+ conversations, clear patterns"
+        - "Positioning validated: Users explain what ModelOptix does in their own words"
+
+    - phase_id: "phase_1"
+      name: "Foundation"
+      timeline: "Year 1"
+      objective: "Build a core product so valuable that users want MORE of it."
+      focus: "Prove the value prop works - people actually save money, actually trust recommendations, and naturally want to monitor more products."
+      products:
+        - "ModelOptix Core MVP"
+        - "Trust Dashboard"
+        - "Opportunities Dashboard"
+        - "Model Comparison"
+        - "Sanity Check"
+        - "Alerts"
+      strategic_objectives:
+        - "Validate demand: 100+ signups in first 30 days"
+        - "Validate clarity: Users understand what we do"
+        - "Validate word-of-mouth: Organic referrals without incentives"
+        - "Prove independence positioning resonates"
+        - "First 100 paying customers"
+      go_to_market:
+        - "Build in public (WIP.co daily, X/Twitter ongoing)"
+        - "Waitlist → Alpha testers → Public launch"
+        - "Launch on Indie Hackers, Hacker News, Product Hunt"
+        - "Document own savings on personal projects"
+      milestones:
+        product:
+          - milestone: "Alpha launch"
+            target: "Month 2-3"
+            significance: "First real users, high-touch feedback"
+          - milestone: "Public MVP launch"
+            target: "Month 4-5"
+            significance: "HN, Product Hunt, Indie Hackers"
+          - milestone: "100 paying customers"
+            target: "Month 6"
+            significance: "Revenue validation"
+          - milestone: "1,000 paying customers"
+            target: "Month 9"
+            significance: "Growth trajectory proven"
+        strategic:
+          - milestone: "First organic referral"
+            target: "Month 3"
+            significance: "Word-of-mouth working"
+          - milestone: "Independence positioning cited"
+            target: "Month 4+"
+            significance: "Differentiation resonating"
+          - milestone: "Trial-to-paid > 45%"
+            target: "Month 6+"
+            significance: "Conversion validated"
+          - milestone: "NPS > 50"
+            target: "Month 6+"
+            significance: "Product-market fit signal"
+        revenue:
+          - milestone: "First $1K MRR"
+            target: "Month 4-5"
+            notes: "~100 Solo users"
+          - milestone: "$5K MRR"
+            target: "Month 7-8"
+            notes: "~350 users across tiers"
+          - milestone: "$10K MRR"
+            target: "Month 10-12"
+            notes: "~700 users"
+          - milestone: "$20K MRR"
+            target: "Month 12+"
+            notes: "Year 1 target ($240K ARR)"
+      success_criteria:
+        - "Time to first insight < 10 minutes"
+        - "Trial to paid conversion > 45%"
+        - "Users acting on recommendations > 30%"
+        - "NPS > 50"
+        - "Weekly payback achieved for most users"
+        - "Users adding 2nd and 3rd products"
+      revenue_target: "$140K-280K Year 1 (1,250-2,500 paid users)"
+
+    - phase_id: "phase_2"
+      name: "Expansion"
+      timeline: "Years 2-3"
+      objective: "Make the core so sticky that users naturally hit Solo limits and upgrade to Growth/Pro."
+      focus: "Deepen the value of every interaction. More reasons to check, more reasons to test, more reasons to add products."
+      products:
+        - "Enhanced Core (Savings Dashboard, Cost Anomaly Detection, Trust Alerts, Migration Guides)"
+        - "ModelOptix Router"
+      strategic_objectives:
+        - "Solo → Growth upgrades driven by 3-product limit"
+        - "Growth → Pro upgrades driven by heavy testing usage"
+        - "Establish 'Growth' as hero tier (60% of paying customers)"
+        - "Router creates usage-based revenue stream"
+        - "Net Revenue Retention > 110%"
+      milestones:
+        product:
+          - milestone: "Savings Dashboard shipped"
+            target: "Year 2 Q1"
+            significance: "Cumulative value visible"
+          - milestone: "Trust Alerts shipped"
+            target: "Year 2 Q1"
+            significance: "Engagement driver live"
+          - milestone: "Router beta"
+            target: "Year 2 Q2-3"
+            significance: "Usage-based revenue stream"
+          - milestone: "Router GA"
+            target: "Year 2 Q4"
+            significance: "Second product validated"
+        strategic:
+          - milestone: "Growth = 60% of paid users"
+            target: "Year 2"
+            significance: "Hero tier established"
+          - milestone: "Solo → Growth upgrade > 12%"
+            target: "Year 2"
+            significance: "Volume-driven upgrades working"
+          - milestone: "Net Revenue Retention > 110%"
+            target: "Year 2+"
+            significance: "Expansion revenue healthy"
+          - milestone: "First enterprise customer"
+            target: "Year 2-3"
+            significance: "Upmarket expansion starting"
+        revenue:
+          - milestone: "$50K MRR"
+            target: "Year 2"
+            notes: "~3,500 users"
+          - milestone: "$100K MRR"
+            target: "Year 2-3"
+            notes: "~7,000 users or fewer with upgrades"
+          - milestone: "$1M ARR"
+            target: "Year 2-3"
+            notes: "Milestone for sustainable business"
+      success_criteria:
+        - "Solo → Growth upgrade rate > 12% within 90 days"
+        - "Growth → Pro upgrade rate > 10% within 90 days"
+        - "Average products per user increasing QoQ"
+        - "Monthly churn < 4%"
+        - "Router achieving product-market fit"
+
+    - phase_id: "phase_3"
+      name: "Dominance"
+      timeline: "Years 4-7"
+      objective: "Become the Trust Authority for AI - the institution everyone relies on."
+      focus: "Platform economics. Network effects. The definitive source for AI trust and optimization."
+      products:
+        - "ModelOptix Platform (Marketplace, Provider Dashboard, Trust Registry)"
+        - "Certification Program ('ModelOptix Certified' badge)"
+        - "Integration Ecosystem (LangChain, LlamaIndex, Vercel AI SDK)"
+        - "Open-Source Tooling (CLI, SDKs, eval frameworks)"
+      strategic_objectives:
+        - "Own the 'Independent AI Intelligence' category"
+        - "Become cited source in enterprise procurement"
+        - "Regulatory recognition (EU AI Act compliance reference)"
+        - "Provider adoption of certification program"
+        - "Platform revenue streams (B2B, enterprise)"
+      milestones:
+        product:
+          - milestone: "Platform/Marketplace live"
+            target: "Year 4"
+            significance: "Network effects begin"
+          - milestone: "Trust Registry comprehensive"
+            target: "Year 4-5"
+            significance: ">90% of major models covered"
+          - milestone: "Certification program launched"
+            target: "Year 5"
+            significance: "Provider revenue stream"
+          - milestone: "Integration ecosystem"
+            target: "Year 5-6"
+            significance: "LangChain, LlamaIndex, Vercel plugins"
+        strategic:
+          - milestone: "Cited in enterprise procurement"
+            target: "Year 4+"
+            significance: "Trust authority recognized"
+          - milestone: "Regulatory recognition"
+            target: "Year 5+"
+            significance: "EU AI Act compliance reference"
+          - milestone: "'ModelOptix Certified' in provider marketing"
+            target: "Year 5+"
+            significance: "Certification has market value"
+          - milestone: "Category 'Independent AI Intelligence' owned"
+            target: "Year 6-7"
+            significance: "Default destination for AI evaluation"
+        revenue:
+          - milestone: "$5M ARR"
+            target: "Year 4-5"
+            notes: "Sustainable, growing business"
+          - milestone: "Platform revenue 20% of total"
+            target: "Year 5+"
+            notes: "Diversified revenue streams"
+          - milestone: "$10M+ ARR"
+            target: "Year 6-7"
+            notes: "Category leader economics"
+      success_criteria:
+        - "Trust Registry coverage > 90% of major models"
+        - "Citations in enterprise RFPs and procurement"
+        - "Provider dashboard adoption"
+        - "Platform traffic and engagement growing"
+        - "Category leadership established"
+
+# ============================================================
+# SECTION IV: PRODUCT INTERDEPENDENCIES (Enhanced with capability_building)
+# ============================================================
 
 product_interdependencies:
   enablement_chain:
-    - "Core MVP → validates everything"
-    - "Savings Dashboard + Trust Alerts → drives volume"
-    - "Router → usage-based revenue, data flywheel"
-    - "Platform → network effects, category ownership"
+    - "Core MVP enables everything - validates demand and creates foundation"
+    - "Savings Dashboard + Trust Alerts (needs usage history and trust data from Core)"
+    - "Router (needs recommendation engine, trust scoring, and proven value prop from Core)"
+    - "Platform (needs trust data, user base, and credibility from Core + Router)"
+
   required_sequence:
     - priority: 1
       product: "Core MVP"
@@ -393,10 +534,32 @@ product_interdependencies:
     - priority: 5
       product: "Platform"
       why: "Network effects, category ownership"
+
   can_build_in_parallel:
-    - "Savings Dashboard and Trust Alerts"
+    - "Savings Dashboard and Trust Alerts (both extend Core, no dependency on each other)"
     - "Open-source tooling (can start early for developer goodwill)"
     - "Content/SEO (should run continuously from day 1)"
+
+  capability_building:
+    phase_1:
+      - "Trust scoring methodology"
+      - "Recommendation engine"
+      - "Model database and monitoring"
+      - "User onboarding and activation"
+    phase_2:
+      - "Historical tracking and analytics"
+      - "Alert infrastructure"
+      - "API/routing infrastructure"
+      - "Usage-based billing"
+    phase_3:
+      - "Marketplace infrastructure"
+      - "Provider relationship management"
+      - "Certification program"
+      - "Integration ecosystem"
+
+# ============================================================
+# SECTION VI: SUCCESS METRICS (Enhanced with trust_specific + pricing_page)
+# ============================================================
 
 success_metrics:
   conversion:
@@ -412,6 +575,7 @@ success_metrics:
     - metric: "Landing page → Signup"
       target: "> 20%"
       alert_if: "< 10%"
+
   activation:
     - metric: "Time to first product added"
       target: "< 1 hour"
@@ -425,6 +589,7 @@ success_metrics:
     - metric: "Day 6-7 login rate"
       target: "> 50%"
       alert_if: "< 30%"
+
   upgrades:
     - metric: "Solo → Growth (90 days)"
       target: "> 12%"
@@ -441,6 +606,7 @@ success_metrics:
     - metric: "Average products per user"
       target: "Growing QoQ"
       alert_if: "Flat or declining"
+
   retention:
     - metric: "Monthly churn"
       target: "< 4%"
@@ -454,11 +620,12 @@ success_metrics:
     - metric: "90-day retention"
       target: "> 85%"
       alert_if: "< 70%"
+
   acquisition:
     - metric: "Referral rate"
       target: "> 10%"
       alert_if: "< 5%"
-    - metric: "Heard from referral"
+    - metric: "'Heard from referral'"
       target: "> 30%"
       alert_if: "< 15%"
     - metric: "LTV:CAC"
@@ -467,6 +634,31 @@ success_metrics:
     - metric: "ARPU"
       target: "> $15/mo"
       alert_if: "< $10/mo"
+
+  trust_specific:
+    - metric: "Trust reports viewed"
+      target: "Growing MoM"
+      alert_if: "Declining"
+    - metric: "Trust alerts acted on"
+      target: "> 25%"
+      alert_if: "< 10%"
+    - metric: "'Independence' cited in feedback"
+      target: "Regular mentions"
+      alert_if: "Never mentioned"
+    - metric: "Users explaining value in own words"
+      target: "Consistent clarity"
+      alert_if: "Confusion in interviews"
+
+  pricing_page:
+    - metric: "Scroll depth"
+      watch_for: "< 50% = losing them early"
+    - metric: "Tier click distribution"
+      watch_for: "Should favor Growth"
+    - metric: "FAQ clicks"
+      watch_for: "Top 3 = your real objections"
+    - metric: "Time on page"
+      watch_for: "< 30s = confused, > 3min = stuck"
+
   tier_distribution:
     day_1:
       free_trial_downgrade: "55%"
@@ -477,66 +669,572 @@ success_metrics:
       solo: "25%"
       growth: "60%"
       pro: "15%"
+      note: "Growth is the hero tier - pricing designed to land 60% here"
+
+# ============================================================
+# SECTION VII: IMPLEMENTATION FRAMEWORK (PREVIOUSLY MISSING)
+# ============================================================
+
+implementation_framework:
+  development_methodology:
+    approach: "Two-System Approach"
+    systems:
+      - name: "BOS-AI"
+        purpose: "Business strategy, requirements, PRDs"
+        output: "What to build and why"
+      - name: "Agent-11"
+        purpose: "Technical development with Claude Code"
+        output: "Working software"
+    workflow: "BOS-AI (strategy/requirements) → PRD handoff → Agent-11 (build) → Working product → BOS-AI (operate, gather feedback) → New requirements → Agent-11 (iterate)"
+
+  build_cadence:
+    total_cycle: "5-7 weeks from PRD to mature product"
+    phases:
+      - phase: "Requirements (BOS-AI)"
+        duration: "1-2 days"
+        focus: "PRD, user stories, acceptance criteria"
+      - phase: "Build (Agent-11)"
+        duration: "~1 week"
+        focus: "Scalable MVP"
+      - phase: "Test & Mature"
+        duration: "3-4 weeks"
+        focus: "Bug fixes, edge cases, polish"
+      - phase: "Launch"
+        duration: "1 week"
+        focus: "GTM execution, monitoring"
+
+  phase_implementation:
+    - phase_id: "phase_0"
+      tasks:
+        - task: "Landing page"
+          approach: "Agent-11 build or no-code (Framer, Webflow)"
+          time: "1-2 days"
+        - task: "Email capture"
+          approach: "Waitlist tool (Loops, ConvertKit, simple form)"
+          time: "1 hour"
+        - task: "Analytics"
+          approach: "Plausible, Fathom, or simple tracking"
+          time: "1 hour"
+        - task: "Build in public setup"
+          approach: "WIP.co account, X/Twitter ready"
+          time: "1 hour"
+        - task: "First announcement post"
+          approach: "Write and publish"
+          time: "1 hour"
+
+    - phase_id: "phase_1"
+      components:
+        - component: "Trust Dashboard"
+          approach: "Agent-11"
+          priority: "P0 - Core value"
+        - component: "Opportunities Dashboard"
+          approach: "Agent-11"
+          priority: "P0 - Core value"
+        - component: "Model Comparison"
+          approach: "Agent-11"
+          priority: "P0 - Core value"
+        - component: "Sanity Check"
+          approach: "Agent-11"
+          priority: "P0 - Core value"
+        - component: "Basic Alerts"
+          approach: "Agent-11"
+          priority: "P0 - Core value"
+        - component: "Auth + Billing"
+          approach: "Stripe + Auth provider"
+          priority: "P0 - Revenue"
+        - component: "Onboarding flow"
+          approach: "Agent-11"
+          priority: "P1 - Activation"
+      test_mature:
+        - "Alpha users (hand-picked from waitlist)"
+        - "Daily feedback loops"
+        - "Bug fixes and edge cases"
+        - "Performance optimization"
+        - "Onboarding refinement"
+      launch_sequence:
+        - "Product Hunt"
+        - "Hacker News"
+        - "Indie Hackers"
+        - "Build in public announcement"
+
+    - phase_id: "phase_2"
+      components:
+        - component: "Savings Dashboard"
+          approach: "1 week build + 2 weeks mature"
+          priority: "P0"
+        - component: "Trust Alerts"
+          approach: "1 week build + 2 weeks mature"
+          priority: "P0"
+        - component: "Cost Anomaly Detection"
+          approach: "1 week build + 2 weeks mature"
+          priority: "P1"
+        - component: "Router"
+          approach: "3-4 weeks build + 6-8 weeks mature"
+          priority: "P0"
+          notes: "Requires robust infrastructure (uptime critical), usage-based billing integration"
+
+    - phase_id: "phase_3"
+      components:
+        - component: "Marketplace infrastructure"
+          approach: "Agent-11 + contractors"
+          priority: "P0"
+        - component: "Provider dashboard"
+          approach: "Agent-11"
+          priority: "P1"
+        - component: "Certification program"
+          approach: "Process + tech"
+          priority: "P1"
+        - component: "Integration ecosystem"
+          approach: "Agent-11 + community"
+          priority: "P2"
+
+  market_validation:
+    loop:
+      - "Ship small - Release early, learn fast"
+      - "Talk to users - Regular interviews, not just metrics"
+      - "Measure what matters - Focus on activation and retention, not vanity"
+      - "Iterate weekly - Small improvements compound"
+      - "Kill what doesn't work - No attachment to features that don't perform"
+    decision_points:
+      - decision: "Continue building MVP"
+        criteria: "Waitlist > 500, positive interview feedback"
+        action: "Proceed to Alpha"
+      - decision: "Launch publicly"
+        criteria: "Alpha NPS > 40, core flows working"
+        action: "Go to Product Hunt, HN"
+      - decision: "Build Router"
+        criteria: "Core product validated, demand signals"
+        action: "Start Router PRD"
+      - decision: "Hire/contract help"
+        criteria: "Revenue supports it, you're the bottleneck"
+        action: "Targeted contractor"
+      - decision: "Build Platform"
+        criteria: "Router working, enterprise interest"
+        action: "Start Platform PRD"
+
+# ============================================================
+# SECTION VIII: DECISION FRAMEWORK (PREVIOUSLY MISSING)
+# ============================================================
+
+decision_framework:
+  decision_points:
+    - name: "Phase 0 → Phase 1 (Start Building MVP)"
+      criteria:
+        - criterion: "Waitlist signups"
+          green_light: "> 500"
+          yellow_light: "200-500"
+          red_light: "< 200"
+        - criterion: "User interviews"
+          green_light: "Clear pain, would pay"
+          yellow_light: "Interested but vague"
+          red_light: "No urgency"
+        - criterion: "Payment intent"
+          green_light: "> 50 pre-commits"
+          yellow_light: "20-50 pre-commits"
+          red_light: "< 20"
+        - criterion: "Positioning clarity"
+          green_light: "Users explain it back"
+          yellow_light: "Some confusion"
+          red_light: "Total confusion"
+      green_action: "Proceed to MVP build immediately"
+      yellow_action: "Iterate messaging, do more interviews, keep validating"
+      red_action: "Fundamental rethink - wrong audience, wrong problem, or wrong solution"
+
+    - name: "Alpha → Public Launch"
+      criteria:
+        - criterion: "Alpha NPS"
+          green_light: "> 50"
+          yellow_light: "30-50"
+          red_light: "< 30"
+        - criterion: "Core flows working"
+          green_light: "Smooth, minimal bugs"
+          yellow_light: "Some friction"
+          red_light: "Broken"
+        - criterion: "Week-1 payback"
+          green_light: "> 80% of users"
+          yellow_light: "50-80%"
+          red_light: "< 50%"
+        - criterion: "Alpha churn"
+          green_light: "< 10%"
+          yellow_light: "10-20%"
+          red_light: "> 20%"
+      green_action: "Launch on Product Hunt, HN, Indie Hackers"
+      yellow_action: "Fix issues, extend alpha, iterate"
+      red_action: "Major product rethink before public exposure"
+
+    - name: "Core → Router (Start Second Product)"
+      criteria:
+        - criterion: "Core MRR"
+          green_light: "> $10K"
+          yellow_light: "$5-10K"
+          red_light: "< $5K"
+        - criterion: "Monthly churn"
+          green_light: "< 4%"
+          yellow_light: "4-6%"
+          red_light: "> 6%"
+        - criterion: "User requests for API/routing"
+          green_light: "Regular"
+          yellow_light: "Occasional"
+          red_light: "None"
+        - criterion: "Capacity"
+          green_light: "You're not drowning"
+          yellow_light: "Busy but manageable"
+          red_light: "Overwhelmed"
+      green_action: "Start Router PRD, begin build"
+      yellow_action: "Focus on Core growth and retention first"
+      red_action: "Core product needs work - don't split focus"
+
+    - name: "Solo → Team (Hire/Contract)"
+      criteria:
+        - criterion: "Revenue"
+          green_light: "Covers salary + runway"
+          yellow_light: "Tight but possible"
+          red_light: "Can't afford it"
+        - criterion: "Bottleneck"
+          green_light: "You're limiting growth"
+          yellow_light: "Some friction"
+          red_light: "Managing fine"
+        - criterion: "Type of help needed"
+          green_light: "Clear, scoped"
+          yellow_light: "Vague"
+          red_light: "Don't know"
+      green_action: "Hire contractor for specific capability"
+      yellow_action: "Wait, or find cheaper solution (tools, automation)"
+      red_action: "Stay solo, focus on revenue first"
+
+  acceleration_triggers:
+    - signal: "Signups 2x target"
+      action: "Increase marketing investment"
+    - signal: "Trial conversion > 50%"
+      action: "Raise prices or add higher tier"
+    - signal: "Organic referrals > 20%"
+      action: "Build referral program with incentives"
+    - signal: "NPS > 70"
+      action: "Double down on testimonials, case studies"
+    - signal: "Enterprise inbound"
+      action: "Create enterprise tier, start sales motion"
+
+  investigation_triggers:
+    - signal: "High signups, low activation"
+      investigation: "UX research - where's the friction?"
+    - signal: "High activation, low conversion"
+      investigation: "Value perception or pricing problem"
+    - signal: "High conversion, high churn"
+      investigation: "Product not delivering promised value"
+    - signal: "Low referrals despite good NPS"
+      investigation: "Sharing mechanism broken or missing"
+    - signal: "Tier distribution wrong"
+      investigation: "Pricing page or feature allocation issue"
+
+  pivot_triggers:
+    - signal: "< 200 waitlist after 8 weeks"
+      consideration: "Wrong audience, channel, or message"
+    - signal: "< 25% action on recommendations"
+      consideration: "Core value prop not working"
+    - signal: "0 conversions after 60 days"
+      consideration: "Fundamental product-market fit problem"
+    - signal: "Negative NPS"
+      consideration: "Wrong market or wrong solution"
+    - signal: "Independence not mentioned"
+      consideration: "Differentiation not resonating"
+
+  pivot_options:
+    - type: "Audience pivot"
+      description: "Same product, different target (e.g., enterprises instead of solopreneurs)"
+    - type: "Problem pivot"
+      description: "Same audience, different problem (e.g., compliance instead of cost)"
+    - type: "Solution pivot"
+      description: "Same problem, different approach (e.g., consulting instead of SaaS)"
+    - type: "Channel pivot"
+      description: "Same everything, different GTM (e.g., content instead of communities)"
+
+  roadmap_revision:
+    triggers:
+      - trigger: "Major pivot decision"
+        action: "Full roadmap revision"
+      - trigger: "Phase transition"
+        action: "Review and update next phase details"
+      - trigger: "Market shift (e.g., new regulation)"
+        action: "Assess impact, update if significant"
+      - trigger: "Competitor move (e.g., OpenRouter adds trust)"
+        action: "Reassess differentiation"
+      - trigger: "Quarterly review"
+        action: "Light refresh, update timelines"
+    no_revision_needed:
+      - "Tactical feature prioritization changes"
+      - "Timeline shifts of a few weeks"
+      - "Minor pricing adjustments"
+      - "Channel experiments"
+
+  adaptation_framework:
+    cadence:
+      - frequency: "Weekly"
+        focus: "Review metrics, user feedback, adjust tactics"
+      - frequency: "Monthly"
+        focus: "Review progress against milestones, adjust priorities"
+      - frequency: "Quarterly"
+        focus: "Review strategic direction, update roadmap if needed"
+      - frequency: "Annually"
+        focus: "Full strategic review, major roadmap update"
+    principle: "Stay committed to the vision (Independent AI Intelligence), flexible on the path."
+
+# ============================================================
+# SECTION X: RESOURCE PLANNING (PREVIOUSLY MISSING)
+# ============================================================
+
+resource_planning:
+  by_phase:
+    - phase_id: "phase_0_1"
+      name: "Phase 0-1 Resources (Year 1)"
+      time_investment:
+        - activity: "Development (with Claude Code)"
+          hours_per_week: "20-30"
+          notes: "Core product build"
+        - activity: "User interviews & support"
+          hours_per_week: "5-10"
+          notes: "Essential for learning"
+        - activity: "Build in public & marketing"
+          hours_per_week: "5-10"
+          notes: "WIP, Twitter, content"
+        - activity: "Strategy & planning"
+          hours_per_week: "2-5"
+          notes: "BOS-AI work"
+      financial_requirements:
+        - item: "Infrastructure (hosting, DB)"
+          monthly_cost: "$100-500"
+          notes: "Scales with usage"
+        - item: "Third-party tools"
+          monthly_cost: "$100-200"
+          notes: "Stripe, email, analytics"
+        - item: "API costs (sanity checks)"
+          monthly_cost: "Variable"
+          notes: "~$0.01-0.10 per check"
+        - item: "Domains"
+          monthly_cost: "~$30/year"
+          notes: "modeloptix.com, .io"
+      total_monthly: "$200-700/month (before revenue)"
+      skills_required:
+        - skill: "Product strategy"
+          source: "You + BOS-AI"
+        - skill: "Full-stack development"
+          source: "You + Agent-11/Claude Code"
+        - skill: "UI/UX design"
+          source: "You + AI tools (Figma, v0)"
+        - skill: "Copywriting"
+          source: "You + AI assistance"
+        - skill: "Marketing"
+          source: "You (build in public)"
+
+    - phase_id: "phase_2"
+      name: "Phase 2 Resources (Years 2-3)"
+      time_investment:
+        - activity: "Similar split to Phase 1"
+          hours_per_week: "40+"
+          notes: "May add contractor hours"
+        - activity: "Operations"
+          hours_per_week: "Increasing"
+          notes: "User base growth"
+        - activity: "Router infrastructure"
+          hours_per_week: "Significant"
+          notes: "Requires expertise"
+      financial_requirements:
+        - item: "Infrastructure"
+          monthly_cost: "$500-2000"
+          notes: "Router requires more"
+        - item: "Third-party tools"
+          monthly_cost: "$200-500"
+          notes: "More advanced tooling"
+        - item: "API costs"
+          monthly_cost: "$500-2000"
+          notes: "Scales with sanity checks"
+        - item: "Contractors (optional)"
+          monthly_cost: "$2000-5000"
+          notes: "Specific projects"
+      total_monthly: "$1000-5000/month (covered by revenue)"
+      skills_required:
+        - skill: "Infrastructure/DevOps"
+          source: "Contract or learn"
+          notes: "Router uptime critical"
+        - skill: "Customer support"
+          source: "Contract"
+          notes: "Volume increases"
+        - skill: "Content marketing"
+          source: "Contract or learn"
+          notes: "SEO, thought leadership"
+
+    - phase_id: "phase_3"
+      name: "Phase 3 Resources (Years 4-7)"
+      team_consideration: "By Phase 3, likely need at least part-time help: Infrastructure/DevOps (Router reliability), Customer success (enterprise relationships), Content/Marketing (platform growth)"
+      lean_alternative:
+        - "Focused contractor relationships"
+        - "AI automation for support"
+        - "Community-driven content"
+      financial_model:
+        - revenue: "< $500K ARR"
+          team_approach: "Stay solo + contractors"
+        - revenue: "$500K-1M ARR"
+          team_approach: "1-2 part-time/contractors"
+        - revenue: "$1M-5M ARR"
+          team_approach: "Small team (3-5)"
+        - revenue: "> $5M ARR"
+          team_approach: "Grow as needed"
+
+  investment_priorities:
+    high_impact:
+      - "Core product quality (retention driver)"
+      - "Onboarding experience (activation driver)"
+      - "Trust data accuracy (differentiation)"
+    foundation:
+      - "Reliable infrastructure (trust requires uptime)"
+      - "Analytics and monitoring (decision-making)"
+      - "Email and communication (user relationships)"
+    avoid_until_validated:
+      - "Paid advertising (until organic working)"
+      - "Expensive tools (until revenue supports)"
+      - "Hiring (until bottleneck clear)"
+
+# ============================================================
+# SECTION IX: RISKS (Enhanced with risk_monitoring)
+# ============================================================
 
 risks:
   - name: "Adoption (Cold Start)"
     severity: "High"
-    probability: "Medium"
+    probability: "Medium (mitigated by build in public strategy)"
+    description: "Can't get initial traction, no one signs up"
+    impact: "Business doesn't launch, time and effort wasted"
     mitigations:
       - "Solve your own problem publicly - 'I saved $X on my own products' = ultimate credibility"
       - "Build in public - daily progress builds audience before launch"
       - "Alpha testers from waitlist - validates demand, creates testimonials"
       - "Launch in friendly communities - Indie Hackers, WIP already root for you"
+    key_insight: "You ARE your target customer."
+
   - name: "Competition (OpenRouter adds recommendations)"
     severity: "Medium"
-    probability: "Medium-High"
+    probability: "Medium-High (they have $40M and this is obvious)"
+    description: "OpenRouter (or similar) adds recommendation layer with more users and data"
+    impact: "Harder to differentiate, may lose market window"
     mitigations:
-      - "Structural independence - they have investors, volume incentives. You don't."
+      - "Structural independence - they have investors, volume incentives. You don't. They literally cannot copy your structure."
       - "Speed to trust - establish 'independent referee' brand before they move"
-      - "Depth for solopreneurs - they'll build generic; you build personalized"
+      - "Depth for solopreneurs - they'll build generic; you build personalized with switching costs"
       - "Trust-first positioning - they optimize for routing; you optimize for trust"
+    key_insight: "They can copy features. They CANNOT copy your structure."
+
   - name: "Market Timing"
     severity: "Medium"
     probability: "Medium"
+    description: "Major players bundle 'good enough' model selection. Window estimated at 6-18 months."
+    impact: "Harder to establish category, may become feature of bigger platform"
     mitigations:
-      - "Create category - 'Independent AI Intelligence'"
+      - "Create category - 'Independent AI Intelligence' - category creators capture 76% of market cap"
       - "Trust over features - features get copied quickly; trust doesn't"
       - "Lock in early advocates - they become your distribution moat"
       - "Move fast with users - ship to learn, not to launch"
+
   - name: "Trust Verification Limitations"
     severity: "Medium"
     probability: "Medium"
+    description: "Can't actually verify all trust claims - some require provider cooperation"
+    impact: "Trust scores seen as unreliable, differentiation weakened"
     mitigations:
       - "Radical transparency - explicit about what we know, don't know, and can't verify"
       - "Clear confidence levels - high/medium/low/unknown for each dimension"
       - "Source everything - show where every claim comes from"
       - "No false certainty - 'unknown' is better than wrong"
+
   - name: "Solopreneur Burnout"
     severity: "Medium"
-    probability: "Medium"
+    probability: "Medium (common in bootstrapped businesses)"
+    description: "Trying to do everything alone leads to exhaustion, quality drops"
+    impact: "Product suffers, growth stalls, health issues"
     mitigations:
       - "AI-assisted development - Claude Code multiplies your capacity"
       - "Clear phase priorities - don't try to build everything at once"
       - "Revenue-first milestones - hire help when you can afford it"
       - "Sustainable pace - this is a 7-year roadmap, not a sprint"
 
+risk_monitoring:
+  early_warning_indicators:
+    - indicator: "Waitlist growth stalling"
+      signals: "Messaging or channel problem"
+    - indicator: "Trial completion dropping"
+      signals: "Onboarding friction"
+    - indicator: "Churn increasing"
+      signals: "Value delivery problem"
+    - indicator: "Support tickets spiking"
+      signals: "Product quality issues"
+    - indicator: "Competitor announcements"
+      signals: "Market positioning threat"
+    - indicator: "Burnout symptoms"
+      signals: "Need to slow down or get help"
+
+  response_framework:
+    - step: "Detect"
+      description: "Monitor early warning indicators weekly"
+    - step: "Assess"
+      description: "Is this a blip or a trend?"
+    - step: "Diagnose"
+      description: "Root cause analysis (talk to users, look at data)"
+    - step: "Respond"
+      description: "Implement mitigation"
+    - step: "Review"
+      description: "Did it work? Adjust if needed."
+
+# ============================================================
+# SECTION XI: VISION ACHIEVEMENT (Enhanced with legacy_impact + bhag)
+# ============================================================
+
 vision_achievement:
-  year_1_transformation:
-    - "ModelOptix established as the independent voice for solopreneurs"
-    - "First cohort of users seeing real savings and trusting recommendations"
-    - "'Independent AI advisor' concept proven"
-    - "Community of early advocates spreading word"
-    - "Foundation for trust authority laid"
-  year_3_transformation:
-    - "ModelOptix is the default tool for indie developers choosing AI models"
-    - "Trust Dashboard is how people evaluate model trustworthiness"
-    - "Savings Dashboard shows millions in collective savings"
-    - "Router handling significant API traffic with trust-aware routing"
-    - "Expansion into team/enterprise market beginning"
-  year_7_transformation:
-    - "ModelOptix is THE Trust Authority for AI"
-    - "'ModelOptix Certified' is a recognized trust signal"
-    - "Enterprise procurement references our trust assessments"
-    - "Platform hosts the comprehensive AI model registry"
-    - "Regulatory bodies cite our methodology"
-    - "Vision realized: the unbiased guide in a world of AI with hidden interests"
+  transformations:
+    - timeframe: "Current State (January 2026)"
+      outcomes:
+        - "Developers pick models based on stale research"
+        - "No trusted, independent source for AI guidance"
+        - "Everyone has hidden incentives (providers, VCs, affiliates)"
+        - "Solopreneurs overpaying and underperforming without knowing"
+        - "Trust in AI decisions is based on gut feeling, not data"
+    - timeframe: "Phase 1 Transformation (End of Year 1)"
+      outcomes:
+        - "ModelOptix established as the independent voice for solopreneurs"
+        - "First cohort of users seeing real savings and trusting recommendations"
+        - "'Independent AI advisor' concept proven"
+        - "Community of early advocates spreading word"
+        - "Foundation for trust authority laid"
+    - timeframe: "Phase 2 Transformation (End of Year 3)"
+      outcomes:
+        - "ModelOptix is the default tool for indie developers choosing AI models"
+        - "Trust Dashboard is how people evaluate model trustworthiness"
+        - "Savings Dashboard shows millions in collective savings"
+        - "Router handling significant API traffic with trust-aware routing"
+        - "Expansion into team/enterprise market beginning"
+    - timeframe: "Phase 3 Transformation (End of Year 7)"
+      outcomes:
+        - "ModelOptix is THE Trust Authority for AI"
+        - "'ModelOptix Certified' is a recognized trust signal"
+        - "Enterprise procurement references our trust assessments"
+        - "Platform hosts the comprehensive AI model registry"
+        - "Regulatory bodies cite our methodology"
+        - "Vision realized: the unbiased guide in a world of AI with hidden interests"
+
+  legacy_impact:
+    market_transformation:
+      - "Created the 'Independent AI Intelligence' category"
+      - "Established trust scoring as a standard for AI model evaluation"
+      - "Shifted conversation from 'which is cheapest' to 'which can I trust'"
+    customer_transformation:
+      - "Developers confidently choose AI models knowing they're optimized"
+      - "Solopreneurs stop worrying about model decisions - it's handled"
+      - "Enterprises have due diligence process they can rely on"
+      - "Everyone knows: whose interests does this AI really serve?"
+    competitive_landscape:
+      - "Providers compete on trust metrics, not just benchmarks"
+      - "Transparency becomes table stakes for AI companies"
+      - "'ModelOptix Certified' is sought after by providers"
+      - "Independence is recognized as essential for trust"
+    vision_statement: "ModelOptix is the institution people turn to when they need to know the truth about AI. Not because we're the biggest, but because we're structurally incapable of being compromised. Independence isn't our feature - it's our foundation."
+
+  bhag:
+    statement: "Create the 'AI Transparency' category and own it for 25 years - becoming the global standard for unbiased AI intelligence."
+    why_it_matters: "In a future where AI influences every decision, someone must stand for truth without agenda. That's us. We're building the institution people trust when they need to know: is this AI serving me, or someone else?"
