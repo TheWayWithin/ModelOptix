@@ -50,15 +50,22 @@ If no subcommand provided, default to `status`.
 
 **Document Category Matching** (case-insensitive, order of precedence):
 
-| Category | Priority 1 | Priority 2 | Priority 3 |
-|----------|------------|------------|------------|
-| **prd** | prd.md | requirements.md | product-requirements.md |
-| **vision** | vision-mission.md | vision.md | strategic-plan.md |
-| **roadmap** | strategic-roadmap.md | roadmap.md | development-plan.md |
-| **icp** | client-success-blueprint.md | icp.md | personas.md |
-| **brand** | brand-style-guidelines.md | brand.md | style-guide.md |
-| **marketing** | marketing-bible.md | marketing.md | positioning.md |
-| **pricing** | pricing-strategy.md | pricing.md | pricing-tiers.md |
+| Category | Priority 1 | Priority 2 | Priority 3 | Priority 4 | Priority 5 |
+|----------|------------|------------|------------|------------|------------|
+| **prd** | prd.md | requirements.md | product-requirements.md | *-prd-*.md | prd-*.md |
+| **vision** | vision-mission.md | vision.md | strategic-plan.md | vision-and-mission.md | |
+| **roadmap** | strategic-roadmap.md | roadmap.md | development-plan.md | | |
+| **icp** | client-success-blueprint.md | icp.md | personas.md | customer-success.md | |
+| **research** | market-and-client-research.md | market-research.md | competitive-analysis.md | research.md | |
+| **brand** | brand-style-guidelines.md | brand.md | style-guide.md | brand-style-guide.md | |
+| **marketing** | marketing-bible.md | marketing.md | positioning.md | positioning-statement.md | |
+| **pricing** | pricing-strategy.md | pricing.md | pricing-tiers.md | | |
+
+**Pattern Matching Notes**:
+- Patterns with `*` are glob patterns (e.g., `*-prd-*.md` matches `ModelOptix-Core-PRD-FINAL.md`)
+- Matching is case-insensitive
+- First match wins (Priority 1 before Priority 2, etc.)
+- Files in subdirectories (e.g., `prds/`) are also scanned
 
 **For each document found**:
 1. Read file content
@@ -82,6 +89,7 @@ sha256sum documents/foundations/<filename> | cut -d' ' -f1
 - `foundation-vision.schema.yaml`
 - `foundation-roadmap.schema.yaml`
 - `foundation-icp.schema.yaml`
+- `foundation-research.schema.yaml`
 - `foundation-brand.schema.yaml`
 - `foundation-marketing.schema.yaml`
 - `foundation-pricing.schema.yaml`
@@ -100,6 +108,7 @@ Before extraction, classify the document type to apply appropriate rules:
 | Vision | STRATEGIC | SYNTHESIS MODE |
 | Roadmap | STRATEGIC | SYNTHESIS MODE |
 | ICP | STRUCTURED | MAPPING MODE |
+| Research | ANALYTICAL | COMPLETENESS MODE |
 | Brand | PRECISION | EXACT MODE |
 | Marketing | STRATEGIC | SYNTHESIS MODE |
 | Pricing | STRUCTURED | MAPPING MODE |

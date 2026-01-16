@@ -1,0 +1,452 @@
+# ModelOptix - Pricing Strategy Extraction
+# Extracted from: foundations/pricing-strategy.md
+# Extraction mode: MAPPING MODE
+# Generated: 2026-01-15
+
+metadata:
+  version: "2.1"
+  date: "January 2026"
+
+philosophy:
+  design_gate:
+    name: "10x/10x Design Gate"
+    criteria:
+      - "Is it 10x better than alternatives?"
+      - "Is it 10x cheaper than alternatives?"
+    rule: "If no to either → I don't build it."
+
+  roi_timeline:
+    - timeframe: "Week 1"
+      expected_return: "Subscription cost recovered"
+    - timeframe: "Month 1"
+      expected_return: "Multiple of subscription"
+    - timeframe: "Year 1"
+      expected_return: "1000x return for many users"
+
+  positioning: "ModelOptix isn't a cost. It's a profit generator that drives up your margins."
+
+principles:
+  - name: "The 10x/10x Gate"
+    description: "I only build tools that are 10x better AND 10x cheaper than alternatives. If I can't hit both, I don't build it."
+  - name: "Week One Payback"
+    description: "Annual subscription cost recovered in your first week. After that, it's pure profit."
+  - name: "Exponential Returns"
+    description: "Savings compound—not linear. More products, more optimizations, growing margins. Many users see 1000x return in year one."
+  - name: "Lean = Your Gain"
+    description: "No office, no staff, no investors. AI-first automation. My low overhead becomes your 10x value."
+  - name: "Independence, No Hidden Fees"
+    description: "Subscriptions only. No volume incentives, no referral fees, no provider kickbacks."
+  - name: "Prove Value Before Trust"
+    description: "7-day trial available as fallback. Money-back guarantee on all plans. Experience it first, decide second."
+
+tiers:
+  - name: "Solo"
+    annual_price: 9.95
+    monthly_price: 13.45
+    annual_total: 119.40
+    first_year_20_off: 95.52
+    products: 3
+    sanity_checks_per_month: 10
+    test_history: "90 days"
+    email_alerts: true
+    slack_discord: true
+    webhooks: false
+    custom_alert_rules: false
+    api_access: false
+    roi_dashboard: false
+    support: "Email"
+    target: "Entry-level solopreneurs"
+
+  - name: "Growth"
+    label: "Best Value"
+    annual_price: 19.95
+    monthly_price: 26.95
+    annual_total: 239.40
+    first_year_20_off: 191.52
+    products: 10
+    sanity_checks_per_month: 30
+    test_history: "1 year"
+    email_alerts: true
+    slack_discord: true
+    webhooks: true
+    custom_alert_rules: true
+    api_access: false
+    roi_dashboard: false
+    support: "Priority"
+    target: "Multi-product solopreneurs"
+
+  - name: "Pro"
+    annual_price: 29.95
+    monthly_price: 40.45
+    annual_total: 359.40
+    first_year_20_off: 287.52
+    products: 25
+    sanity_checks_per_month: 100
+    test_history: "Forever"
+    email_alerts: true
+    slack_discord: true
+    webhooks: true
+    custom_alert_rules: true
+    api_access: true
+    roi_dashboard: true
+    support: "4-hour"
+    target: "Power users + high-end solos"
+
+  - name: "Enterprise"
+    price: "Contact"
+    products: "Unlimited"
+    sanity_checks_per_month: "Unlimited"
+    additional_features:
+      - "Multiple users"
+      - "SSO/SAML"
+      - "Audit logs"
+      - "Dedicated success manager"
+      - "Custom SLA"
+    target: "Teams + large orgs"
+
+signup_hierarchy:
+  priority_order:
+    - priority: "1st (Best)"
+      action: "Annual paid signup"
+      incentive: "20% off first year"
+    - priority: "2nd"
+      action: "Monthly paid signup"
+      incentive: "Full price, flexibility"
+    - priority: "3rd (Fallback)"
+      action: "7-day trial"
+      incentive: "Risk reversal for hesitant"
+  note: "All options include money-back guarantee as safety net."
+
+reverse_trial:
+  description: "For users who choose the 7-day trial"
+  features: "Full Solo features during trial"
+  card_required: true
+  charge_day: 8
+  failure_action: "Downgrade to Free tier"
+
+free_tier:
+  availability: "Post-Trial Downgrade Only"
+  features:
+    products: 1
+    sanity_checks: 0
+    alerts: "Weekly digest only"
+    history: "7 days"
+  psychology: "They HAD real-time alerts, multiple products, testing. Now it's gone. That loss drives conversion later."
+
+tier_distribution:
+  signup_day_1:
+    - tier: "Free (trial downgrade)"
+      target: "55%"
+      notes: "Didn't convert, still in funnel"
+    - tier: "Solo"
+      target: "25%"
+      notes: "Converted at entry price"
+    - tier: "Growth"
+      target: "15%"
+      notes: "Upgraded during/after trial"
+    - tier: "Pro"
+      target: "5%"
+      notes: "Power users"
+
+  settled_month_6_plus:
+    - tier: "Solo"
+      target: "25%"
+    - tier: "Growth"
+      target: "60%"
+    - tier: "Pro"
+      target: "15%"
+
+  hero_tier: "Growth"
+  hero_tier_rationale: "Pricing page and triggers designed to land 60% of paying customers here."
+
+marketing_physics:
+  solo:
+    price: "$9.95/mo"
+    overt_benefits:
+      - feature: "3 products"
+        benefit: "Cover your main projects, all monitored"
+      - feature: "10 sanity checks/mo"
+        benefit: "Test before you switch, no blind faith"
+      - feature: "Slack/Discord alerts"
+        benefit: "Notifications where you work"
+      - feature: "90-day history"
+        benefit: "See what's changed, track decisions"
+    fomo_to_growth:
+      - missing: "Only 3 products"
+        cost: "Your 4th project flies blind"
+      - missing: "No webhooks"
+        cost: "Can't automate into CI/CD"
+      - missing: "No custom alerts"
+        cost: "Stuck with our thresholds, not yours"
+      - missing: "90-day history limit"
+        cost: "Can't see long-term patterns"
+    upgrade_message: "For just $10 more, Growth covers 10 projects with automation and custom rules."
+
+  growth:
+    price: "$19.95/mo"
+    overt_benefits:
+      - feature: "10 products"
+        benefit: "Your whole portfolio, monitored"
+      - feature: "30 sanity checks/mo"
+        benefit: "Test thoroughly every quarter"
+      - feature: "Webhooks"
+        benefit: "Automate into your pipeline"
+      - feature: "Custom alert rules"
+        benefit: "Your thresholds, your triggers"
+      - feature: "1-year history"
+        benefit: "See seasonal patterns, long-term trends"
+    fomo_to_pro:
+      - missing: "No API access"
+        cost: "Can't build ModelOptix into your tools"
+      - missing: "No ROI dashboard"
+        cost: "Can't prove savings to stakeholders"
+      - missing: "Standard support"
+        cost: "Complex questions wait longer"
+      - missing: "25 product limit"
+        cost: "Enterprise scale needs more"
+    upgrade_message: "For just $10 more, Pro unlocks API access and proves your ROI."
+
+  pro:
+    price: "$29.95/mo"
+    overt_benefits:
+      - feature: "25 products"
+        benefit: "Professional scale, no limits"
+      - feature: "100 sanity checks/mo"
+        benefit: "Test everything, always"
+      - feature: "Full API"
+        benefit: "Build ModelOptix into your stack"
+      - feature: "ROI dashboard"
+        benefit: "Prove value to stakeholders"
+      - feature: "4-hour support"
+        benefit: "Fast answers for complex decisions"
+      - feature: "Forever history"
+        benefit: "Complete institutional knowledge"
+    fomo_to_enterprise:
+      - missing: "No team access"
+        cost: "Can't share across org"
+      - missing: "No SSO/SAML"
+        cost: "Manual user management"
+      - missing: "No audit logs"
+        cost: "Compliance gaps"
+      - missing: "No dedicated support"
+        cost: "No strategic partnership"
+    upgrade_message: "Need team features or compliance? Let's talk Enterprise."
+
+upgrade_triggers:
+  free_to_solo:
+    - signal: "Tries to add 2nd product"
+      message: "Your second project is flying blind. Unlock 3 products for $9.95/mo."
+    - signal: "Tries to run sanity check"
+      message: "You had this during your trial. Get it back for less than a coffee/week."
+    - signal: "Hits 7-day history limit"
+      message: "Your optimization history expired. Solo keeps 90 days."
+
+  solo_to_growth:
+    - signal: "Creates 3rd product"
+      message: "You're scaling. Growth handles 10 products + webhooks."
+    - signal: "Asks about webhooks/automation"
+      message: "Want this in your CI/CD? Growth adds webhooks."
+    - signal: "Uses 8+ sanity checks in a month"
+      message: "You're testing seriously. Growth gives you 30/month."
+
+  growth_to_pro:
+    - signal: "Hits 10 product limit"
+      message: "Your portfolio needs Pro. 25 products + API access."
+    - signal: "Clicks API docs"
+      message: "Ready to automate? Pro unlocks full API."
+    - signal: "Multiple support tickets"
+      message: "Complex decisions need faster answers. Pro: 4-hour response."
+
+objection_handling:
+  too_expensive:
+    - audience: "Solo users"
+      response: "At $75/hour, 2 hours of research costs more than a year of Solo."
+    - audience: "Growth/Pro users"
+      response: "One delayed model switch costs $1000s/year in overspend. I catch that in week one, not month six."
+    - audience: "Competitive builders"
+      response: "Your competitors are optimizing. If you're running 6-month-old model choices while they're on this week's best option—that's not a cost problem, it's a survival problem."
+
+  can_do_myself:
+    response: "You can—but should you? Every hour researching models is an hour not building your product. I do the grunt work so you decide faster."
+
+  not_sure_need_ongoing:
+    response: "New models launch monthly, pricing changes weekly. What was best 6 months ago often isn't now. This is protection against the landscape changing under you."
+
+  recommendations_wrong:
+    response: "Every recommendation shows its reasoning. Plus sanity-check testing lets you validate with your actual prompts before switching. You're never flying blind."
+
+  wait_until_need:
+    response: "Developers usually wait until mid-project, under deadline, then realize they picked wrong. The trial is free—have answers ready before you need them urgently."
+
+  current_setup_fine:
+    response: "Working fine today isn't the same as winning tomorrow. In AI, standing still means falling behind. The question isn't whether your stack works—it's whether it's the best it could be while your competitors are optimizing theirs."
+
+competitive_comparison:
+  alternative_stack:
+    - alternative: "Manual research"
+      cost: "8-12 hrs/project"
+      problem: "Outdated the moment you finish"
+    - alternative: "LangSmith"
+      cost: "$39+/seat/mo"
+      problem: "Shows costs, doesn't optimize them"
+    - alternative: "Helicone"
+      cost: "$20-150/mo"
+      problem: "Dashboards, no recommendations"
+    - alternative: "OpenRouter"
+      cost: "Pay-per-use + markup"
+      problem: "Volume incentives, no guidance"
+    - alternative: "Total"
+      cost: "$100+/mo + hours"
+      problem: "Fragmented, reactive, conflicted"
+
+  modeloptix_vs_alternatives:
+    - dimension: "Monthly cost"
+      alternatives: "$100+"
+      modeloptix_solo: "$9.95"
+    - dimension: "Time required"
+      alternatives: "8-12 hrs/project"
+      modeloptix_solo: "5 minutes"
+    - dimension: "Proactive alerts"
+      alternatives: "No"
+      modeloptix_solo: "Yes"
+    - dimension: "Independent advice"
+      alternatives: "No (conflicts)"
+      modeloptix_solo: "Yes (structural)"
+    - dimension: "ROI"
+      alternatives: "Unclear"
+      modeloptix_solo: "Week 1 payback"
+
+  one_liner: "They show you dashboards. I hand you decisions and savings."
+
+pricing_page:
+  hero:
+    headline: "10x Better. 10x Cheaper. 1000x Return."
+    subhead: "Most users recover their annual subscription in week one. After that, it's pure profit."
+    cta: "Start Now - 20% Off First Year"
+    note: "$9.95/mo after trial. Cancel anytime."
+
+  roi_callout:
+    - timeframe: "Week 1"
+      result: "Subscription paid for"
+    - timeframe: "Month 1"
+      result: "Multiple returns"
+    - timeframe: "Year 1"
+      result: "1000x for many users"
+    tagline: "ModelOptix isn't a cost. It's a margin multiplier."
+
+  pricing_toggle:
+    options:
+      - name: "Annual - 20% off first year"
+        highlight: true
+        default: true
+      - name: "Monthly"
+        highlight: false
+      - name: "Not sure? Try 7 days free"
+        highlight: false
+        position: "small, underneath"
+
+  trust_elements:
+    - "20% off first year + money-back guarantee"
+    - "Independent: No investors, no conflicts"
+    - "Every recommendation shows its reasoning"
+    - "Week 1 payback for most users"
+
+metrics:
+  conversion:
+    - metric: "Trial → Paid"
+      target: ">45%"
+      alert_if: "<35%"
+    - metric: "Free (downgrade) → Paid"
+      target: ">15%"
+      alert_if: "<10%"
+    - metric: "Annual vs Monthly mix"
+      target: ">70% annual"
+      alert_if: "<50% annual"
+
+  activation:
+    - metric: "Time to first product added"
+      target: "<1 hour"
+      alert_if: ">24 hours"
+    - metric: "First savings shown"
+      target: "<1 hour"
+      alert_if: ">4 hours"
+    - metric: "Sanity check used in trial"
+      target: ">60% of trials"
+      alert_if: "<40%"
+    - metric: "Day 6-7 login rate"
+      target: ">50%"
+      alert_if: "<30%"
+
+  upgrades:
+    - metric: "Solo → Growth (90 days)"
+      target: ">12%"
+      alert_if: "<8%"
+    - metric: "Growth → Pro (90 days)"
+      target: ">10%"
+      alert_if: "<5%"
+    - metric: "Expansion revenue % of MRR"
+      target: ">20%"
+      alert_if: "<10%"
+    - metric: "Net Revenue Retention"
+      target: ">110%"
+      alert_if: "<100%"
+
+  retention:
+    - metric: "Monthly churn"
+      target: "<4%"
+      alert_if: ">6%"
+    - metric: "Week 1 payback achieved"
+      target: ">80%"
+      alert_if: "<60%"
+    - metric: "NPS score"
+      target: ">50"
+      alert_if: "<30"
+
+  acquisition:
+    - metric: "Referral rate"
+      target: ">10%"
+      alert_if: "<5%"
+    - metric: "Heard from referral"
+      target: ">30%"
+      alert_if: "<15%"
+    - metric: "LTV:CAC"
+      target: ">10:1"
+      alert_if: "<5:1"
+    - metric: "ARPU"
+      target: ">$15/mo"
+      alert_if: "<$10/mo"
+
+  pricing_page:
+    - metric: "Scroll depth"
+      watch_for: "<50% = losing them early"
+    - metric: "Tier click distribution"
+      watch_for: "Should favor Growth"
+    - metric: "FAQ clicks"
+      watch_for: "Top 3 = your real objections"
+    - metric: "Time on page"
+      watch_for: "<30s = confused, >3min = stuck"
+
+value_framework:
+  - user_type: "Solo users"
+    primary_value: "Time savings (8+ hrs/project)"
+    secondary_value: "Avoiding bad choices"
+  - user_type: "Growth/Pro users"
+    primary_value: "Model cost savings ($1000s/year)"
+    secondary_value: "Competitive edge"
+  - user_type: "All users"
+    primary_value: "Survival vs. extinction"
+    secondary_value: "Not falling behind"
+
+reasons_to_believe:
+  - point: "Structural independence"
+    evidence: "No investors, no partners, no provider kickbacks"
+  - point: "10x/10x design gate"
+    evidence: "I only build if 10x better AND 10x cheaper"
+  - point: "Week 1 payback"
+    evidence: "Most users recover annual cost in first week"
+  - point: "Methodology transparency"
+    evidence: "Every recommendation shows data + reasoning"
+  - point: "Skin in the game"
+    evidence: "I use ModelOptix myself on my own products"
+  - point: "Money-back guarantee"
+    evidence: "Full refund if not satisfied, no questions"

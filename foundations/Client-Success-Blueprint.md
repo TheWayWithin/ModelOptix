@@ -327,7 +327,7 @@ First-time builders or SaaS builders adding LLM to existing apps are valid prosp
 | I show my work (data sources, reasoning, confidence) | Transparency builds trust |
 | 7-day trial (fallback option, reverse trial model) | Try before you pay |
 | Money-back guarantee | Risk-free to commit |
-| 25% off first year | Lower risk to prove value |
+| 20% off first year | Lower risk to prove value |
 | Sanity check before switching | Proof, not promises |
 | I use it myself (skin in the game) | I'm a solopreneur too |
 

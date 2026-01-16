@@ -23,7 +23,7 @@ Through radical transparency and independent analysis, we help developers optimi
 We are solopreneurs building truly independent AI intelligence for solopreneurs - growing by delivering so much value to indie hackers that they can't help but spread the word.
 
 **Our Value Proposition:**
-For developers and solopreneurs building LLM-powered products who face an overwhelming, constantly-changing AI landscape with no unbiased guidance - we are an independent AI portfolio intelligence platform that continuously monitors your LLM stack and proactively recommends optimizations with full transparency on what's best for YOU, not us.
+For developers and solopreneurs building LLM-powered products who face an overwhelming, constantly-changing AI landscape with no unbiased guidance - we are an independent AI model advisor that continuously monitors your LLM stack and proactively recommends optimizations with full transparency on what's best for YOU, not us.
 
 ---
 
@@ -148,17 +148,25 @@ Cost optimization remains valuable, but trust is the deeper moat and the bigger 
      - Trust Requirements Matching ("I need a model where my data is never logged")
      - Clear indication of what we know, don't know, and confidence levels
 
-  2. **Trust Scoring Framework** - Specific, verifiable dimensions:
+  2. **Trust Scoring Framework** - Canonical 8 dimensions (3 Model + 5 Provider):
+
+     **Model Dimensions (3):**
 
      | Trust Dimension | What We Track | How We Verify |
      |-----------------|---------------|---------------|
-     | Data Privacy | Training policy, logging, retention | ToS analysis, provider attestations, third-party audits |
-     | Data Residency | Where processing happens | Technical verification, certifications |
-     | Model Provenance | Who trained it, on what data, where | Public records, provider disclosure |
-     | Security Posture | SOC2, ISO, penetration testing | Certification verification |
-     | Output Safety | Guardrails, refusal rates, jailbreak resistance | Our own testing |
-     | Accountability | What happens when things go wrong | Contract analysis, incident history |
-     | Regulatory Compliance | GDPR, EU AI Act, HIPAA | Legal analysis, certifications |
+     | Output Quality | Accuracy, consistency, benchmark performance | Artificial Analysis, Arena ELO, MMLU |
+     | Output Safety | Guardrails, refusal rates, jailbreak resistance | Safety benchmarks, incident reports, our own testing |
+     | Training Transparency | Openness about data, methods, limitations | Provider documentation, model cards |
+
+     **Provider Dimensions (5):**
+
+     | Trust Dimension | What We Track | How We Verify |
+     |-----------------|---------------|---------------|
+     | Uptime | Service availability, reliability | Status pages, own monitoring |
+     | Data Privacy | Logging policy, retention, training on inputs | ToS analysis, privacy policies |
+     | API Stability | Error rates, deprecation history, breaking changes | Own metrics, changelog analysis |
+     | Pricing Transparency | Clear pricing, no hidden fees, advance notice | Pricing pages, historical tracking |
+     | Support Quality | Response times, documentation quality | Community sentiment, own experience |
 
   3. **Trust Transparency Reports** - For each model:
      - Exactly what we know and don't know
@@ -203,8 +211,8 @@ Cost optimization remains valuable, but trust is the deeper moat and the bigger 
 - **Success Metrics:**
   - Time to first trust insight < 10 minutes
   - Users acting on recommendations > 30%
-  - Trial to paid conversion > 40%
-  - Monthly churn < 5%
+  - Trial to paid conversion > 45%
+  - Monthly churn < 4%
   - Trust reports cited/shared
 
 - **Vision Alignment:** This IS the vision - "the unbiased guide in a world where AI serves hidden interests"
@@ -375,7 +383,7 @@ If the core isn't compelling enough to drive volume, no amount of tier-gated fea
 
 **Success Criteria:**
 - Time to first insight < 10 minutes
-- Trial to paid conversion > 40%
+- Trial to paid conversion > 45%
 - Users acting on recommendations > 30%
 - NPS > 50
 - Weekly payback achieved for most users
@@ -624,7 +632,7 @@ The Platform is the marketplace, provider dashboard, and trust registry.
 | First organic referral | Month 3 | Word-of-mouth working |
 | Independence positioning cited | Month 4+ | Differentiation resonating |
 | First user testimonial/case study | Month 5 | Social proof for marketing |
-| Trial-to-paid > 40% | Month 6+ | Conversion validated |
+| Trial-to-paid > 45% | Month 6+ | Conversion validated |
 | NPS > 50 | Month 6+ | Product-market fit signal |
 
 **Revenue Milestones:**

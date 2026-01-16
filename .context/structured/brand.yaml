@@ -1,0 +1,458 @@
+# ModelOptix - Brand Extraction
+# Extracted from: foundations/brand-style-guide.md
+# Extraction mode: EXACT MODE
+# Generated: 2026-01-15
+# Note: Industry-standard Tailwind defaults used for neutrals, shadows, animations, breakpoints where not specified in source
+
+metadata:
+  version: "1.0"
+  date: "January 2026"
+
+brand_overview:
+  essence: "Independent truth in AI."
+  promise: "We work for you. We find the savings, you decide what to do with them. We promise to always give you unbiased, transparent guidance on your AI stack — with nothing to sell but the truth."
+
+  values:
+    - name: "Independence Above All"
+      manifestation: "We stay structurally free from conflicts. No investors, no partners, no hidden agendas. Our structure IS our promise."
+    - name: "Radical Transparency"
+      manifestation: "We show our work. Every recommendation includes data sources, reasoning, and confidence levels. If we don't know, we say so."
+    - name: "Truth Is Our Product"
+      manifestation: "We don't sell software — we sell truth. In a world of AI with hidden agendas, truth is king."
+    - name: "Solopreneur Spirit"
+      manifestation: "Lean, fast, user-obsessed. No bureaucracy, no bloat, no forgetting who we serve."
+    - name: "Skin in the Game"
+      manifestation: "We use what we build. We recommend what we'd use ourselves. Our success is tied to yours."
+
+brand_personality:
+  traits:
+    - trait: "Straight-talking"
+      description: "Direct, no BS, says what others won't"
+      example: "You're overpaying. Here's proof."
+    - trait: "Trustworthy"
+      description: "Reliable, consistent, keeps promises"
+      example: "Every recommendation shows its reasoning."
+    - trait: "Clever"
+      description: "Smart but not arrogant, insightful without being condescending"
+      example: "We monitor 400+ models so you don't have to."
+    - trait: "Independent"
+      description: "Uncompromised, stands apart, answers to no one but users"
+      example: "No investors. No partners. No agenda."
+    - trait: "Helpful"
+      description: "Genuinely wants users to succeed, not just to sell"
+      example: "Here's exactly how to switch — and how to roll back if needed."
+
+  archetypes:
+    primary:
+      name: "The Sage"
+      description: "The wise advisor who seeks truth and shares knowledge. ModelOptix is the trusted guide helping developers navigate complexity with clarity and insight."
+    secondary:
+      name: "The Outlaw/Rebel"
+      description: "Challenges the status quo and refuses to play by rigged rules. ModelOptix stands against vendor bias and hidden agendas in the AI industry."
+
+  if_brand_were_person:
+    age: "Mid-30s — experienced enough to know things, young enough to move fast"
+    speaks_like: "A senior developer friend who's done the research and is sharing what they found — direct, knowledgeable, zero fluff"
+    dresses_like: "Clean and functional — quality hoodie or simple tee, not a suit, not sloppy"
+    values: "Honesty over diplomacy, results over appearances, independence over popularity"
+    would_say: "Look, I tested this myself. Here's what actually works."
+
+visual_identity:
+  logo:
+    concept: "Clean, modern wordmark with a subtle visual element suggesting clarity, optimization, or insight."
+    specifications:
+      primary: "ModelOptix wordmark"
+      mark: "Standalone icon for app icons, favicons"
+      clear_space: "Minimum padding equal to the height of the 'O' in ModelOptix"
+      minimum_size_digital: "80px width"
+      minimum_size_print: "20mm"
+    usage:
+      - "Use primary logo on light backgrounds"
+      - "Use reversed (white) logo on dark backgrounds"
+      - "Never stretch, rotate, or alter proportions"
+      - "Never add effects (shadows, gradients, outlines)"
+
+colors:
+  primary:
+    - name: "Trust Blue"
+      color_name: "Deep Navy"
+      hex: "#1A2B4C"
+      rgb: "26, 43, 76"
+      usage: "Primary brand color, headers, CTAs"
+    - name: "Clarity White"
+      color_name: "Clean White"
+      hex: "#FFFFFF"
+      rgb: "255, 255, 255"
+      usage: "Backgrounds, text on dark"
+    - name: "Ink"
+      color_name: "Near Black"
+      hex: "#0F1419"
+      rgb: "15, 20, 25"
+      usage: "Body text, dark mode backgrounds"
+
+  secondary:
+    - name: "Independent Teal"
+      color_name: "Teal"
+      hex: "#0D9488"
+      rgb: "13, 148, 136"
+      usage: "Accent, success states, differentiation"
+    - name: "Interface Gray"
+      color_name: "Slate"
+      hex: "#64748B"
+      rgb: "100, 116, 139"
+      usage: "Secondary text, borders, muted elements"
+    - name: "Background Gray"
+      color_name: "Light Gray"
+      hex: "#F8FAFC"
+      rgb: "248, 250, 252"
+      usage: "Page backgrounds, cards"
+
+  accent:
+    - name: "Alert Amber"
+      color_name: "Amber"
+      hex: "#F59E0B"
+      rgb: "245, 158, 11"
+      usage: "Alerts, recommendations, 'new' indicators"
+    - name: "Savings Green"
+      color_name: "Green"
+      hex: "#10B981"
+      rgb: "16, 185, 129"
+      usage: "Savings indicators, positive metrics"
+    - name: "Warning Red"
+      color_name: "Red"
+      hex: "#EF4444"
+      rgb: "239, 68, 68"
+      usage: "Errors, overpaying warnings"
+
+  # Tailwind CSS defaults - industry standard
+  neutrals:
+    white: "#FFFFFF"
+    gray_50: "#F9FAFB"
+    gray_100: "#F3F4F6"
+    gray_200: "#E5E7EB"
+    gray_300: "#D1D5DB"
+    gray_400: "#9CA3AF"
+    gray_500: "#6B7280"
+    gray_600: "#4B5563"
+    gray_700: "#374151"
+    gray_800: "#1F2937"
+    gray_900: "#111827"
+    black: "#000000"
+
+  usage:
+    text_primary: "gray_900"
+    text_secondary: "gray_600"
+    text_muted: "gray_400"
+    border_default: "gray_200"
+    background_page: "white"
+    background_subtle: "gray_50"
+
+  psychology:
+    deep_navy: "Trust, reliability, professionalism — establishes credibility"
+    teal: "Independence, freshness, differentiation — sets us apart from typical blue tech brands"
+    amber: "Attention, opportunity — draws eye to recommendations"
+
+typography:
+  primary:
+    font: "Inter"
+    description: "Modern, highly legible, free (Google Fonts). Optimized for screens — perfect for a developer-focused product. Wide range of weights for flexibility."
+    url: "https://fonts.google.com/specimen/Inter"
+
+  secondary:
+    font: "JetBrains Mono"
+    description: "For code snippets, technical data, API references. Developer-friendly, highly legible."
+    url: "https://fonts.google.com/specimen/JetBrains+Mono"
+
+  scale:
+    - use: "H1 Headlines"
+      weight: "Bold (700)"
+      size: "32-48px"
+      example: "Page titles"
+    - use: "H2 Subheadings"
+      weight: "Semibold (600)"
+      size: "24-32px"
+      example: "Section headers"
+    - use: "H3 Labels"
+      weight: "Medium (500)"
+      size: "18-24px"
+      example: "Card titles"
+    - use: "Body Text"
+      weight: "Regular (400)"
+      size: "16px"
+      example: "Paragraphs"
+    - use: "Small/Caption"
+      weight: "Regular (400)"
+      size: "14px"
+      example: "Metadata, hints"
+
+  weights:
+    regular: 400
+    medium: 500
+    semibold: 600
+    bold: 700
+
+# Tailwind CSS defaults - industry standard
+shadows:
+  sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+  default: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1)"
+  md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
+  lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1)"
+  xl: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
+  "2xl": "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
+  usage:
+    card: "default"
+    dropdown: "lg"
+    modal: "xl"
+
+# Tailwind CSS defaults - industry standard
+animations:
+  durations:
+    fast: "150ms"
+    normal: "300ms"
+    slow: "500ms"
+  easings:
+    default: "cubic-bezier(0.4, 0, 0.2, 1)"
+    in: "cubic-bezier(0.4, 0, 1, 1)"
+    out: "cubic-bezier(0, 0, 0.2, 1)"
+    in_out: "cubic-bezier(0.4, 0, 0.2, 1)"
+
+# Tailwind CSS defaults - industry standard
+breakpoints:
+  sm: "640px"
+  md: "768px"
+  lg: "1024px"
+  xl: "1280px"
+  "2xl": "1536px"
+  container_widths:
+    sm: "640px"
+    md: "768px"
+    lg: "1024px"
+    xl: "1280px"
+
+imagery:
+  photography:
+    style: "Minimal, clean, authentic — not stock-y"
+    subjects: "Real developers, workspaces, screens showing code/data"
+    treatment: "Natural lighting, muted tones, no heavy filters"
+    avoid:
+      - "Corporate handshakes"
+      - "Staged meetings"
+      - "Generic 'AI' imagery (robots, blue circuits)"
+
+  illustrations:
+    style: "Clean line art or simple flat illustrations"
+    use: "Explain concepts, empty states, onboarding"
+    palette: "Use brand colors only"
+
+  icons:
+    style: "Outlined (not filled), 1.5-2px stroke weight"
+    sources:
+      - name: "Heroicons"
+        url: "https://heroicons.com"
+      - name: "Lucide"
+        url: "https://lucide.dev"
+    consistency: "Use one icon set throughout"
+
+  data_visualization:
+    - "Use brand colors for charts and graphs"
+    - "Savings shown in green, overspend in amber/red"
+    - "Clear labels, no chartjunk"
+
+voice:
+  characteristics:
+    we_are:
+      - "Direct — Get to the point"
+      - "Honest — Tell it like it is"
+      - "Helpful — Genuinely useful"
+      - "Confident — Know our stuff"
+      - "Clear — Easy to understand"
+      - "Human — Real people talking"
+    we_are_not:
+      - "Wordy or vague"
+      - "Salesy or manipulative"
+      - "Condescending or preachy"
+      - "Arrogant or dismissive"
+      - "Jargon-heavy or academic"
+      - "Corporate or robotic"
+
+  tone_variations:
+    - context: "Marketing"
+      tone: "Confident, direct, benefit-focused"
+      example: "Stop overpaying for AI. See what you're missing in 2 minutes."
+    - context: "Product UI"
+      tone: "Clear, helpful, action-oriented"
+      example: "We found 3 models that could save you money. Review recommendations."
+    - context: "Support"
+      tone: "Warm, patient, solution-focused"
+      example: "Got it. Let me walk you through how to fix this."
+    - context: "Error Messages"
+      tone: "Calm, clear, helpful"
+      example: "Something went wrong. Try refreshing, or contact us if it keeps happening."
+    - context: "Social Media"
+      tone: "Casual, engaging, real"
+      example: "Just found a model that's 40% cheaper with better performance. Love when that happens."
+    - context: "Documentation"
+      tone: "Precise, thorough, scannable"
+      example: "To add a new model to your stack, click Settings > Models > Add Model."
+
+  writing_guidelines:
+    do:
+      - "Lead with the benefit, then explain"
+      - "Use 'you' and 'your' — talk TO the user"
+      - "Use specific numbers when possible ('Save 23%', not 'Save money')"
+      - "Show your reasoning — transparency builds trust"
+      - "Admit when you don't know something"
+      - "Use contractions (we're, you'll, it's) — sounds more human"
+    dont:
+      - "Use jargon without explanation"
+      - "Oversell or hype"
+      - "Make promises you can't keep"
+      - "Use passive voice when active is clearer"
+      - "Be condescending ('Simply click...' implies it should be obvious)"
+      - "Use filler words (very, really, actually, just)"
+
+  vocabulary:
+    preferred:
+      - word: "Recommend"
+        why: "We advise, we don't demand"
+      - word: "Insight"
+        why: "We provide understanding, not just data"
+      - word: "Independent"
+        why: "Our core differentiator"
+      - word: "Your use case"
+        why: "Personalized, not generic"
+      - word: "Save / Savings"
+        why: "Concrete benefit"
+      - word: "Optimize"
+        why: "Active improvement"
+      - word: "Transparent"
+        why: "Our methodology is open"
+    avoid:
+      - word: "Cheap"
+        why: "Sounds low-quality"
+        use_instead: "Cost-effective or saves money"
+      - word: "Best"
+        why: "Subjective and generic"
+        use_instead: "Best for your use case"
+      - word: "Revolutionary"
+        why: "Overused tech hype"
+        use_instead: "Different or specific benefit"
+      - word: "Synergy"
+        why: "Corporate jargon"
+        use_instead: "Just say what you mean"
+      - word: "Leverage"
+        why: "Jargon"
+        use_instead: "Use"
+      - word: "AI-powered"
+        why: "Meaningless in 2026"
+        use_instead: "Describe what it does"
+
+digital_presence:
+  website:
+    primary_domain: "modeloptix.com"
+    secondary_domain: "modeloptix.io"
+    secondary_purpose: "Technical docs, API"
+
+  social_media:
+    - platform: "X/Twitter"
+      handle: "@modeloptix"
+      purpose: "Primary — build in public, engage community"
+    - platform: "LinkedIn"
+      handle: "/company/modeloptix"
+      purpose: "Professional presence, thought leadership"
+    - platform: "GitHub"
+      handle: "@modeloptix"
+      purpose: "Open source, technical credibility"
+    - platform: "Indie Hackers"
+      handle: "modeloptix"
+      purpose: "Community engagement, milestones"
+
+  guidelines:
+    - "Be authentic — share real progress, real insights"
+    - "Engage genuinely — respond, don't just broadcast"
+    - "Share value — insights others can use, not just self-promotion"
+    - "Build in public — share learnings, wins, and losses"
+
+  email:
+    format: "firstname@modeloptix.com"
+    signature: |
+      [Name]
+      [Role] at ModelOptix
+      Independent truth in AI
+      modeloptix.com
+
+components:
+  buttons:
+    primary:
+      background: "#1A2B4C"
+      text: "#FFFFFF"
+      hover: "Darken 10%"
+      padding: "12px 24px"
+      border_radius: "6px"
+    secondary:
+      background: "transparent"
+      text: "#1A2B4C"
+      border: "1px solid #1A2B4C"
+      hover: "Background #F8FAFC"
+    success:
+      background: "#10B981"
+      text: "#FFFFFF"
+    danger:
+      background: "#EF4444"
+      text: "#FFFFFF"
+
+  cards:
+    background: "#FFFFFF"
+    border: "1px solid #E5E7EB"
+    border_radius: "8px"
+    shadow: "default"
+    padding: "24px"
+
+  inputs:
+    background: "#FFFFFF"
+    border: "1px solid #D1D5DB"
+    border_radius: "6px"
+    padding: "10px 14px"
+    focus_ring: "#0D9488"
+    error_border: "#EF4444"
+
+application:
+  dos:
+    - "Use the full logo with adequate clear space"
+    - "Maintain color contrast ratios (4.5:1 minimum for text)"
+    - "Keep messaging direct and benefit-focused"
+    - "Show your work — include data sources and reasoning"
+    - "Use the primary CTA color (Deep Navy) consistently"
+  donts:
+    - "Don't place logo on busy backgrounds"
+    - "Don't use colors outside the palette"
+    - "Don't write in corporate-speak or use buzzwords"
+    - "Don't make claims without backing them up"
+    - "Don't use stock photos of robots or circuit boards"
+
+quick_reference:
+  elevator_pitch: "ModelOptix is the independent AI model advisor that automatically monitors your stack and alerts you when better or cheaper models appear — with no hidden agendas."
+  taglines:
+    acquisition: "Stop overpaying for AI."
+    brand: "Independent truth in AI."
+  one_liner: "ModelOptix is the independent AI model advisor that automatically finds savings you're missing."
+
+brand_governance:
+  access_levels:
+    internal_team: "Full access to all brand assets"
+    partners_press: "Must request approval for logo use"
+    users: "May share screenshots and savings with attribution"
+  asset_locations:
+    logo_files: "/documents/assets/logos/ (once created)"
+    color_codes: "This document"
+    font_files: "Google Fonts (linked above)"
+    icon_library: "Heroicons / Lucide"
+  contact: "brand@modeloptix.com"
+
+summary:
+  essence: "Independent truth in AI"
+  promise: "We work for you. We find the savings, you decide."
+  personality: "Straight-talking, trustworthy, clever, independent, helpful"
+  voice: "Direct, honest, helpful, confident, clear, human"
+  look: "Clean, modern, trustworthy — navy/teal/white palette with Inter typography"
+  feel: "Like getting advice from a smart developer friend who's done all the research"

@@ -46,7 +46,7 @@ I am a solopreneur building truly independent AI intelligence for solopreneurs -
 
 **Who** face an overwhelming, constantly-changing AI landscape with no unbiased guidance
 
-**ModelOptix is** an independent AI portfolio intelligence platform
+**ModelOptix is** an independent AI model advisor
 
 **That** continuously monitors your LLM stack and proactively recommends optimizations - delivering week 1 payback and 1000x returns for many users - with full transparency on what's best for YOU, not me
 
@@ -90,7 +90,7 @@ Today you're piecing together leaderboards, benchmarks, and pricing from a dozen
 *Risk Reduction (Risk):*
 - 7-day trial available as fallback (reverse trial model)
 - Money-back guarantee on all plans
-- 25% off first year to prove value at lower risk
+- 20% off first year to prove value at lower risk
 - Sanity check feature: test recommendations with your own prompts before switching
 - Migration guides with rollback plans
 
@@ -104,7 +104,7 @@ Today you're piecing together leaderboards, benchmarks, and pricing from a dozen
 ## Our Strategic Positioning
 
 **Market Position:**
-The independent AI portfolio intelligence platform for developers and solopreneurs.
+The independent AI model advisor for developers and solopreneurs.
 
 **Competitive Advantage:**
 Structural independence - no investors, no partners, no conflicts of interest. I literally cannot be compromised.

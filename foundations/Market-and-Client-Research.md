@@ -249,23 +249,23 @@ This document serves as a practical tool for building the right product — focu
 
 #### Value Ladder
 
-| Tier | Annual | Monthly (~35% premium) | Products | Use Cases | Target |
-|------|--------|------------------------|----------|-----------|--------|
-| **Starter** | $9.95/mo | ~$13.45/mo | 1 | 5 | Try it on one product |
-| **Pro** | $19.95/mo | ~$26.95/mo | 5 | 15 | Multi-product solopreneurs |
-| **Enterprise** | $29.95/seat/mo | ~$40.45/seat/mo | 10 | 30 | Teams + high-end solos |
-| **Scale** | Contact us | Custom | Custom | Custom | Large orgs |
+| Tier | Annual | Monthly (~35% premium) | Products | Functions | Sanity Checks/mo | Target |
+|------|--------|------------------------|----------|-----------|------------------|--------|
+| **Solo** | $9.95/mo | ~$13.45/mo | 3 | 10 | 10 | Entry-level solopreneurs |
+| **Growth** | $19.95/mo | ~$26.95/mo | 10 | 30 | 30 | Multi-product solopreneurs |
+| **Pro** | $29.95/mo | ~$40.45/mo | 25 | 100 | 100 | Power users + high-end solos |
+| **Enterprise** | Contact us | Custom | Unlimited | Unlimited | Unlimited | Teams + large orgs |
 
 #### Core Features (All Tiers)
 
 - Recommendations
-- Alerts (limited in Starter, real-time in higher tiers)
+- Alerts (weekly digest on Free, real-time on paid tiers)
 - Savings dashboard
 
 #### FOMO Upgrade Triggers
 
-- "Want to add your second product? Upgrade to Pro."
-- "You've used all 5 sanity checks this month. Upgrade for more."
+- "Want to add your 4th product? Upgrade to Growth."
+- "You've used all 10 sanity checks this month. Upgrade for more."
 
 #### Trial Model
 
@@ -364,13 +364,13 @@ Make sharing part of the product design and UX:
 | Waitlist signups | 1,000+ |
 | Paid users | 1,250-2,500 |
 | Revenue | $140K-280K |
-| Churn | < 5% monthly |
+| Churn | < 4% monthly |
 | NPS | > 50 |
 
 ### Leading Indicators
 
 - TTFO (Time to First Optimization) < 10 minutes
-- Trial-to-paid conversion > 40%
+- Trial-to-paid conversion > 45%
 - Recommendations accepted > 30%
 - Organic referrals in first 90 days
 
