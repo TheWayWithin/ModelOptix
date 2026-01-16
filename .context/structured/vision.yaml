@@ -1,0 +1,126 @@
+# ModelOptix - Vision Extraction
+# Extracted from: foundations/Vision-and-Mission.md
+# Extraction mode: SYNTHESIS MODE
+# Generated: 2026-01-15
+
+metadata:
+  version: "1.2"
+  date: "January 2026"
+
+vision:
+  statement: "To be the unbiased guide in a world where AI serves hidden interests."
+  elaboration: "When AI can do everything instantly, the scarce resource isn't time - it's trust. I exist to ensure people always know what's truly best for them - not what profits someone else."
+
+mission:
+  statement: "Through radical transparency and independent analysis, I help developers optimize their AI stack today - building the foundation for AI truth everyone can trust tomorrow."
+  elaboration: "I start with developers and solopreneurs choosing LLMs, but my mission extends to anyone who needs to know: whose interests does this AI really serve?"
+
+hedgehog_concept:
+  passion: "Empowering solopreneurs to succeed - because I am a solopreneur. I build the tools I desperately need myself."
+  best_at: "Truly independent AI intelligence - structurally free from outside influence. No investors, no partners, no hidden agendas. Just truth."
+  economic_engine: "Subscriber growth driven by value delivered - starting with indie hackers who will become advocates because I genuinely help them win."
+  economic_engine_note: "The engine is subscriber growth. The indie hacker advocacy is the strategy that fuels it."
+  strategic_sweet_spot: "I am a solopreneur building truly independent AI intelligence for solopreneurs - growing by delivering so much value to indie hackers that they can't help but spread the word."
+
+value_proposition:
+  for: "developers and solopreneurs building LLM-powered products"
+  who: "face an overwhelming, constantly-changing AI landscape with no unbiased guidance"
+  product_is: "an independent AI model advisor"
+  that: "continuously monitors your LLM stack and proactively recommends optimizations - delivering week 1 payback and 1000x returns for many users - with full transparency on what's best for YOU, not me"
+  unlike: "static leaderboards, vendor-biased tools, or enterprise solutions that ignore the little guy"
+  because: "I'm structurally independent (no investors, no partners, no hidden agendas) and I'm a solopreneur myself - I built this because I need it too"
+
+marketing_physics:
+  overt_benefit: "10x better AND 10x cheaper than alternatives. Week 1 payback, 1000x return year one for many users - and keep it that way as the landscape changes."
+  dramatic_difference: "Today you're piecing together leaderboards, benchmarks, and pricing from a dozen sources - and hoping none of them have hidden agendas. I monitor, analyze, and recommend so you don't have to - with nothing to sell but the truth."
+  real_reasons_to_believe:
+    independence:
+      category: "Trust"
+      points:
+        - "Structurally independent: no investors, no partners, no model provider relationships"
+        - "No referral fees, no kickbacks, no affiliate deals"
+        - "I make money from subscriptions, not from steering you"
+    transparency:
+      category: "Trust + Competence"
+      points:
+        - "Every recommendation shows its data sources, reasoning, and confidence level"
+        - "Data freshness indicators on everything - you see what we see"
+        - "Open about what we don't know (uncertainty scores, limited data warnings)"
+    methodology:
+      category: "Competence"
+      points:
+        - "10x/10x Design Gate: I only build features that are 10x better AND 10x cheaper - if I can't hit both, I don't build it"
+        - "I aggregate benchmarks, pricing, latency, and community ratings from multiple sources"
+        - "Recommendations are algorithmic + editorially reviewed"
+        - "I test and validate recommendations myself"
+    skin_in_the_game:
+      category: "Identity"
+      points:
+        - "I'm a solopreneur building for solopreneurs - I use ModelOptix myself"
+        - "I built this because I needed it first"
+        - "My products run on the models I recommend"
+    risk_reduction:
+      category: "Risk"
+      points:
+        - "7-day trial available as fallback (reverse trial model)"
+        - "Money-back guarantee on all plans"
+        - "20% off first year to prove value at lower risk"
+        - "Sanity check feature: test recommendations with your own prompts before switching"
+        - "Migration guides with rollback plans"
+    social_proof:
+      category: "Future"
+      points:
+        - "Community ratings from verified users"
+        - "Switching trends: see what other developers are doing"
+        - "Testimonials and case studies"
+
+strategic_positioning:
+  market_position: "The independent AI model advisor for developers and solopreneurs."
+  competitive_advantage: "Structural independence - no investors, no partners, no conflicts of interest. I literally cannot be compromised."
+  customer_promise: "You will always know the best model for your use case at the best price - with full transparency on why."
+  brand_essence: "Independent truth in AI."
+
+bhag:
+  vision: "Create the 'AI Transparency' category and own it for 25 years - becoming the global standard for unbiased AI intelligence."
+  timeframe: "25 years"
+  why_it_matters: "In a future where AI influences every decision, someone must stand for truth without agenda. That's me. I'm building the institution people trust when they need to know: is this AI serving me, or someone else?"
+
+core_values:
+  - name: "Independence Above All"
+    description: "I stay structurally free from conflicts. No investors, partners, or relationships that could compromise my recommendations. Independence isn't a feature - it's my foundation."
+  - name: "Radical Transparency"
+    description: "I show my work. Every recommendation includes data sources, reasoning, and confidence levels. If I don't know something, I say so."
+  - name: "Truth Is My Product"
+    description: "I don't sell software - I sell truth. In a future full of AI with answers and hidden agendas, truth becomes both king and incredibly rare. I exist to be the exception. Truth is my north star, my product, and my promise."
+  - name: "Solopreneur Spirit"
+    description: "I stay lean, fast, and user-obsessed. No bureaucracy, no bloat, no forgetting who I serve."
+  - name: "Skin in the Game"
+    description: "I use what I build. I recommend what I'd use myself. My success is tied to your success."
+  - name: "Market Genius, Not Personal Genius"
+    description: "I'm not the smartest person in the room - the market is. I experiment, measure, and follow what works. No ego. No attachment to ideas that don't perform. Just relentless learning."
+
+success_indicators:
+  - "Developers actively seek ModelOptix out as the trusted source before making AI model decisions"
+  - "'Independent AI Recommendations' becomes a recognized need - and ModelOptix is the obvious answer"
+  - "Early growth comes from grassroots advocacy; later, people search for what I offer and find me as the obvious choice"
+  - "Users tell me my recommendations saved them time, money, or costly mistakes"
+  - "I remain structurally independent (no investors, no conflicting partnerships)"
+
+strategic_validation:
+  immediate_activities:
+    - name: "Validate Demand"
+      question: "Do indie hackers/developers want help picking the right model AND being informed when a better choice is available - badly enough to pay?"
+    - name: "Validate Clarity"
+      question: "Do they understand what we do, how it benefits them, and believe we can deliver on the promise?"
+    - name: "Validate Word-of-Mouth"
+      question: "Will early users advocate for us organically without incentives?"
+  success_metrics:
+    - "Waitlist signups and conversion to paid (demand exists)"
+    - "User interviews confirm understanding of offer and perceived value (clarity works)"
+    - "Users can explain what we do in their own words (message is clear)"
+    - "Organic referrals in first 90 days (word-of-mouth potential)"
+
+domains:
+  primary: "modeloptix.com"
+  secondary: "modeloptix.io"
+  secondary_purpose: "Technical specs & API documentation"
