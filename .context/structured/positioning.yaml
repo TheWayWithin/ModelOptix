@@ -1,0 +1,181 @@
+# ModelOptix - Positioning Extraction
+# Extracted from: foundations/positioning-statement.md
+# Extraction mode: SYNTHESIS MODE
+# Generated: 2026-01-16
+
+metadata:
+  version: "1.2"
+  date: "January 2026"
+  next_review: "After first 50 customer conversations"
+
+core_positioning:
+  for: "developers and solopreneurs building AI-powered products"
+  who: "are overpaying for models they chose months ago and can't keep up with 400+ models constantly changing"
+  product_is: "an independent AI model advisor"
+  that: "automatically monitors your AI stack and alerts you when better or cheaper models appear for your use case"
+  unlike: "leaderboards that give generic benchmarks or API gateways with volume incentives"
+  because: "delivers week 1 payback and 1000x returns through the 10x/10x design gate (I only build what's 10x better AND 10x cheaper) — and I'm structurally independent (no investors, no partners, no hidden agendas) so my only incentive is your savings"
+
+category:
+  name: "AI Model Advisor"
+  description: "I help developers decide which AI model is right for their use case, not just show them data."
+  position: "category_creator"
+  position_label: "Category Creator — I'm creating 'Independent AI Advisory'"
+  frame: "They give you data. I give you decisions."
+  versus:
+    - competitor_type: "Leaderboards"
+      their_approach: "show you how models perform on tests"
+      our_approach: "show you how they'd perform on YOUR prompts"
+    - competitor_type: "API Gateways"
+      their_approach: "provide data, models, and costs"
+      our_approach: "tell you which one is RIGHT for your use case"
+
+competitive_differentiation:
+  matrix:
+    - dimension: "Independence"
+      us: "Structural — no investors, no partners"
+      competitors:
+        - name: "Artificial Analysis (Leaderboards)"
+          value: "Free but ad/sponsor influenced"
+        - name: "OpenRouter (API Gateways)"
+          value: "$40M VC funded, volume incentives"
+    - dimension: "ROI Promise"
+      us: "Week 1 payback, 1000x year one"
+      competitors:
+        - name: "Artificial Analysis"
+          value: "None stated"
+        - name: "OpenRouter"
+          value: "None stated"
+    - dimension: "Design Gate"
+      us: "10x better AND 10x cheaper"
+      competitors:
+        - name: "Artificial Analysis"
+          value: "No quality gate"
+        - name: "OpenRouter"
+          value: "No quality gate"
+    - dimension: "Recommendations"
+      us: "Personalized to YOUR use case"
+      competitors:
+        - name: "Artificial Analysis"
+          value: "Generic benchmarks"
+        - name: "OpenRouter"
+          value: "Routes traffic, no guidance"
+    - dimension: "Monitoring"
+      us: "Automatic alerts when better options appear"
+      competitors:
+        - name: "Artificial Analysis"
+          value: "Static, you check manually"
+        - name: "OpenRouter"
+          value: "None"
+    - dimension: "Validation"
+      us: "Test before you switch"
+      competitors:
+        - name: "Artificial Analysis"
+          value: "None"
+        - name: "OpenRouter"
+          value: "None"
+    - dimension: "Target user"
+      us: "Solopreneurs & indie devs"
+      competitors:
+        - name: "Artificial Analysis"
+          value: "Everyone (generic)"
+        - name: "OpenRouter"
+          value: "Developers needing routing"
+  unique_advantage: "The only AI advisor that is structurally independent — we literally cannot be compromised."
+  defensibility: "No investors to please. No partners to protect. No volume incentives. Our only revenue comes from subscriptions — so our only incentive is to save you money. Competitors with funding cannot make this claim."
+
+value_propositions:
+  primary_punchy: "10x better. 10x cheaper. Week 1 payback. 1000x return year one."
+  primary_full: "Through the 10x/10x design gate, we deliver the right AI model at the right price - with week 1 payback and 1000x returns for many users - from the only advisor with nothing to sell but the truth."
+  supporting:
+    - value: "Save money without effort"
+      proof_point: "I monitor 400+ models and alert you when cheaper options appear for YOUR use case"
+    - value: "Stay optimized automatically"
+      proof_point: "Set it and forget it — no more 'I picked this 6 months ago and haven't checked since'"
+    - value: "Decide with confidence"
+      proof_point: "Test recommendations against your own prompts before switching — proof, not promises"
+    - value: "Trust the guidance"
+      proof_point: "Structurally independent: no investors, no partners, no kickbacks. I only make money when you save money"
+
+messaging_framework:
+  elevator_pitch: "You know how developers pick an AI model, ship it, and then six months later they're probably overpaying but can't justify stopping to re-evaluate? ModelOptix fixes that. I automatically monitor 400+ models and alert you when something better or cheaper appears for your specific use case. Most users recover their annual subscription in the first week - after that, it's pure profit. Many see 1000x returns in year one. And unlike other tools, I'm completely independent — no investors, no partnerships, no hidden agendas. I only make money when you save money."
+  one_liner: "ModelOptix is the independent AI model advisor that automatically finds savings you're missing."
+  taglines:
+    - context: "Advertising / Acquisition"
+      tagline: "Stop overpaying for AI."
+      purpose: "Hooks attention, creates urgency"
+    - context: "Brand / Positioning"
+      tagline: "Independent truth in AI."
+      purpose: "Long-term category ownership"
+  supporting_taglines:
+    - "The AI advisor that works for you."
+    - "Your AI stack, always optimized."
+
+proof_points:
+  evidence:
+    - point: "10x/10x design gate — I only build if 10x better AND 10x cheaper"
+      type: "product_discipline"
+    - point: "Week 1 payback — most users recover annual cost in first week"
+      type: "roi_validation"
+    - point: "1000x return potential — year one for many users"
+      type: "roi_validation"
+    - point: "Structurally independent — no investors, no partners, no kickbacks"
+      type: "structural_fact"
+    - point: "I monitor 400+ models — so you don't have to"
+      type: "capability"
+    - point: "Test before you switch — sanity check with your own prompts"
+      type: "feature"
+    - point: "I use it myself — solopreneur building for solopreneurs"
+      type: "identity"
+    - point: "Transparent methodology — I show my data sources and reasoning"
+      type: "process"
+  target_customer_quote: "I stopped worrying about my AI costs. ModelOptix just tells me when there's something better."
+
+positioning_map:
+  axes:
+    x:
+      label: "Independence"
+      low: "VENDOR-ALIGNED (OpenRouter, sponsored tools)"
+      high: "INDEPENDENT"
+    y:
+      label: "Proactivity"
+      low: "PASSIVE (static data, you check)"
+      high: "PROACTIVE (alerts, recommendations)"
+  our_position:
+    quadrant: "Upper Right"
+    description: "Independent AND Proactive - Only player combining structural independence with automatic monitoring"
+  competitors:
+    - name: "OpenRouter"
+      quadrant: "Upper Left (Vendor-aligned + Proactive)"
+    - name: "Artificial Analysis"
+      quadrant: "Lower Right (Independent-ish + Passive)"
+  strategic_insight: "Competitors must choose: either they have funding (not independent) or they're passive (just data). ModelOptix is the only option for developers who want trusted guidance delivered automatically."
+
+the_one_thing: "The only independent AI advisor."
+
+success_criteria:
+  - "Developers seek ModelOptix out as the trusted source before making AI model decisions"
+  - "'Independent AI advice' becomes a recognized need — ModelOptix is the obvious answer"
+  - "Users tell me my recommendations saved them time, money, or costly mistakes"
+  - "I remain structurally independent (no investors, no conflicting partnerships)"
+
+prd_cross_references:
+  features_proving_differentiation:
+    - claim: "Structurally independent"
+      feature_ids: []
+      note: "Business model claim, not feature-specific"
+    - claim: "Automatic monitoring and alerts"
+      feature_ids: ["F-024", "F-025"]
+    - claim: "Test before you switch (sanity check)"
+      feature_ids: ["F-009"]
+    - claim: "Personalized recommendations"
+      feature_ids: ["F-010", "F-011", "F-012"]
+  value_prop_to_features:
+    - value_prop: "Save money without effort"
+      supporting_features: ["F-010", "F-024", "F-025"]
+    - value_prop: "Stay optimized automatically"
+      supporting_features: ["F-024", "F-025", "F-008"]
+    - value_prop: "Decide with confidence"
+      supporting_features: ["F-009", "F-014", "F-015", "F-016"]
+    - value_prop: "Trust the guidance"
+      supporting_features: ["F-014", "F-015", "F-016"]
