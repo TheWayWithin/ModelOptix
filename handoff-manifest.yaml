@@ -189,6 +189,33 @@ agent_context_mapping:
     - "pricing.*"
     - "prd.external_api_dependencies"
 
+generated_plans:
+  project_plan:
+    path: "project-plan.md"
+    generated: "2026-01-17T17:46:00Z"
+    generated_by: "/bootstrap (Engaged Mode)"
+    from_extracts:
+      - "prd.yaml"
+      - "vision.yaml"
+      - "roadmap.yaml"
+      - "icp.yaml"
+    architecture_version: "2.4.1"
+    project_type: "saas-mvp"
+    phases: 6
+    total_tasks: 64
+    deferred_to_p1:
+      - "F-003a Enhancement: OpenRouter usage import"
+    prd_divergences:
+      - item: "Free tier sanity checks"
+        prd_value: 0
+        plan_value: 3
+        rationale: "Enable aha moment pre-signup"
+  phase_context:
+    path: ".context/phase-0-context.yaml"
+    generated: "2026-01-17T17:47:00Z"
+    phase: "phase-0"
+    phase_name: "Pre-MVP Landing Page"
+
 summary:
   total_documents: 8
   total_word_count: 34969

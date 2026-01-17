@@ -226,7 +226,7 @@ Developers pick an AI model, ship it, and then 6 months later they're probably o
 
 | Tier | Products | Total Functions | Sanity Checks/mo |
 |------|----------|-----------------|------------------|
-| Free | 1 | 1 | 0 |
+| Free | 1 | 1 | 3 |
 | Solo | 3 | 10 | 10 |
 | Growth | 10 | 30 | 30 |
 | Pro | 25 | 100 | 100 |
@@ -326,7 +326,7 @@ User ||--o{ UsageTracking : "tracked by"
 |---------|------|-------------|
 | BR-001 | Products limited by tier (Free: 1, Solo: 3, Growth: 10, Pro: 25) | Backend |
 | BR-002 | Functions limited by tier total (Free: 1, Solo: 10, Growth: 30, Pro: 100) | Backend |
-| BR-003 | Sanity checks limited per month by tier (Free: 0, Solo: 10, Growth: 30, Pro: 100) | Backend |
+| BR-003 | Sanity checks limited per month by tier (Free: 3, Solo: 10, Growth: 30, Pro: 100) | Backend |
 | BR-004 | Usage counters reset on 1st of each month | Backend (scheduled) |
 | BR-005 | When adding item that uses last slot, show warning: "This is your final [product/function] slot on [tier]" | Frontend |
 | BR-006 | When at limit, hard block with upgrade prompt: "Upgrade to [next tier] to add more" | Backend + Frontend |
@@ -342,7 +342,7 @@ User ||--o{ UsageTracking : "tracked by"
 | BR-011 | 20% first year discount only applies to annual subscriptions | Backend + Stripe |
 | BR-012 | All plans include money-back guarantee | Policy |
 | BR-013 | If trial cancelled before day 8, downgrade to Free | Backend |
-| BR-014 | Free tier: 1 product, 1 function, 0 sanity checks, weekly alert digest only | Backend |
+| BR-014 | Free tier: 1 product, 1 function, 3 sanity checks, no real-time alerts (digest is P1 feature F-026) | Backend |
 | BR-015 | On downgrade: show impact ("X products will be frozen, $Y opportunities hidden"), then freeze extras | Frontend + Backend |
 | BR-016 | Frozen products: read-only, no new opportunities generated, data preserved | Backend |
 | BR-017 | Re-upgrade: full access restored instantly | Backend |
@@ -366,7 +366,7 @@ User ||--o{ UsageTracking : "tracked by"
 
 | Rule ID | Rule | Enforcement |
 |---------|------|-------------|
-| BR-024 | Free tier: weekly digest email only | Backend |
+| BR-024 | Free tier: no real-time alerts (weekly digest is P1 feature F-026) | Backend |
 | BR-025 | Paid tiers: real-time alerts via configured channels (email, Slack, Discord) | Backend |
 | BR-026 | Alert types: new opportunity, price change, trust change, new model relevant to user's functions | Backend |
 | BR-027 | User can configure alert preferences per channel | Frontend + Backend |
@@ -909,7 +909,6 @@ When a new model version releases from the same maker:
 - Given I see the outputs, When displayed, Then I have an option "Ask ModelOptix to review"
 - Given I click "Ask ModelOptix to review", When processed, Then ModelOptix AI compares the outputs against my use case and provides an assessment
 - Given I'm at my tier's monthly sanity check limit, When I try to run one, Then I'm blocked with upgrade prompt
-- Given I'm on Free tier, When I try to run Sanity Check, Then I'm blocked (0 allowed) with upgrade prompt
 
 **Touched Entities:** SanityCheck, Opportunity, UseCase, UsageTracking
 
@@ -1240,7 +1239,7 @@ When a new model version releases from the same maker:
 
 **Acceptance Criteria:**
 - Given I'm on Settings/Notifications, When it loads, Then I see notification options by channel: Email, Slack, Discord
-- Given I'm on Free tier, When viewing, Then I see only weekly digest email option (real-time disabled with upgrade prompt)
+- Given I'm on Free tier, When viewing, Then I see alerts disabled with note "Alerts available on paid plans" (digest is P1 feature F-026)
 - Given I'm on paid tier, When viewing, Then I can enable/disable real-time alerts per channel
 - Given Slack/Discord is available, When I click "Connect", Then I'm guided through webhook setup
 - Given I configure preferences, When I set alert types, Then I can choose which alerts I receive: new opportunities, price changes, trust changes, new models
@@ -1431,7 +1430,6 @@ When a new model version releases from the same maker:
 | User at function limit minus 1, adds function | Warning shown, function added |
 | User at function limit (total), tries to add | Blocked with upgrade prompt |
 | User at sanity check limit, tries to run | Blocked with upgrade prompt |
-| Free user tries sanity check | Blocked (0 allowed) |
 | User upgrades tier mid-session | New limits reflected immediately without re-login |
 | User downgrades tier mid-session | Current limits remain until period end, visual indicator of pending change |
 
@@ -1440,8 +1438,8 @@ When a new model version releases from the same maker:
 | Scenario | Expected Behavior |
 |----------|-------------------|
 | Free user tries to connect Slack/Discord | Blocked with upgrade prompt |
-| Free user tries to enable real-time alerts | Blocked, shown "Weekly digest only on Free" |
-| Free user accesses Alerts page | Shows weekly digest history only, upgrade prompt for real-time |
+| Free user tries to enable real-time alerts | Blocked with upgrade prompt (no alerts on Free in MVP) |
+| Free user accesses Alerts page | Shows "Alerts coming soon" or upgrade prompt (F-026 digest is P1) |
 | User on any tier accesses P1 feature before launch | Feature hidden or "Coming soon" message |
 
 **Authentication:**
@@ -1791,8 +1789,8 @@ Machine-readable summary for AGENT-11 handoff:
   "tiers": {
     "free": {
       "price": { "annual": 0, "monthly": 0 },
-      "limits": { "products": 1, "functions": 1, "sanityChecks": 0 },
-      "features": { "alerts": "weekly digest only", "history": "7 days" }
+      "limits": { "products": 1, "functions": 1, "sanityChecks": 3 },
+      "features": { "alerts": "none (digest is P1)", "history": "7 days" }
     },
     "solo": {
       "price": { "annual": 9.95, "monthly": 13.45 },

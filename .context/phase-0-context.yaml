@@ -1,0 +1,247 @@
+# Phase 0 Context: Pre-MVP Landing Page
+# Generated: 2026-01-17
+# Purpose: Provide detailed context for Phase 0 execution
+
+phase_id: phase-0
+phase_name: "Pre-MVP Landing Page"
+status: not_started
+
+context:
+  summary: |
+    Ship a landing page quickly to start collecting waitlist signups while
+    the full product is being built. This is the fastest path to market
+    validation and early user acquisition.
+
+  objectives:
+    - Get a live landing page deployed within days, not weeks
+    - Start capturing waitlist emails immediately
+    - Establish the deployment pipeline (Railway + Cloudflare)
+    - Set up Supabase foundation that Phase 1 will build on
+    - Send confirmation emails to build trust
+
+  key_decisions:
+    - decision: "Waitlist storage in Supabase"
+      rationale: "Already using Supabase for the full product - no new service needed"
+      alternatives_considered:
+        - "Resend Audience - good for campaigns but separate system"
+        - "External waitlist service - adds cost and complexity"
+
+    - decision: "Minimal feature set for landing page"
+      rationale: "Speed over perfection - can iterate after launch"
+      scope:
+        - Hero with value proposition
+        - Email capture form
+        - Benefits section
+        - Confirmation email
+      explicitly_excluded:
+        - Fancy animations
+        - Blog/content section
+        - Pricing page (save for Phase 4)
+        - FAQ section
+
+  technical_context:
+    stack:
+      - "Next.js 14 (App Router)"
+      - "Tailwind CSS"
+      - "shadcn/ui (button, input, card only)"
+      - "Supabase (waitlist table)"
+      - "Resend (confirmation email)"
+      - "Railway (hosting)"
+      - "Cloudflare (CDN + SSL)"
+
+    patterns:
+      - "Server Actions for form submission (no API route needed)"
+      - "Simple RLS policy allowing anon INSERT to waitlist"
+      - "Environment variables for all secrets"
+
+    constraints:
+      - "No auth required - public landing page"
+      - "Keep bundle size minimal"
+      - "Mobile-first responsive design"
+
+  messaging_guidance:
+    tagline: "Stop overpaying for AI"
+    value_props:
+      - "See what you're missing in 2 minutes"
+      - "I monitor 400+ models so you don't have to"
+      - "Independent - I work for you, not the model providers"
+    tone: "Direct, trustworthy, no-BS"
+    source: "vision.yaml and brand.yaml extracts"
+
+dependencies:
+  external:
+    - service: "Railway account"
+      required_for: "Deployment"
+      setup_link: "https://railway.app"
+
+    - service: "Cloudflare account"
+      required_for: "CDN and SSL"
+      setup_link: "https://cloudflare.com"
+
+    - service: "Supabase project"
+      required_for: "Database"
+      setup_link: "https://supabase.com"
+
+    - service: "Resend account"
+      required_for: "Confirmation emails"
+      setup_link: "https://resend.com"
+
+  internal: []  # Phase 0 has no internal dependencies
+
+current_focus:
+  active_task: null  # Set when phase begins
+  blocked_tasks: []
+  completed_tasks: []
+
+handoff_notes:
+  from_previous_phase: null  # First phase
+
+  for_next_phase:
+    - "Supabase project will be reused - keep the same project"
+    - "Railway deployment pipeline established - add to it"
+    - "Cloudflare DNS configured - no changes needed"
+    - "Consider migrating waitlist emails to user_profiles on signup"
+
+quality_requirements:
+  gates:
+    - gate: build
+      command: "npm run build"
+      required: true
+
+    - gate: lint
+      command: "npm run lint"
+      required: true
+
+    - gate: manual_landing
+      description: "Landing page loads in < 2 seconds"
+      required: true
+
+    - gate: manual_signup
+      description: "Email signup flow works end-to-end"
+      required: true
+
+  acceptance_bar: |
+    Phase 0 is complete when:
+    1. Landing page is live at production URL
+    2. Users can submit their email
+    3. Confirmation email is received
+    4. Emails are stored in Supabase waitlist table
+
+task_details:
+  task_0_1:
+    name: "Project Scaffolding"
+    commands:
+      - "npx create-next-app@latest modeloptix --typescript --tailwind --eslint --app --src-dir"
+      - "cd modeloptix && npx shadcn@latest init"
+      - "npx shadcn@latest add button input card"
+    notes: "Use default shadcn config (New York style, zinc colors)"
+
+  task_0_2:
+    name: "Railway + Cloudflare Setup"
+    steps:
+      - "Create Railway project from GitHub repo"
+      - "Add Cloudflare site (free tier)"
+      - "Update nameservers at domain registrar"
+      - "Wait for DNS propagation (can take up to 24h)"
+      - "Set SSL/TLS to Full (Strict) in Cloudflare"
+      - "Add CNAME record pointing to Railway"
+    warnings:
+      - "SSL must be Full (Strict) or you'll get redirect loops"
+      - "DNS propagation can be slow - plan accordingly"
+
+  task_0_3:
+    name: "Supabase Project + Waitlist Table"
+    sql: |
+      -- Create waitlist table
+      CREATE TABLE waitlist (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        email TEXT UNIQUE NOT NULL,
+        source TEXT DEFAULT 'landing',
+        referrer TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      -- Enable RLS
+      ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
+
+      -- Allow anonymous inserts (for landing page form)
+      CREATE POLICY "Allow anonymous waitlist signup"
+        ON waitlist FOR INSERT
+        WITH CHECK (true);
+
+      -- Optional: Allow reading own entry (for confirmation)
+      -- Not strictly needed for MVP
+
+  task_0_4:
+    name: "Landing Page UI"
+    reference_content:
+      hero_headline: "Stop overpaying for AI"
+      hero_subhead: "ModelOptix monitors 400+ LLM models so you don't have to. Get personalized recommendations and alerts when better options appear."
+      cta_text: "Join the Waitlist"
+      benefits:
+        - title: "See what you're missing"
+          description: "Discover better models for your specific use cases in minutes"
+        - title: "Independent advice"
+          description: "No partnerships, no hidden agendas - I work for you"
+        - title: "Set and forget"
+          description: "Get alerts when it's time to switch - no constant research"
+
+  task_0_5:
+    name: "Waitlist Form Submission"
+    implementation_notes: |
+      Use Next.js Server Actions for simplicity:
+
+      ```typescript
+      'use server'
+
+      export async function joinWaitlist(formData: FormData) {
+        const email = formData.get('email') as string;
+
+        // Validate email
+        if (!email || !email.includes('@')) {
+          return { error: 'Please enter a valid email' };
+        }
+
+        // Insert into Supabase
+        const { error } = await supabase
+          .from('waitlist')
+          .insert({ email });
+
+        if (error?.code === '23505') {
+          return { error: 'You're already on the waitlist!' };
+        }
+
+        if (error) {
+          return { error: 'Something went wrong. Please try again.' };
+        }
+
+        // Send confirmation email
+        await sendConfirmationEmail(email);
+
+        return { success: true };
+      }
+      ```
+
+  task_0_6:
+    name: "Confirmation Email + Analytics"
+    email_template: |
+      Subject: You're on the ModelOptix waitlist!
+
+      Hey there,
+
+      Thanks for joining the ModelOptix waitlist. You're now in line to be
+      one of the first to stop overpaying for AI.
+
+      We're building something different - an independent advisor that works
+      for you, not the model providers.
+
+      We'll let you know as soon as we're ready for you.
+
+      - Jamie
+      Founder, ModelOptix
+
+    posthog_events:
+      - event: "waitlist_signup"
+        properties:
+          - source
+          - referrer

@@ -387,7 +387,6 @@ features:
         - "Given I enter a prompt, When I submit, Then I see a loading state ('Testing both models...')"
         - "Given both models respond, When displayed, Then I see side-by-side outputs with timing info"
         - "Given results are shown, When viewing, Then I can rate which output I prefer"
-        - "Given I'm on Free tier, When I try to run sanity check, Then I see upgrade prompt (0 allowed)"
         - "Given I've used my monthly sanity check allocation, When I try to run, Then I see upgrade prompt"
         - "Given I want to test again, When I click 'Try another prompt', Then I can run another sanity check"
         - "Given I'm satisfied, When I click 'Confirm Switch', Then I proceed to confirmation"
@@ -549,7 +548,7 @@ features:
       user_story: "As a user, I want to control how and when I receive notifications so I'm not overwhelmed."
       acceptance_criteria:
         - "Given I'm on Settings/Notifications, When it loads, Then I see notification options by channel: Email, Slack, Discord"
-        - "Given I'm on Free tier, When viewing, Then I see only weekly digest email option (real-time disabled with upgrade prompt)"
+        - "Given I'm on Free tier, When viewing, Then I see alerts disabled with note 'Alerts available on paid plans' (digest is P1 feature F-026)"
         - "Given I'm on paid tier, When viewing, Then I can enable/disable real-time alerts per channel"
         - "Given Slack/Discord is available, When I click 'Connect', Then I'm guided through webhook setup"
         - "Given I configure preferences, When I set alert types, Then I can choose which alerts I receive: new opportunities, price changes, trust changes, new models"
@@ -814,8 +813,6 @@ edge_cases:
       expected_behavior: "Blocked with upgrade prompt"
     - scenario: "User at sanity check limit, tries to run"
       expected_behavior: "Blocked with upgrade prompt"
-    - scenario: "Free user tries sanity check"
-      expected_behavior: "Blocked (0 allowed)"
     - scenario: "User upgrades tier mid-session"
       expected_behavior: "New limits reflected immediately without re-login"
     - scenario: "User downgrades tier mid-session"
@@ -825,9 +822,9 @@ edge_cases:
     - scenario: "Free user tries to connect Slack/Discord"
       expected_behavior: "Blocked with upgrade prompt"
     - scenario: "Free user tries to enable real-time alerts"
-      expected_behavior: "Blocked, shown 'Weekly digest only on Free'"
+      expected_behavior: "Blocked with upgrade prompt (no alerts on Free in MVP)"
     - scenario: "Free user accesses Alerts page"
-      expected_behavior: "Shows weekly digest history only, upgrade prompt for real-time"
+      expected_behavior: "Shows 'Alerts coming soon' or upgrade prompt (F-026 digest is P1)"
     - scenario: "User on any tier accesses P1 feature before launch"
       expected_behavior: "Feature hidden or 'Coming soon' message"
 
@@ -986,7 +983,7 @@ business_rules:
       rule: "Functions limited by tier total (Free: 1, Solo: 10, Growth: 30, Pro: 100)"
       enforcement: "Backend"
     - id: "BR-003"
-      rule: "Sanity checks limited per month by tier (Free: 0, Solo: 10, Growth: 30, Pro: 100)"
+      rule: "Sanity checks limited per month by tier (Free: 3, Solo: 10, Growth: 30, Pro: 100)"
       enforcement: "Backend"
     - id: "BR-004"
       rule: "Usage counters reset on 1st of each month"
@@ -1021,7 +1018,7 @@ business_rules:
       rule: "If trial cancelled before day 8, downgrade to Free"
       enforcement: "Backend + Stripe"
     - id: "BR-014"
-      rule: "Free tier: 1 product, 1 function, 0 sanity checks, weekly alert digest only"
+      rule: "Free tier: 1 product, 1 function, 3 sanity checks, no real-time alerts (digest is P1 feature F-026)"
       enforcement: "Backend"
 
   # ADDED: Missing downgrade rules BR-015 to BR-018
@@ -1062,7 +1059,7 @@ business_rules:
   # ADDED: Missing alert rules BR-024 to BR-028
   alerts:
     - id: "BR-024"
-      rule: "Free tier users receive weekly digest only, no real-time alerts"
+      rule: "Free tier: no real-time alerts (weekly digest is P1 feature F-026)"
       enforcement: "Backend"
     - id: "BR-025"
       rule: "Paid tier users (Solo/Growth/Pro) can receive real-time alerts via Email, Slack, Discord"
@@ -1589,8 +1586,8 @@ pricing:
       price_monthly: 0
       products: 1
       functions: 1
-      sanity_checks: 0
-      alerts: "weekly digest only"
+      sanity_checks: 3
+      alerts: "none (digest is P1 feature F-026)"
       history: "7 days"
     solo:
       price_annual: 9.95
