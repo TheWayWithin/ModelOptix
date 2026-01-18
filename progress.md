@@ -28,8 +28,8 @@
 - [x] Task 0.1: Project Scaffolding - 2026-01-17 18:45
 - [x] Task 0.2: Railway + Cloudflare Setup - 2026-01-17 19:15
 - [x] Task 0.3: Supabase Project + Waitlist Table - 2026-01-17 19:30
-- [ ] Task 0.4: Landing Page UI
-- [ ] Task 0.5: Waitlist Form Submission
+- [x] Task 0.4: Landing Page UI - 2026-01-17 19:45
+- [x] Task 0.5: Waitlist Form Submission - 2026-01-17 19:45
 - [ ] Task 0.6: Confirmation Email + Analytics
 
 ---
@@ -108,6 +108,36 @@
 **Configuration:**
 - Project URL: https://cyodlmpucqfisszcosiw.supabase.co
 - Region: Americas
+
+---
+
+### 2026-01-17 19:45 - Tasks 0.4 & 0.5: Landing Page UI + Waitlist Form Complete
+
+**Deliverables:**
+- `src/app/page.tsx` - Complete landing page with:
+  - Hero section with headline "Stop overpaying for AI."
+  - Independence badge
+  - Email signup form with loading/success/error states
+  - Value props section (3 pillars)
+  - Secondary CTA section
+  - Footer with branding
+- `src/components/waitlist-form.tsx` - Reusable waitlist form component
+- `src/app/api/waitlist/route.ts` - API endpoint for waitlist signups
+  - Email validation
+  - Duplicate detection (returns friendly error)
+  - Supabase integration
+
+**Verification:**
+- ✅ TypeScript passes
+- ✅ ESLint passes
+- ✅ Build succeeds (96.6 kB first load JS)
+- ✅ Pushed to GitHub, Railway auto-deploy triggered
+
+**Design Notes:**
+- Used brand colors from brand.yaml (Trust Blue #1A2B4C, Teal accents)
+- Copy pulled from vision.yaml and brand.yaml
+- Mobile-responsive layout
+- Form has proper loading, success, and error states
 
 ---
 

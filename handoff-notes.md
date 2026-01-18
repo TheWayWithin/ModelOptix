@@ -1,32 +1,32 @@
 # ModelOptix Handoff Notes
 
 > Current context for agent-to-agent handoff
-> Last Updated: 2026-01-17 19:30
+> Last Updated: 2026-01-17 19:45
 
 ---
 
 ## Current Phase
 
 **Phase 0: Pre-MVP Landing Page**
-**Status**: In Progress (3/6 tasks complete)
+**Status**: In Progress (5/6 tasks complete)
 
 ---
 
 ## Immediate Context
 
 ### What Was Just Completed
-**Task 0.3: Supabase Project + Waitlist Table** - COMPLETE 2026-01-17 19:30
-- Supabase project created in TheWayWithin's Org
-- waitlist_signups table with RLS enabled
-- Supabase client configured in src/lib/supabase.ts
-- Environment variables in .env.local
+**Tasks 0.4 & 0.5: Landing Page + Waitlist Form** - COMPLETE 2026-01-17 19:45
+- Landing page with hero, value props, CTA sections
+- WaitlistForm component with all states
+- API endpoint /api/waitlist connected to Supabase
+- Deployed to Railway (auto-deploy triggered)
 
 ### Current Task
-**Task 0.4: Landing Page UI** - NEXT
-- Build hero section with value proposition
-- Create waitlist signup form component
-- Add trust indicators and social proof
-- Responsive design for mobile/desktop
+**Task 0.6: Confirmation Email + Analytics** - NEXT
+- Set up Resend for transactional emails
+- Send confirmation email on signup
+- Set up PostHog for analytics
+- Track signup events
 
 ---
 

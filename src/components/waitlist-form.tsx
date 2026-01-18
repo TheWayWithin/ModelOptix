@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePostHog } from "posthog-js/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -10,6 +11,7 @@ export function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const posthog = usePostHog();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,13 +31,22 @@ export function WaitlistForm() {
         throw new Error(data.error || "Something went wrong");
       }
 
+      // Track successful signup
+      posthog?.capture("waitlist_signup", {
+        email_domain: email.split("@")[1],
+      });
+
       setFormState("success");
       setEmail("");
     } catch (error) {
       setFormState("error");
-      setErrorMessage(
-        error instanceof Error ? error.message : "Something went wrong"
-      );
+      const message = error instanceof Error ? error.message : "Something went wrong";
+      setErrorMessage(message);
+
+      // Track failed signup attempt
+      posthog?.capture("waitlist_signup_failed", {
+        error: message,
+      });
     }
   };
 
