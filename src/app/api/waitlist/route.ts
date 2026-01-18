@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     // Send confirmation email
     try {
       await resend.emails.send({
-        from: "ModelOptix <onboarding@resend.dev>",
+        from: "ModelOptix <hello@modeloptix.com>",
         to: normalizedEmail,
         subject: "You're on the ModelOptix waitlist",
         html: `
