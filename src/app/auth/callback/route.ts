@@ -10,9 +10,12 @@ import { NextResponse } from 'next/server';
  * @see architecture.md Section 3 - Authentication Flow
  */
 export async function GET(request: Request) {
-  const { searchParams, origin } = new URL(request.url);
+  const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/dashboard';
+
+  // Use configured app URL instead of request origin (Railway internal URL is localhost:8080)
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   if (code) {
     const supabase = await createClient();
@@ -20,10 +23,10 @@ export async function GET(request: Request) {
 
     if (!error) {
       // Successful auth - redirect to intended destination
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(`${appUrl}${next}`);
     }
   }
 
   // Auth error - redirect to error page
-  return NextResponse.redirect(`${origin}/login?error=auth_callback_error`);
+  return NextResponse.redirect(`${appUrl}/login?error=auth_callback_error`);
 }
