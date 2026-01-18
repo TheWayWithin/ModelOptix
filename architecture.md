@@ -1,9 +1,9 @@
 # ModelOptix Architecture
 
-> Version: 2.4.1
+> Version: 2.5.0
 > Generated: 2025-01-17
 > Status: Ready for Implementation
-> Last Updated: 2025-01-17
+> Last Updated: 2026-01-18
 
 ---
 
@@ -1112,12 +1112,163 @@ async function reaperJob() {
 
 ### Environments
 
-| Environment | Purpose | Branch |
-|-------------|---------|--------|
-| Development | Local dev | - |
-| Preview | PR previews | PR branches |
-| Staging | Pre-production testing | `staging` |
-| Production | Live | `main` |
+ModelOptix uses a three-environment architecture with **isolated infrastructure per environment**.
+
+#### Environment Overview
+
+| Environment | Branch | Railway | Supabase | Domain |
+|-------------|--------|---------|----------|--------|
+| **Development** | `develop` | Local | Local/Staging | localhost:3000 |
+| **Staging** | `develop` | Railway Staging | Supabase Staging | staging.modeloptix.com |
+| **Production** | `main` | Railway Production | Supabase Production | modeloptix.com |
+
+#### Infrastructure Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                           GitHub                                     │
+│                                                                      │
+│   develop branch ──────────────▶ Railway Staging                     │
+│                                     │                                │
+│                                     ▼                                │
+│                              Supabase Staging                        │
+│                              (staging project)                       │
+│                                                                      │
+│   main branch ─────────────────▶ Railway Production                  │
+│                                     │                                │
+│                                     ▼                                │
+│                              Supabase Production                     │
+│                              (production project)                    │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+#### Railway Instances
+
+| Instance | Project | Purpose |
+|----------|---------|---------|
+| **Staging** | `modeloptix-staging` | Pre-production testing, QA, feature validation |
+| **Production** | `modeloptix-production` | Live user-facing application |
+
+**Key Commands:**
+```bash
+# Link to staging
+railway link -e staging
+
+# Link to production
+railway link -e production
+
+# View logs
+railway logs -e staging
+railway logs -e production
+
+# Set variables
+railway variables set VAR=value -e staging
+railway variables set VAR=value -e production
+```
+
+#### Supabase Instances
+
+| Instance | Project Ref | Purpose |
+|----------|-------------|---------|
+| **Staging** | `[staging-ref]` | Test data, schema validation, safe experimentation |
+| **Production** | `[prod-ref]` | Live user data, protected environment |
+
+**Key Commands:**
+```bash
+# Link to staging
+supabase link --project-ref [staging-ref]
+
+# Link to production
+supabase link --project-ref [prod-ref]
+
+# Push migrations
+supabase db push --linked
+
+# Generate types
+supabase gen types typescript --linked > src/types/database.ts
+```
+
+#### Environment Variable Parity
+
+**CRITICAL:** All environment variables must exist in BOTH Railway Staging AND Railway Production.
+
+| Variable Category | Same Value? | Notes |
+|-------------------|-------------|-------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Different | Points to respective Supabase project |
+| `SUPABASE_SERVICE_ROLE_KEY` | Different | Per-project key |
+| `STRIPE_SECRET_KEY` | Different | Use test mode for staging |
+| `STRIPE_WEBHOOK_SECRET` | Different | Separate webhook per environment |
+| `DATABASE_URL` | Different | Points to respective database |
+| `NEXT_PUBLIC_APP_URL` | Different | staging.modeloptix.com vs modeloptix.com |
+| `OPENROUTER_API_KEY` | Same | Single API key (consider separate for cost tracking) |
+| `RESEND_API_KEY` | Same | Single API key |
+| `UPSTASH_REDIS_*` | Different | Consider separate Redis per env |
+
+**Verification Checklist (before marking env var task complete):**
+- [ ] Variable exists in Railway Staging
+- [ ] Variable exists in Railway Production
+- [ ] Values appropriate for each environment
+- [ ] Documented in handoff-notes.md
+
+#### Database Migration Protocol
+
+**NEVER apply schema changes directly to production.**
+
+1. **Create migration:**
+   ```bash
+   supabase migration new descriptive_name
+   ```
+
+2. **Test on staging:**
+   ```bash
+   supabase link --project-ref [staging-ref]
+   supabase db push --linked
+   # Test thoroughly
+   ```
+
+3. **Apply to production (after code merge to main):**
+   ```bash
+   supabase link --project-ref [prod-ref]
+   supabase db push --linked
+   ```
+
+4. **Document in progress.md:**
+   ```markdown
+   MIGRATION: add_user_preferences_table
+   - Applied to Staging: 2026-01-18 14:00 UTC
+   - Tested on Staging: ✅ Pass
+   - Applied to Production: 2026-01-18 16:00 UTC
+   ```
+
+#### Deployment Flow
+
+```
+Local Development
+       │
+       ▼
+Push to develop branch
+       │
+       ▼
+GitHub Actions (lint, type-check, test)
+       │
+       ▼
+Railway auto-deploys to Staging
+       │
+       ▼
+QA/Test on staging.modeloptix.com
+       │
+       ▼
+Merge develop → main (PR)
+       │
+       ▼
+GitHub Actions (lint, type-check, test)
+       │
+       ▼
+Railway auto-deploys to Production
+       │
+       ▼
+Verify on modeloptix.com
+```
 
 ### Background Jobs (Railway)
 
@@ -1948,3 +2099,4 @@ These items are captured from multi-LLM review and should be addressed during im
 | 2.3.1 | Jan 2025 | Added missing background jobs (trial-reminders, reaper, guest-cleanup), vector index training caveat, enterprise tier in schema |
 | 2.4.0 | Jan 2025 | **Multi-LLM Review Fixes:** Added `provider_id` FK to models, added `benchmarks` and `capabilities` JSONB columns, added `editorial_overrides` table, fixed guest sanity check RLS (service role + session ID), added server-only table lockdown, added `idx_products_user` index, documented cron initialization via instrumentation.ts, added first admin to seed script requirements, added Appendix B with implementation notes |
 | 2.4.1 | Jan 2025 | **Security Hardening:** Added concrete CSRF protection (Origin/Host validation, SameSite cookies), added Guest Access Contract with token flow, replaced `FOR ALL` RLS policies with explicit per-operation policies (USING + WITH CHECK), added `updated_at` trigger function, added single-instance cron assumption with scaling guidance, explicit admin write enforcement |
+| 2.5.0 | Jan 2026 | **Environment Infrastructure:** Expanded environments section with full dev-staging-prod architecture, separate Railway and Supabase instances per environment, environment variable parity requirements, database migration protocol, deployment flow diagram |
