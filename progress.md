@@ -26,8 +26,8 @@
 
 **Tasks**:
 - [x] Task 0.1: Project Scaffolding - 2026-01-17 18:45
-- [ ] Task 0.2: Railway + Cloudflare Setup
-- [ ] Task 0.3: Supabase Project + Waitlist Table
+- [x] Task 0.2: Railway + Cloudflare Setup - 2026-01-17 19:15
+- [x] Task 0.3: Supabase Project + Waitlist Table - 2026-01-17 19:30
 - [ ] Task 0.4: Landing Page UI
 - [ ] Task 0.5: Waitlist Form Submission
 - [ ] Task 0.6: Confirmation Email + Analytics
@@ -63,6 +63,51 @@
 **Notes:**
 - Upgraded Next.js from 14.2.21 to 14.2.35 to fix security vulnerability
 - Changed next.config.ts to next.config.mjs (14.x doesn't support .ts config)
+
+---
+
+### 2026-01-17 19:15 - Task 0.2: Railway + Cloudflare Setup Complete
+
+**Deliverables:**
+- Railway project created and connected to GitHub (auto-deploy on push)
+- Railway deployment live at: modeloptix-production.up.railway.app
+- Cloudflare account created, domain added
+- Nameservers updated at Namecheap to Cloudflare (jihoon.ns.cloudflare.com, nataly.ns.cloudflare.com)
+- Custom domain configured: modeloptix.com → epj0rw91.up.railway.app (CNAME)
+- Cloudflare proxy enabled for CDN + DDoS protection
+
+**Verification:**
+- ✅ modeloptix.com loads landing page successfully
+- ✅ Railway shows "Cloudflare proxy detected"
+- ✅ SSL certificate active (HTTPS working)
+
+**Notes:**
+- www.modeloptix.com not configured yet (optional, can add later)
+- MX records preserved for email forwarding
+
+---
+
+### 2026-01-17 19:30 - Task 0.3: Supabase Project + Waitlist Table Complete
+
+**Deliverables:**
+- Supabase project "ModelOptix" created in TheWayWithin's Org
+- `waitlist_signups` table created with columns: id, email, created_at, source, metadata
+- Row Level Security (RLS) enabled with anonymous insert policy
+- Index on email column for performance
+- Environment variables configured in `.env.local`
+- `.env.example` created for documentation
+- `.gitignore` updated with proper Next.js ignores
+- Supabase client library installed (@supabase/supabase-js 2.90.1)
+- Supabase client configured in `src/lib/supabase.ts`
+
+**Verification:**
+- ✅ SQL executed successfully in Supabase
+- ✅ TypeScript passes
+- ✅ ESLint passes
+
+**Configuration:**
+- Project URL: https://cyodlmpucqfisszcosiw.supabase.co
+- Region: Americas
 
 ---
 
