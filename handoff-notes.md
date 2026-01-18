@@ -1,7 +1,7 @@
 # ModelOptix Handoff Notes
 
 > Current context for agent-to-agent handoff
-> Last Updated: 2026-01-18 11:20
+> Last Updated: 2026-01-18 19:45
 
 ---
 
@@ -103,16 +103,20 @@
    - `UPSTASH_REDIS_REST_URL`
    - `UPSTASH_REDIS_REST_TOKEN`
 
-### Phase 1 Complete - User Actions Needed
-
-Before starting Phase 2, the user needs to:
+### Phase 1 Complete - All User Actions Done
 
 | Action | Description | Status |
 |--------|-------------|--------|
-| Configure OAuth | Set up Google + GitHub OAuth in Supabase Dashboard | ✅ DONE |
-| Create Upstash | Create Upstash Redis instance, add env vars to Railway | pending |
+| Configure OAuth | Set up Google + GitHub OAuth in Supabase Dashboard (BOTH staging & prod) | ✅ DONE |
+| Create Upstash | Create Upstash Redis instance, add env vars to Railway (BOTH environments) | ✅ DONE |
 | Run Migrations | Deploy 001, 002, 003 migrations to staging Supabase | ✅ DONE |
-| Test Auth | Manually test signup, login, logout, reset password | pending |
+| Test Auth | OAuth login tested and working on staging | ✅ DONE |
+| Add NEXT_PUBLIC_APP_URL | Added to BOTH Railway environments | ✅ DONE |
+
+### Bugs Fixed (2026-01-18)
+
+1. **OAuth Login Loop** - `/auth/callback` was not in middleware PUBLIC_ROUTES, causing redirect loop
+2. **OAuth Redirect to localhost:8080** - Railway internal URL was used; fixed by using `NEXT_PUBLIC_APP_URL`
 
 ### Ready for Phase 2
 
