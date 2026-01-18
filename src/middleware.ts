@@ -32,6 +32,7 @@ const PUBLIC_ROUTES = [
   '/signup',
   '/forgot-password',
   '/reset-password',
+  '/auth/callback', // OAuth callback - MUST be public to exchange code for session
   '/pricing',
   '/privacy',
   '/terms',
