@@ -1,6 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
+/**
+ * @deprecated Import from '@/lib/supabase/client' or '@/lib/supabase/server' instead
+ *
+ * This file is kept for backward compatibility.
+ * Use:
+ * - '@/lib/supabase/client' for browser/client components
+ * - '@/lib/supabase/server' for server components and route handlers
+ * - '@/lib/supabase/middleware' for middleware.ts
+ */
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export { supabase, createClient } from './supabase/client';

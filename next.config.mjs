@@ -17,6 +17,12 @@ const nextConfig = {
     // Don't ignore ESLint errors in production
     ignoreDuringBuilds: false,
   },
+
+  // Enable instrumentation hook for cron job initialization
+  // @see src/instrumentation.ts
+  experimental: {
+    instrumentationHook: true,
+  },
 };
 
 export default nextConfig;
