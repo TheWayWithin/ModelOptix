@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ModelOptix Brand - Light Mode */
+    /* Trust Blue #1A2B4C as primary */
+    --background: 0 0% 100%;
+    --foreground: 217 48% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 217 48% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 217 48% 20%;
+
+    /* Primary: Trust Blue */
+    --primary: 217 48% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: Lighter Trust Blue */
+    --secondary: 217 30% 96%;
+    --secondary-foreground: 217 48% 20%;
+
+    --muted: 217 20% 96%;
+    --muted-foreground: 217 20% 45%;
+
+    /* Accent: Independent Teal */
+    --accent: 175 83% 32%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 20% 90%;
+    --input: 217 20% 90%;
+    --ring: 175 83% 32%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* ModelOptix Brand - Dark Mode */
+    --background: 217 48% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 217 48% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 217 48% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary: Independent Teal (inverted for dark) */
+    --primary: 175 83% 32%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217 30% 18%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 217 30% 18%;
+    --muted-foreground: 217 20% 65%;
+
+    /* Accent: Trust Blue lighter variant */
+    --accent: 217 48% 30%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 217 30% 22%;
+    --input: 217 30% 22%;
+    --ring: 175 83% 42%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+}

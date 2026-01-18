@@ -56,7 +56,7 @@ Help developers and solopreneurs stop overpaying for AI by providing independent
 
 | Phase | Name | Status | Tasks | Key Deliverable |
 |-------|------|--------|-------|-----------------|
-| 0 | Pre-MVP Landing Page | not_started | 6 | Live waitlist page |
+| 0 | Pre-MVP Landing Page | in_progress | 6 | Live waitlist page |
 | 1 | Foundation & Infrastructure | not_started | 12 | Auth + database + app shell |
 | 2 | Portfolio + Model Catalog | not_started | 10 | Users can add products, browse models |
 | 3 | Core Value Loop | not_started | 15 | Recommendations + Sanity Check |
@@ -69,7 +69,7 @@ Help developers and solopreneurs stop overpaying for AI by providing independent
 
 ## Phase 0: Pre-MVP Landing Page
 
-**Status:** not_started
+**Status:** in_progress
 **Objective:** Ship a landing page fast to start collecting waitlist signups while building the full product.
 
 ### Tasks
@@ -77,14 +77,14 @@ Help developers and solopreneurs stop overpaying for AI by providing independent
 #### Task 0.1: Project Scaffolding
 - **Agent:** developer
 - **Priority:** p0
-- **Status:** pending
+- **Status:** complete - 2026-01-17 18:45
 - **Acceptance Criteria:**
-  - [ ] Next.js 14 project created with App Router
-  - [ ] Tailwind CSS configured
-  - [ ] shadcn/ui initialized with base components (button, input, card)
-  - [ ] TypeScript strict mode enabled
-  - [ ] ESLint + Prettier configured
-  - [ ] Git repository initialized with .gitignore
+  - [x] Next.js 14 project created with App Router
+  - [x] Tailwind CSS configured
+  - [x] shadcn/ui initialized with base components (button, input, card)
+  - [x] TypeScript strict mode enabled
+  - [x] ESLint + Prettier configured
+  - [x] Git repository initialized with .gitignore
 - **Dependencies:** None
 - **Estimated Effort:** small
 
