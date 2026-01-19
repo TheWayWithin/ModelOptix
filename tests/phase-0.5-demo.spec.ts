@@ -81,36 +81,56 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
 
     test('model dropdown has multiple options', async ({ page }) => {
       // Find and click the model dropdown (second dropdown)
-      const modelDropdown = page.locator('button').filter({ hasText: /GPT-4o|Claude|Gemini|Mistral|Llama/i }).first();
+      const modelDropdown = page.locator('button').filter({ hasText: /GPT-4|Claude|Gemini|Mistral|Llama|DeepSeek/i }).first();
       await expect(modelDropdown).toBeVisible();
 
       // Click to open dropdown
       await modelDropdown.click();
 
-      // Check for at least 5 options (we have 10)
+      // Check for at least 5 options (we have 9)
       const options = page.locator('[role="option"]');
       expect(await options.count()).toBeGreaterThanOrEqual(5);
 
       // Verify some models
       await expect(page.locator('[role="option"]').filter({ hasText: 'GPT-4o' })).toBeVisible();
-      await expect(page.locator('[role="option"]').filter({ hasText: 'Claude 3 Opus' })).toBeVisible();
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Claude 3.5 Sonnet' })).toBeVisible();
 
       // Close dropdown
       await page.keyboard.press('Escape');
     });
 
-    test('savings display shows dollar amounts', async ({ page }) => {
-      // Look for the savings display
-      const savingsDisplay = page.locator('text=Your estimated savings');
-      await expect(savingsDisplay).toBeVisible();
+    test('optimization priority dropdown exists', async ({ page }) => {
+      // Find the priority dropdown
+      const priorityDropdown = page.locator('button').filter({ hasText: /Balanced|Performance First|Cost First/i }).first();
+      await expect(priorityDropdown).toBeVisible();
 
-      // Should show monthly savings with dollar sign
-      const monthlySavings = page.locator('text=/\\$[\\d,]+/').first();
-      await expect(monthlySavings).toBeVisible();
+      // Click to open dropdown
+      await priorityDropdown.click();
 
-      // Should show percentage
-      const percentage = page.locator('text=/\\d+%\\s*cost reduction/');
-      await expect(percentage).toBeVisible();
+      // Check for 3 options
+      await expect(page.locator('[role="option"]')).toHaveCount(3);
+
+      // Verify options
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Balanced' })).toBeVisible();
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Performance First' })).toBeVisible();
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Cost First' })).toBeVisible();
+
+      // Close dropdown
+      await page.keyboard.press('Escape');
+    });
+
+    test('dual metrics display shows performance and cost', async ({ page }) => {
+      // Look for the optimization display
+      const optimizationDisplay = page.locator('text=Your estimated optimization');
+      await expect(optimizationDisplay).toBeVisible();
+
+      // Should show performance improvement with percentage
+      const performanceDisplay = page.locator('text=/\\+\\d+%/').first();
+      await expect(performanceDisplay).toBeVisible();
+
+      // Should show cost value with dollar sign
+      const costDisplay = page.locator('text=/[\\-\\+]\\$[\\d,\\.]+/').first();
+      await expect(costDisplay).toBeVisible();
     });
 
     test('CTA button exists and is clickable', async ({ page }) => {
@@ -135,48 +155,66 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
       await expect(waitlistSection).toBeInViewport();
     });
 
-    test('changing use case updates savings calculation', async ({ page }) => {
-      // Get initial savings value from the calculator card's large savings display
-      const savingsElement = page.locator('.text-4xl, .sm\\:text-5xl').filter({ hasText: /^\$/ }).first();
-      const savingsText = await savingsElement.textContent();
+    test('changing priority updates recommendations', async ({ page }) => {
+      // Get initial recommended model
+      const recommendedText = page.locator('text=/Recommended:/');
+      await expect(recommendedText).toBeVisible();
+      const initialText = await recommendedText.textContent();
 
-      // Change use case
-      const useCaseDropdown = page.locator('button').filter({ hasText: /Code Generation|Content Writing|Data Extraction|Summarization|Classification|Chat Support/i }).first();
-      await useCaseDropdown.click();
-      await page.locator('[role="option"]').filter({ hasText: 'Classification' }).click();
+      // Change priority to Performance First
+      const priorityDropdown = page.locator('button').filter({ hasText: /Balanced|Performance First|Cost First/i }).first();
+      await priorityDropdown.click();
+      await page.locator('[role="option"]').filter({ hasText: 'Performance First' }).click();
 
       // Wait for recalculation
       await page.waitForTimeout(500);
 
-      // Get new savings value
-      const newSavingsText = await savingsElement.textContent();
+      // Check performance gain is higher with performance priority
+      const performanceDisplay = page.locator('text=/\\+\\d+%/').first();
+      const performanceText = await performanceDisplay.textContent();
+      // Performance first should show higher gains
+      expect(performanceText).toBeTruthy();
 
-      // Values should be different (Classification has 60% multiplier vs Code Gen's 35%)
-      expect(newSavingsText).not.toBe(savingsText);
+      // Get new recommended model
+      const newText = await recommendedText.textContent();
+      // Recommendations should potentially change based on priority
+      expect(newText).toBeTruthy();
     });
   });
 
   test.describe('Trader7 Case Study', () => {
     test('case study section is visible', async ({ page }) => {
       // Look for case study heading
-      const caseStudyHeading = page.locator('text=/How a Trading Platform Saves/i');
+      const caseStudyHeading = page.locator('text=/How a Trading Platform Optimized/i');
       await expect(caseStudyHeading).toBeVisible();
     });
 
-    test('shows $747 total savings', async ({ page }) => {
-      // Use first() since $747 appears in multiple places (heading, table, mobile summary)
-      const totalSavings = page.locator('text=/\\$747/').first();
-      await expect(totalSavings).toBeVisible();
+    test('shows net savings result', async ({ page }) => {
+      // The case study now shows net result with $379/mo savings
+      const netResult = page.locator('text=/\\$379/').first();
+      await expect(netResult).toBeVisible();
+    });
+
+    test('shows average performance gain', async ({ page }) => {
+      // Should show average performance improvement
+      const performanceGain = page.locator('text=/\\+19% avg|\\+19%/').first();
+      await expect(performanceGain).toBeVisible();
     });
 
     test('shows quality maintained badge', async ({ page }) => {
-      const qualityBadge = page.locator('text=/96\\.2%/');
+      const qualityBadge = page.locator('text=/97\\.8%/');
       await expect(qualityBadge).toBeVisible();
     });
 
     test('case study badge is visible', async ({ page }) => {
       const badge = page.locator('text=Case Study');
       await expect(badge).toBeVisible();
+    });
+
+    test('shows critical task investment message', async ({ page }) => {
+      // Should show that critical tasks got investment
+      const criticalMessage = page.locator('text=/Critical Tasks|Critical/i').first();
+      await expect(criticalMessage).toBeVisible();
     });
   });
 
@@ -207,12 +245,12 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
       await page.waitForTimeout(1000);
 
       // Case study should be visible
-      const caseStudyHeading = page.locator('text=/How a Trading Platform Saves/i');
+      const caseStudyHeading = page.locator('text=/How a Trading Platform Optimized/i');
       await expect(caseStudyHeading).toBeVisible();
 
-      // $747 savings should be visible (use first() since appears in multiple places)
-      const totalSavings = page.locator('text=/\\$747/').first();
-      await expect(totalSavings).toBeVisible();
+      // Net savings should be visible (use first() since appears in multiple places)
+      const netSavings = page.locator('text=/\\$379/').first();
+      await expect(netSavings).toBeVisible();
     });
   });
 

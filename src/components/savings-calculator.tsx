@@ -13,38 +13,98 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
-// Savings multipliers by use case (percentage of cost that can be saved)
-const useCaseSavings: Record<string, { multiplier: number; label: string }> = {
-  'code-generation': { multiplier: 0.35, label: 'Code Generation' },
-  'content-writing': { multiplier: 0.45, label: 'Content Writing' },
-  'data-extraction': { multiplier: 0.55, label: 'Data Extraction' },
-  summarization: { multiplier: 0.5, label: 'Summarization' },
-  classification: { multiplier: 0.6, label: 'Classification' },
-  'chat-support': { multiplier: 0.4, label: 'Chat Support' },
+// Optimization priority types
+type OptimizationPriority = 'balanced' | 'performance' | 'cost';
+
+// Model data with performance and cost characteristics
+const modelData: Record<string, {
+  cost: number;
+  label: string;
+  tier: 'premium' | 'standard' | 'economy';
+  strengths: string[];
+}> = {
+  'gpt-4': { cost: 0.03, label: 'GPT-4', tier: 'premium', strengths: ['reasoning', 'coding'] },
+  'gpt-4o': { cost: 0.005, label: 'GPT-4o', tier: 'standard', strengths: ['general', 'fast'] },
+  'claude-opus-4.5': { cost: 0.045, label: 'Claude Opus 4.5', tier: 'premium', strengths: ['reasoning', 'analysis'] },
+  'claude-3.5-sonnet': { cost: 0.003, label: 'Claude 3.5 Sonnet', tier: 'standard', strengths: ['coding', 'accuracy'] },
+  'gemini-1.5-pro': { cost: 0.00125, label: 'Gemini 1.5 Pro', tier: 'standard', strengths: ['data', 'context'] },
+  'gemini-1.5-flash': { cost: 0.000075, label: 'Gemini 1.5 Flash', tier: 'economy', strengths: ['speed', 'volume'] },
+  'deepseek-v3': { cost: 0.0014, label: 'DeepSeek V3', tier: 'economy', strengths: ['patterns', 'cost'] },
+  'llama-3.1-405b': { cost: 0.005, label: 'Llama 3.1 405B', tier: 'standard', strengths: ['open', 'customizable'] },
+  'mistral-large': { cost: 0.002, label: 'Mistral Large', tier: 'standard', strengths: ['european', 'efficient'] },
 };
 
-// Model costs per 1K tokens (input + output averaged)
-const modelCosts: Record<string, { cost: number; label: string }> = {
-  'gpt-4o': { cost: 0.005, label: 'GPT-4o' },
-  'gpt-4-turbo': { cost: 0.01, label: 'GPT-4 Turbo' },
-  'gpt-4': { cost: 0.03, label: 'GPT-4' },
-  'claude-3-opus': { cost: 0.015, label: 'Claude 3 Opus' },
-  'claude-3.5-sonnet': { cost: 0.003, label: 'Claude 3.5 Sonnet' },
-  'claude-3-sonnet': { cost: 0.003, label: 'Claude 3 Sonnet' },
-  'gemini-1.5-pro': { cost: 0.00125, label: 'Gemini 1.5 Pro' },
-  'gemini-1.5-flash': { cost: 0.000075, label: 'Gemini 1.5 Flash' },
-  'llama-3.1-405b': { cost: 0.005, label: 'Llama 3.1 405B' },
-  'mistral-large': { cost: 0.002, label: 'Mistral Large' },
-};
-
-// Average tokens per API call (varies by use case)
-const tokensPerCall: Record<string, number> = {
-  'code-generation': 2500,
-  'content-writing': 3000,
-  'data-extraction': 1500,
-  summarization: 2000,
-  classification: 500,
-  'chat-support': 1200,
+// Use case optimization data
+const useCaseOptimization: Record<string, {
+  label: string;
+  avgTokens: number;
+  criticalTasks: boolean;
+  recommendations: {
+    balanced: { model: string; performanceGain: number; costChange: number };
+    performance: { model: string; performanceGain: number; costChange: number };
+    cost: { model: string; performanceGain: number; costChange: number };
+  };
+}> = {
+  'code-generation': {
+    label: 'Code Generation',
+    avgTokens: 2500,
+    criticalTasks: true,
+    recommendations: {
+      balanced: { model: 'claude-3.5-sonnet', performanceGain: 15, costChange: -40 },
+      performance: { model: 'claude-opus-4.5', performanceGain: 25, costChange: 50 },
+      cost: { model: 'deepseek-v3', performanceGain: 5, costChange: -72 },
+    },
+  },
+  'content-writing': {
+    label: 'Content Writing',
+    avgTokens: 3000,
+    criticalTasks: false,
+    recommendations: {
+      balanced: { model: 'claude-3.5-sonnet', performanceGain: 12, costChange: -40 },
+      performance: { model: 'claude-opus-4.5', performanceGain: 20, costChange: 50 },
+      cost: { model: 'gemini-1.5-flash', performanceGain: -5, costChange: -98 },
+    },
+  },
+  'data-extraction': {
+    label: 'Data Extraction',
+    avgTokens: 1500,
+    criticalTasks: false,
+    recommendations: {
+      balanced: { model: 'gemini-1.5-pro', performanceGain: 18, costChange: -75 },
+      performance: { model: 'claude-opus-4.5', performanceGain: 28, costChange: 50 },
+      cost: { model: 'gemini-1.5-flash', performanceGain: 8, costChange: -98 },
+    },
+  },
+  'summarization': {
+    label: 'Summarization',
+    avgTokens: 2000,
+    criticalTasks: false,
+    recommendations: {
+      balanced: { model: 'gemini-1.5-pro', performanceGain: 15, costChange: -75 },
+      performance: { model: 'claude-3.5-sonnet', performanceGain: 22, costChange: -40 },
+      cost: { model: 'gemini-1.5-flash', performanceGain: 5, costChange: -98 },
+    },
+  },
+  'classification': {
+    label: 'Classification',
+    avgTokens: 500,
+    criticalTasks: false,
+    recommendations: {
+      balanced: { model: 'gemini-1.5-flash', performanceGain: 12, costChange: -98 },
+      performance: { model: 'gemini-1.5-pro', performanceGain: 20, costChange: -75 },
+      cost: { model: 'deepseek-v3', performanceGain: 8, costChange: -72 },
+    },
+  },
+  'chat-support': {
+    label: 'Chat Support',
+    avgTokens: 1200,
+    criticalTasks: false,
+    recommendations: {
+      balanced: { model: 'claude-3.5-sonnet', performanceGain: 18, costChange: -40 },
+      performance: { model: 'claude-opus-4.5', performanceGain: 30, costChange: 50 },
+      cost: { model: 'mistral-large', performanceGain: 10, costChange: -60 },
+    },
+  },
 };
 
 interface SavingsCalculatorProps {
@@ -55,58 +115,62 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
   const [monthlyApiCalls, setMonthlyApiCalls] = React.useState(100000);
   const [useCase, setUseCase] = React.useState('code-generation');
   const [currentModel, setCurrentModel] = React.useState('gpt-4o');
+  const [priority, setPriority] = React.useState<OptimizationPriority>('balanced');
   const [hasInteracted, setHasInteracted] = React.useState(false);
 
   // Track interaction for analytics
   React.useEffect(() => {
     if (hasInteracted && typeof window !== 'undefined') {
-      // PostHog event for calculator interaction
       const posthog = (window as unknown as { posthog?: { capture: (event: string, properties?: Record<string, unknown>) => void } }).posthog;
       if (posthog?.capture) {
         posthog.capture('calculator_interaction', {
           api_calls: monthlyApiCalls,
           use_case: useCase,
           current_model: currentModel,
+          priority: priority,
         });
       }
     }
-  }, [hasInteracted, monthlyApiCalls, useCase, currentModel]);
+  }, [hasInteracted, monthlyApiCalls, useCase, currentModel, priority]);
 
-  // Calculate savings
-  const calculateSavings = () => {
-    const model = modelCosts[currentModel] ?? { cost: 0.005, label: 'GPT-4o' };
-    const useCaseData = useCaseSavings[useCase] ?? { multiplier: 0.35, label: 'Code Generation' };
-    const avgTokens = tokensPerCall[useCase] ?? 2500;
+  // Calculate optimization results
+  const calculateOptimization = () => {
+    const model = modelData[currentModel] ?? { cost: 0.005, label: 'GPT-4o', tier: 'standard' as const, strengths: [] };
+    const useCaseData = useCaseOptimization[useCase] ?? useCaseOptimization['code-generation'];
+    const recommendation = useCaseData.recommendations[priority];
+    const recommendedModel = modelData[recommendation.model] ?? model;
 
     // Current monthly cost
-    const currentMonthlyCost =
-      monthlyApiCalls * (avgTokens / 1000) * model.cost;
+    const currentMonthlyCost = monthlyApiCalls * (useCaseData.avgTokens / 1000) * model.cost;
 
-    // Potential savings (based on use case optimization potential)
-    const potentialSavings = currentMonthlyCost * useCaseData.multiplier;
-
-    // Optimized cost
-    const optimizedCost = currentMonthlyCost - potentialSavings;
+    // Calculate cost change
+    const costChangePercent = recommendation.costChange;
+    const costDelta = currentMonthlyCost * (costChangePercent / 100);
+    const optimizedCost = currentMonthlyCost + costDelta;
 
     return {
       currentCost: currentMonthlyCost,
-      savings: potentialSavings,
-      optimizedCost,
-      percentageSaved: useCaseData.multiplier * 100,
+      optimizedCost: optimizedCost,
+      costChange: costDelta,
+      costChangePercent: costChangePercent,
+      performanceGain: recommendation.performanceGain,
+      recommendedModel: recommendedModel.label,
+      isCritical: useCaseData.criticalTasks,
     };
   };
 
-  const savings = calculateSavings();
+  const results = calculateOptimization();
 
-  // Format numbers with specific decimal places for credibility
+  // Format numbers
   const formatCurrency = (amount: number) => {
-    if (amount >= 1000) {
-      return `$${amount.toLocaleString('en-US', {
+    const absAmount = Math.abs(amount);
+    if (absAmount >= 1000) {
+      return `$${absAmount.toLocaleString('en-US', {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
       })}`;
     }
-    return `$${amount.toLocaleString('en-US', {
+    return `$${absAmount.toLocaleString('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
@@ -139,14 +203,19 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
     setCurrentModel(value);
   };
 
+  const handlePriorityChange = (value: string) => {
+    setHasInteracted(true);
+    setPriority(value as OptimizationPriority);
+  };
+
   const handleCtaClick = () => {
-    // Track CTA click
     if (typeof window !== 'undefined') {
       const posthog = (window as unknown as { posthog?: { capture: (event: string, properties?: Record<string, unknown>) => void } }).posthog;
       if (posthog?.capture) {
         posthog.capture('calculator_cta_clicked', {
-          monthly_savings: savings.savings,
-          yearly_savings: savings.savings * 12,
+          performance_gain: results.performanceGain,
+          cost_change: results.costChange,
+          priority: priority,
         });
       }
     }
@@ -154,13 +223,15 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
     if (onCtaClick) {
       onCtaClick();
     } else {
-      // Scroll to waitlist form
       const waitlistForm = document.querySelector('#waitlist-form');
       if (waitlistForm) {
         waitlistForm.scrollIntoView({ behavior: 'smooth' });
       }
     }
   };
+
+  // Determine if this is a "invest more" or "save money" scenario
+  const isInvestment = results.costChangePercent > 0;
 
   return (
     <Card className="w-full max-w-2xl mx-auto border-2 border-accent/20 bg-card/50 backdrop-blur">
@@ -202,7 +273,7 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
                 <SelectValue placeholder="Select use case" />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(useCaseSavings).map(([key, { label }]) => (
+                {Object.entries(useCaseOptimization).map(([key, { label }]) => (
                   <SelectItem key={key} value={key}>
                     {label}
                   </SelectItem>
@@ -221,7 +292,7 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(modelCosts).map(([key, { label }]) => (
+                {Object.entries(modelData).map(([key, { label }]) => (
                   <SelectItem key={key} value={key}>
                     {label}
                   </SelectItem>
@@ -230,43 +301,97 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
             </Select>
           </div>
 
-          {/* Savings Display */}
+          {/* Optimization Priority */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-foreground">
+              Optimization Priority
+            </label>
+            <Select value={priority} onValueChange={handlePriorityChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="balanced">
+                  Balanced — Best of both
+                </SelectItem>
+                <SelectItem value="performance">
+                  Performance First — Quality over cost
+                </SelectItem>
+                <SelectItem value="cost">
+                  Cost First — Maximum savings
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Results Display */}
           <div className="mt-8 p-6 rounded-lg bg-accent/5 border border-accent/20">
-            <div className="text-center space-y-2">
+            <div className="text-center space-y-1 mb-4">
               <p className="text-sm text-muted-foreground">
-                Your estimated savings
+                Your estimated optimization
               </p>
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-4xl sm:text-5xl font-bold text-accent">
-                  {formatCurrency(savings.savings)}
-                </span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-              <p className="text-lg text-foreground font-medium">
-                {formatCurrency(savings.savings * 12)}/year
+              <p className="text-sm font-medium text-accent">
+                Recommended: {results.recommendedModel}
               </p>
-              <Badge
-                variant="outline"
-                className="mt-2 border-accent/30 text-accent"
-              >
-                {savings.percentageSaved.toFixed(0)}% cost reduction
-              </Badge>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-4 text-center text-sm">
-              <div>
-                <p className="text-muted-foreground">Current cost</p>
-                <p className="font-semibold text-foreground">
-                  {formatCurrency(savings.currentCost)}/mo
+            {/* Dual Metrics Display */}
+            <div className="grid grid-cols-2 gap-4 mb-4">
+              {/* Performance Gain */}
+              <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-center">
+                <p className="text-xs text-muted-foreground mb-1">Performance</p>
+                <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">
+                  +{results.performanceGain}%
                 </p>
+                <p className="text-xs text-muted-foreground mt-1">improvement</p>
               </div>
-              <div>
-                <p className="text-muted-foreground">Optimized cost</p>
-                <p className="font-semibold text-green-600 dark:text-green-400">
-                  {formatCurrency(savings.optimizedCost)}/mo
+
+              {/* Cost Change */}
+              <div className={`p-4 rounded-lg text-center ${
+                isInvestment
+                  ? 'bg-amber-500/10 border border-amber-500/20'
+                  : 'bg-green-500/10 border border-green-500/20'
+              }`}>
+                <p className="text-xs text-muted-foreground mb-1">Cost</p>
+                <p className={`text-2xl sm:text-3xl font-bold ${
+                  isInvestment
+                    ? 'text-amber-600 dark:text-amber-400'
+                    : 'text-green-600 dark:text-green-400'
+                }`}>
+                  {isInvestment ? '+' : '-'}{formatCurrency(results.costChange)}
                 </p>
+                <p className="text-xs text-muted-foreground mt-1">/month</p>
               </div>
             </div>
+
+            {/* Context Badge */}
+            <div className="flex justify-center">
+              {isInvestment ? (
+                <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-400">
+                  Investment for {Math.abs(results.costChangePercent)}% higher quality
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="border-green-500/30 text-green-600 dark:text-green-400">
+                  {Math.abs(results.costChangePercent)}% cost reduction
+                </Badge>
+              )}
+            </div>
+
+            {/* Summary Text */}
+            <p className="text-xs text-center text-muted-foreground mt-4">
+              {isInvestment ? (
+                <>
+                  For <span className="font-medium">{useCaseOptimization[useCase]?.label ?? 'this use case'}</span>, we recommend investing in better quality.
+                  You&apos;ll see <span className="text-green-600 dark:text-green-400 font-medium">+{results.performanceGain}% better results</span>.
+                </>
+              ) : (
+                <>
+                  Switching to <span className="font-medium">{results.recommendedModel}</span> saves{' '}
+                  <span className="text-green-600 dark:text-green-400 font-medium">{formatCurrency(Math.abs(results.costChange) * 12)}/year</span>{' '}
+                  while improving performance by <span className="font-medium">{results.performanceGain}%</span>.
+                </>
+              )}
+            </p>
           </div>
 
           {/* CTA Button */}
@@ -292,10 +417,9 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
-            Based on{' '}
-            {formatApiCalls(monthlyApiCalls)} calls using{' '}
-            {modelCosts[currentModel]?.label ?? 'GPT-4o'} for {(useCaseSavings[useCase]?.label ?? 'Code Generation').toLowerCase()}.
-            Actual savings depend on your specific usage patterns.
+            Based on {formatApiCalls(monthlyApiCalls)} calls using{' '}
+            {modelData[currentModel]?.label ?? 'GPT-4o'} for {(useCaseOptimization[useCase]?.label ?? 'code generation').toLowerCase()}.
+            ModelOptix validates recommendations with automated testing.
           </p>
         </div>
       </CardContent>
