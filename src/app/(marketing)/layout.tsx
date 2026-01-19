@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { WaitlistForm } from '@/components/waitlist-form';
 
 export default function MarketingLayout({
   children,
@@ -49,20 +48,7 @@ export default function MarketingLayout({
       {/* Marketing Footer */}
       <footer className="border-t border-border bg-muted/50">
         <div className="container py-8 md:py-12">
-          {/* Footer CTA - Email Capture */}
-          <div className="mb-12 text-center">
-            <h3 className="text-lg font-semibold text-primary mb-2">
-              Don&apos;t miss the launch
-            </h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Join 500+ developers on the waitlist
-            </p>
-            <div className="flex justify-center">
-              <WaitlistForm />
-            </div>
-          </div>
-
-          <div className="border-t border-border pt-8 grid gap-8 md:grid-cols-4">
+          <div className="grid gap-8 md:grid-cols-4">
             {/* Brand Column */}
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center gap-2">
