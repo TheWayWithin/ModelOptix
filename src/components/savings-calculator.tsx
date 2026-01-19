@@ -12,6 +12,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 // Optimization priority types
 type OptimizationPriority = 'balanced' | 'performance' | 'cost';
@@ -107,16 +108,16 @@ const useCaseOptimization: Record<string, {
   },
 };
 
-interface SavingsCalculatorProps {
-  onCtaClick?: () => void;
-}
-
-export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
+export function SavingsCalculator() {
   const [monthlyApiCalls, setMonthlyApiCalls] = React.useState(100000);
   const [useCase, setUseCase] = React.useState('code-generation');
   const [currentModel, setCurrentModel] = React.useState('gpt-4o');
   const [priority, setPriority] = React.useState<OptimizationPriority>('balanced');
   const [hasInteracted, setHasInteracted] = React.useState(false);
+  const [showEmailCapture, setShowEmailCapture] = React.useState(false);
+  const [email, setEmail] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
 
   // Track interaction for analytics
   React.useEffect(() => {
@@ -206,28 +207,6 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
   const handlePriorityChange = (value: string) => {
     setHasInteracted(true);
     setPriority(value as OptimizationPriority);
-  };
-
-  const handleCtaClick = () => {
-    if (typeof window !== 'undefined') {
-      const posthog = (window as unknown as { posthog?: { capture: (event: string, properties?: Record<string, unknown>) => void } }).posthog;
-      if (posthog?.capture) {
-        posthog.capture('calculator_cta_clicked', {
-          performance_gain: results.performanceGain,
-          cost_change: results.costChange,
-          priority: priority,
-        });
-      }
-    }
-
-    if (onCtaClick) {
-      onCtaClick();
-    } else {
-      const waitlistForm = document.querySelector('#waitlist-form');
-      if (waitlistForm) {
-        waitlistForm.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
   };
 
   // Determine if this is a "invest more" or "save money" scenario
@@ -394,32 +373,172 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
             </p>
           </div>
 
-          {/* CTA Button */}
-          <Button
-            onClick={handleCtaClick}
-            size="lg"
-            className="w-full bg-accent hover:bg-accent/90 text-white"
-          >
-            Get Personalized Recommendations
-            <svg
-              className="ml-2 h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          {/* CTA Section with Email Capture */}
+          {!showEmailCapture ? (
+            <Button
+              onClick={() => {
+                setShowEmailCapture(true);
+                // Track CTA click
+                if (typeof window !== 'undefined') {
+                  const posthog = (window as unknown as { posthog?: { capture: (event: string, properties?: Record<string, unknown>) => void } }).posthog;
+                  if (posthog?.capture) {
+                    posthog.capture('calculator_email_cta_clicked', {
+                      performance_gain: results.performanceGain,
+                      cost_change: results.costChange,
+                      priority: priority,
+                    });
+                  }
+                }
+              }}
+              size="lg"
+              className="w-full bg-accent hover:bg-accent/90 text-white"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
-            </svg>
-          </Button>
+              Email Me My Results
+              <svg
+                className="ml-2 h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </Button>
+          ) : submitStatus === 'success' ? (
+            <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-center">
+              <svg
+                className="mx-auto h-8 w-8 text-green-600 dark:text-green-400 mb-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <p className="text-sm font-medium text-green-600 dark:text-green-400">
+                You&apos;re on the list!
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                I&apos;ll send your personalized recommendations soon.
+              </p>
+            </div>
+          ) : (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!email || isSubmitting) return;
+
+                setIsSubmitting(true);
+                setSubmitStatus('idle');
+
+                try {
+                  const response = await fetch('/api/waitlist', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      email,
+                      source: 'calculator',
+                      metadata: {
+                        performance_gain: results.performanceGain,
+                        cost_change: results.costChange,
+                        cost_change_percent: results.costChangePercent,
+                        recommended_model: results.recommendedModel,
+                        current_model: modelData[currentModel]?.label,
+                        use_case: useCaseOptimization[useCase]?.label,
+                        priority: priority,
+                        monthly_api_calls: monthlyApiCalls,
+                      },
+                    }),
+                  });
+
+                  if (response.ok) {
+                    setSubmitStatus('success');
+                    // Track successful submission
+                    if (typeof window !== 'undefined') {
+                      const posthog = (window as unknown as { posthog?: { capture: (event: string, properties?: Record<string, unknown>) => void } }).posthog;
+                      if (posthog?.capture) {
+                        posthog.capture('calculator_email_submitted', {
+                          performance_gain: results.performanceGain,
+                          cost_change: results.costChange,
+                          priority: priority,
+                        });
+                      }
+                    }
+                  } else {
+                    setSubmitStatus('error');
+                  }
+                } catch {
+                  setSubmitStatus('error');
+                }
+
+                setIsSubmitting(false);
+              }}
+              className="space-y-3"
+            >
+              <div className="flex gap-2">
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="flex-1"
+                  required
+                  disabled={isSubmitting}
+                />
+                <Button
+                  type="submit"
+                  size="default"
+                  className="bg-accent hover:bg-accent/90 text-white px-6"
+                  disabled={isSubmitting || !email}
+                >
+                  {isSubmitting ? (
+                    <svg
+                      className="h-4 w-4 animate-spin"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                  ) : (
+                    'Send'
+                  )}
+                </Button>
+              </div>
+              {submitStatus === 'error' && (
+                <p className="text-xs text-red-500 text-center">
+                  Something went wrong. Please try again.
+                </p>
+              )}
+              <p className="text-xs text-center text-muted-foreground">
+                Join 500+ developers. No spam, ever.
+              </p>
+            </form>
+          )}
 
           <p className="text-xs text-center text-muted-foreground">
             Based on {formatApiCalls(monthlyApiCalls)} calls using{' '}
             {modelData[currentModel]?.label ?? 'GPT-4o'} for {(useCaseOptimization[useCase]?.label ?? 'code generation').toLowerCase()}.
-            ModelOptix validates recommendations with automated testing.
+            I validate recommendations with automated testing.
           </p>
         </div>
       </CardContent>

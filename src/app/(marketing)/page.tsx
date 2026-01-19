@@ -26,18 +26,28 @@ export default function Home() {
 
           {/* Subheadline */}
           <p className="mx-auto mt-6 max-w-2xl text-center text-lg text-muted-foreground sm:text-xl">
-            ModelOptix is the independent AI model advisor that continuously
+            I&apos;m building an independent AI model advisor that continuously
             monitors your LLM stack and alerts you when better or cheaper models
             appear — with full transparency, no hidden agenda.
           </p>
 
-          {/* Hero CTA - Scroll to Demo */}
-          <div className="mt-10 flex flex-col items-center gap-4">
+          {/* Hero Email Capture - P0-3 */}
+          <div className="mt-10 flex flex-col items-center gap-6">
+            <div className="w-full max-w-md">
+              <WaitlistForm />
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Join 500+ developers on the waitlist. No spam, ever.
+            </p>
+          </div>
+
+          {/* Secondary CTA - Scroll to Demo */}
+          <div className="mt-8 flex flex-col items-center gap-2">
             <a
               href="#demo-section"
-              className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-lg font-semibold text-white transition-colors hover:bg-accent/90"
+              className="inline-flex items-center gap-2 text-accent hover:text-accent/80 transition-colors font-medium"
             >
-              See How Much You Could Save
+              Calculate Your Savings
               <svg
                 className="h-5 w-5 animate-bounce"
                 fill="none"
@@ -52,7 +62,7 @@ export default function Home() {
                 />
               </svg>
             </a>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Interactive calculator - no signup required
             </p>
           </div>
@@ -99,13 +109,13 @@ export default function Home() {
       </section>
 
       {/* Value Props Section */}
-      <section className="border-t border-border bg-muted/50 py-20">
+      <section id="about-section" className="scroll-mt-16 border-t border-border bg-muted/50 py-20">
         <div className="mx-auto max-w-5xl px-6">
           <h2 className="text-center text-2xl font-semibold text-primary sm:text-3xl">
-            Why developers trust ModelOptix
+            Why developers trust me
           </h2>
 
-          <div className="mt-12 grid gap-8 sm:grid-cols-3">
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {/* Prop 1 */}
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
@@ -164,7 +174,33 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Prop 3 */}
+            {/* Prop 3 - Sanity Check (P1-3) */}
+            <div className="text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
+                <svg
+                  className="h-6 w-6 text-accent"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                  />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-foreground">
+                Sanity Check
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                Test any recommendation with your own prompts before switching.
+                I provide the proof, you make the call.
+              </p>
+            </div>
+
+            {/* Prop 4 */}
             <div className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
                 <svg
@@ -190,6 +226,29 @@ export default function Home() {
               </p>
             </div>
           </div>
+
+          {/* Alert Visualization (P2-2) */}
+          <div className="mt-16 max-w-2xl mx-auto">
+            <h3 className="text-center text-lg font-semibold text-primary mb-4">
+              What an alert looks like
+            </h3>
+            <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-4">
+              <div className="flex items-start gap-3">
+                <span className="text-amber-500 text-xl">⚠️</span>
+                <div>
+                  <p className="font-semibold text-foreground">
+                    ModelOptix Alert
+                  </p>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    I&apos;ve detected that <code className="text-accent bg-accent/10 px-1 rounded">claude-3.5-sonnet</code> now
+                    offers a <span className="text-green-600 dark:text-green-400 font-medium">12% performance improvement</span> for
+                    your &apos;Sentiment Analysis&apos; use case at a{' '}
+                    <span className="text-green-600 dark:text-green-400 font-medium">20% lower cost</span>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -206,7 +265,7 @@ export default function Home() {
             <WaitlistForm />
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
-            Join developers who refuse to overpay. No spam, ever.
+            Join 500+ developers who refuse to overpay. No spam, ever.
           </p>
         </div>
       </section>
