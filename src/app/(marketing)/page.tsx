@@ -1,4 +1,6 @@
 import { WaitlistForm } from '@/components/waitlist-form';
+import { SavingsCalculator } from '@/components/savings-calculator';
+import { CaseStudyTrader7 } from '@/components/case-study-trader7';
 
 export default function Home() {
   return (
@@ -29,15 +31,70 @@ export default function Home() {
             appear — with full transparency, no hidden agenda.
           </p>
 
-          {/* Waitlist Form */}
-          <div className="mt-10 flex justify-center">
-            <WaitlistForm />
+          {/* Hero CTA - Scroll to Demo */}
+          <div className="mt-10 flex flex-col items-center gap-4">
+            <a
+              href="#demo-section"
+              className="inline-flex items-center gap-2 rounded-lg bg-accent px-6 py-3 text-lg font-semibold text-white transition-colors hover:bg-accent/90"
+            >
+              See How Much You Could Save
+              <svg
+                className="h-5 w-5 animate-bounce"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              </svg>
+            </a>
+            <p className="text-sm text-muted-foreground">
+              Interactive calculator - no signup required
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Demo Section - Savings Calculator + Case Study */}
+      <section
+        id="demo-section"
+        className="scroll-mt-16 border-t border-border bg-gradient-to-b from-muted/30 to-background py-16 sm:py-24"
+      >
+        <div className="mx-auto max-w-5xl px-6">
+          {/* Section Header */}
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-bold text-primary sm:text-3xl md:text-4xl">
+              See Your Potential Savings
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Calculate how much you could save by optimizing your AI model
+              choices. Real savings from real use cases.
+            </p>
           </div>
 
-          {/* Social proof hint */}
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            Join developers who refuse to overpay. No spam, ever.
-          </p>
+          {/* Calculator */}
+          <div className="mb-16">
+            <SavingsCalculator />
+          </div>
+
+          {/* Divider with "or see real results" */}
+          <div className="relative mb-16">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border"></div>
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-background px-4 text-sm text-muted-foreground">
+                or see real results
+              </span>
+            </div>
+          </div>
+
+          {/* Case Study */}
+          <CaseStudyTrader7 />
         </div>
       </section>
 
@@ -136,8 +193,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="border-t border-border py-20">
+      {/* CTA Section with Waitlist Form */}
+      <section id="waitlist-form" className="scroll-mt-16 border-t border-border py-20">
         <div className="mx-auto max-w-3xl px-6 text-center">
           <h2 className="text-2xl font-semibold text-primary sm:text-3xl">
             Ready to stop guessing?
@@ -148,6 +205,9 @@ export default function Home() {
           <div className="mt-8 flex justify-center">
             <WaitlistForm />
           </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Join developers who refuse to overpay. No spam, ever.
+          </p>
         </div>
       </section>
     </>

@@ -57,7 +57,7 @@ Help developers and solopreneurs stop overpaying for AI by providing independent
 | Phase | Name | Status | Tasks | Key Deliverable |
 |-------|------|--------|-------|-----------------|
 | 0 | Pre-MVP Landing Page | complete | 6 | Live waitlist page |
-| 0.5 | Waitlist Demo Enhancement | not_started | 5 | Interactive savings calculator + case study |
+| 0.5 | Waitlist Demo Enhancement | complete | 5 | Interactive savings calculator + case study |
 | 1 | Foundation & Infrastructure | complete | 12 | Auth + database + app shell |
 | 2 | Portfolio + Model Catalog | not_started | 10 | Users can add products, browse models |
 | 3 | Core Value Loop | not_started | 15 | Recommendations + Sanity Check |
@@ -193,7 +193,7 @@ Help developers and solopreneurs stop overpaying for AI by providing independent
 
 ## Phase 0.5: Waitlist Demo Enhancement
 
-**Status:** not_started
+**Status:** complete
 **Objective:** Add an interactive demo to the landing page that creates an "aha moment" for waitlist visitors, showing ModelOptix's value before signup.
 
 **Rationale:** Interactive calculators drive 50-80% higher conversion than static pages. Visitors engage with their own numbers, making the value proposition personal and concrete.
@@ -217,32 +217,33 @@ Use a fictional trading system (Trader7) with 6 AI use cases to demonstrate savi
 #### Task 0.5.1: Additional UI Components
 - **Agent:** developer
 - **Priority:** p0
-- **Status:** pending
+- **Status:** complete - 2026-01-18 19:15
 - **Acceptance Criteria:**
-  - [ ] Install shadcn/ui `select` component (model dropdowns)
-  - [ ] Install shadcn/ui `slider` component (API call volume)
-  - [ ] Install shadcn/ui `badge` component (savings tags)
-  - [ ] Install shadcn/ui `table` component (case study display)
-  - [ ] All components styled with brand colors
+  - [x] Install shadcn/ui `select` component (model dropdowns)
+  - [x] Install shadcn/ui `slider` component (API call volume)
+  - [x] Install shadcn/ui `badge` component (savings tags)
+  - [x] Install shadcn/ui `table` component (case study display)
+  - [x] All components styled with brand colors
 - **Dependencies:** None
 - **Estimated Effort:** small (1-2 hours)
 
 #### Task 0.5.2: Savings Calculator Component
 - **Agent:** developer
 - **Priority:** p0
-- **Status:** pending
+- **Status:** complete - 2026-01-18 19:16
 - **Acceptance Criteria:**
-  - [ ] Interactive calculator component created (`src/components/savings-calculator.tsx`)
-  - [ ] Slider for "Monthly API calls" (range: 10K - 1M, default: 100K)
-  - [ ] Dropdown for "Primary use case" (6 options: code generation, content writing, data extraction, summarization, classification, chat support)
-  - [ ] Dropdown for "Current model" (top 10 models: GPT-4o, GPT-4 Turbo, Claude 3 Opus, Claude 3.5 Sonnet, etc.)
-  - [ ] Real-time savings calculation based on hardcoded cost differentials
-  - [ ] Display: "Your estimated savings: $X/month ($Y/year)"
-  - [ ] CTA button: "Get Personalized Recommendations →" (links to waitlist form)
-  - [ ] Mobile responsive
-  - [ ] Specific numbers (not rounded) for credibility
+  - [x] Interactive calculator component created (`src/components/savings-calculator.tsx`)
+  - [x] Slider for "Monthly API calls" (range: 10K - 1M, default: 100K)
+  - [x] Dropdown for "Primary use case" (6 options: code generation, content writing, data extraction, summarization, classification, chat support)
+  - [x] Dropdown for "Current model" (top 10 models: GPT-4o, GPT-4 Turbo, Claude 3 Opus, Claude 3.5 Sonnet, etc.)
+  - [x] Real-time savings calculation based on hardcoded cost differentials
+  - [x] Display: "Your estimated savings: $X/month ($Y/year)"
+  - [x] CTA button: "Get Personalized Recommendations →" (links to waitlist form)
+  - [x] Mobile responsive
+  - [x] Specific numbers (not rounded) for credibility
 - **Dependencies:** Task 0.5.1
 - **Estimated Effort:** medium (4-6 hours)
+- **Deliverable:** `src/components/savings-calculator.tsx` (10.7KB)
 
 **Calculator Logic (simplified):**
 ```typescript
@@ -267,36 +268,37 @@ const modelCosts = { // per 1K tokens
 #### Task 0.5.3: Trader7 Case Study Section
 - **Agent:** developer
 - **Priority:** p0
-- **Status:** pending
+- **Status:** complete - 2026-01-18 19:16
 - **Acceptance Criteria:**
-  - [ ] Case study component created (`src/components/case-study-trader7.tsx`)
-  - [ ] Header: "Case Study: How a Trading Platform Saves $747/month"
-  - [ ] Table showing 6 use cases with before/after models and savings
-  - [ ] Footer: "Quality maintained: 96.2% average task success rate"
-  - [ ] Visual styling: clean table with alternating rows, savings highlighted in green
-  - [ ] Mobile responsive (horizontal scroll or stacked cards on mobile)
+  - [x] Case study component created (`src/components/case-study-trader7.tsx`)
+  - [x] Header: "Case Study: How a Trading Platform Saves $747/month"
+  - [x] Table showing 6 use cases with before/after models and savings
+  - [x] Footer: "Quality maintained: 96.2% average task success rate"
+  - [x] Visual styling: clean table with alternating rows, savings highlighted in green
+  - [x] Mobile responsive (horizontal scroll or stacked cards on mobile)
 - **Dependencies:** Task 0.5.1
 - **Estimated Effort:** small (2-3 hours)
+- **Deliverable:** `src/components/case-study-trader7.tsx` (8.3KB)
 
 #### Task 0.5.4: Landing Page Integration
 - **Agent:** developer
 - **Priority:** p0
-- **Status:** pending
+- **Status:** complete - 2026-01-18 19:17
 - **Acceptance Criteria:**
-  - [ ] New section added to landing page between hero and waitlist CTA
-  - [ ] Section header: "See Your Potential Savings"
-  - [ ] Savings calculator prominently displayed
-  - [ ] Case study below calculator (or toggle between calculator/case study)
-  - [ ] Smooth scroll anchor from hero CTA "See How Much You Could Save ↓"
-  - [ ] Section has distinct background to stand out
-  - [ ] Analytics events: `calculator_interaction`, `case_study_viewed`
+  - [x] New section added to landing page between hero and waitlist CTA
+  - [x] Section header: "See Your Potential Savings"
+  - [x] Savings calculator prominently displayed
+  - [x] Case study below calculator (or toggle between calculator/case study)
+  - [x] Smooth scroll anchor from hero CTA "See How Much You Could Save ↓"
+  - [x] Section has distinct background to stand out
+  - [x] Analytics events: `calculator_interaction`, `case_study_viewed`
 - **Dependencies:** Task 0.5.2, Task 0.5.3
 - **Estimated Effort:** small (2 hours)
 
 #### Task 0.5.5: Optional Dashboard Preview GIF
 - **Agent:** developer
 - **Priority:** p2
-- **Status:** pending
+- **Status:** skipped (per user request)
 - **Acceptance Criteria:**
   - [ ] 15-30 second screen recording of mock dashboard
   - [ ] Shows: Dashboard → Click "Get Recommendations" → Results appear with savings
@@ -309,18 +311,18 @@ const modelCosts = { // per 1K tokens
 
 ### Phase 0.5 Quality Gates
 
-- [ ] **build:** `npm run build` passes
-- [ ] **lint:** `npm run lint` passes
-- [ ] **manual:** Calculator shows realistic savings calculations
-- [ ] **manual:** Case study table renders correctly on mobile
-- [ ] **manual:** Page load time still < 2 seconds with new components
+- [x] **build:** `npm run build` passes - verified 2026-01-18 19:18
+- [x] **lint:** `npm run lint` passes (warnings only for console.log - intentional) - verified 2026-01-18 19:18
+- [ ] **manual:** Calculator shows realistic savings calculations - needs user verification
+- [ ] **manual:** Case study table renders correctly on mobile - needs user verification
+- [ ] **manual:** Page load time still < 2 seconds with new components - needs user verification
 
 ### Phase 0.5 Deliverables
 
-- [ ] Interactive savings calculator on landing page
-- [ ] Trader7 case study showcasing real-world savings
-- [ ] Analytics tracking calculator engagement
-- [ ] Optional: Dashboard preview GIF
+- [x] Interactive savings calculator on landing page
+- [x] Trader7 case study showcasing real-world savings
+- [x] Analytics tracking calculator engagement
+- [ ] Optional: Dashboard preview GIF (skipped per user request)
 
 ### Phase 0.5 Success Metrics
 

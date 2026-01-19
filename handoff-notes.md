@@ -1,20 +1,48 @@
 # ModelOptix Handoff Notes
 
 > Current context for agent-to-agent handoff
-> Last Updated: 2026-01-18 19:45
+> Last Updated: 2026-01-18 19:19
 
 ---
 
 ## Current Phase
 
-**Phase 1: Foundation & Infrastructure**
-**Status**: COMPLETE (12/12 tasks complete)
+**Phase 0.5: Waitlist Demo Enhancement**
+**Status**: COMPLETE (4/5 tasks complete, 1 skipped)
 
 ---
 
 ## Immediate Context
 
-### Session Summary - 2026-01-18
+### Session Summary - 2026-01-18 (Phase 0.5)
+
+**Tasks Completed:**
+1. **Task 0.5.1: Additional UI Components** - ✅ COMPLETE
+   - Installed shadcn/ui components: select, slider, badge, table
+   - All 4 components verified on filesystem
+
+2. **Task 0.5.2: Savings Calculator Component** - ✅ COMPLETE
+   - Created `src/components/savings-calculator.tsx` (10.7KB)
+   - Slider for API calls, dropdowns for use case and model
+   - Real-time savings calculation
+   - Analytics events integrated
+
+3. **Task 0.5.3: Trader7 Case Study Section** - ✅ COMPLETE
+   - Created `src/components/case-study-trader7.tsx` (8.3KB)
+   - 6 use cases with $747/mo total savings
+   - Desktop table + mobile cards
+
+4. **Task 0.5.4: Landing Page Integration** - ✅ COMPLETE
+   - New demo section added to landing page
+   - Smooth scroll from hero CTA
+   - Analytics events for engagement
+
+5. **Task 0.5.5: Dashboard Preview GIF** - ⏭️ SKIPPED
+   - Per user request, skipped for now
+
+---
+
+### Previous Session Summary - 2026-01-18 (Phase 1)
 
 **Tasks Completed:**
 1. **Task 1.1: Complete Database Schema** - ✅ COMPLETE
@@ -117,6 +145,14 @@
 
 1. **OAuth Login Loop** - `/auth/callback` was not in middleware PUBLIC_ROUTES, causing redirect loop
 2. **OAuth Redirect to localhost:8080** - Railway internal URL was used; fixed by using `NEXT_PUBLIC_APP_URL`
+
+### Ready for Deployment
+
+**Phase 0.5 needs deployment to staging:**
+1. Push changes to `develop` branch
+2. Railway auto-deploys to staging.modeloptix.com
+3. Manual testing: calculator, mobile, page load time
+4. If all good, merge to `main` for production
 
 ### Ready for Phase 2
 
