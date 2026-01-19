@@ -986,6 +986,41 @@ Per user request, this P2 task was skipped. Calculator and case study deliver mo
 | `src/app/(marketing)/page.tsx` | Added demo section with calculator + case study |
 
 **Next Steps:**
-1. Push to develop branch to deploy to staging
-2. Manual testing on staging.modeloptix.com
+1. ~~Push to develop branch to deploy to staging~~ ✅ Done
+2. ~~Manual testing on staging.modeloptix.com~~ ✅ Done (Playwright automated)
 3. Proceed to Phase 2 when ready
+
+---
+
+### 2026-01-18 19:25 - Playwright Testing Complete
+
+**Test Results:** 21/21 tests passing
+
+**Test Coverage:**
+| Category | Tests | Status |
+|----------|-------|--------|
+| Landing Page Structure | 4 | ✅ Pass |
+| Savings Calculator | 8 | ✅ Pass |
+| Trader7 Case Study | 4 | ✅ Pass |
+| Mobile Responsiveness | 2 | ✅ Pass |
+| Waitlist Form | 2 | ✅ Pass |
+| Performance | 1 | ✅ Pass |
+
+**Key Verifications:**
+- Landing page loads with hero and demo section
+- Smooth scroll from hero CTA to demo section works
+- Calculator slider is interactive
+- Use case dropdown has 6 options
+- Model dropdown has 10+ options
+- Savings calculation updates when inputs change
+- CTA button scrolls to waitlist form
+- Case study shows $747/month savings
+- Quality badge shows 96.2%
+- Mobile views render correctly
+- Page loads in < 3 seconds
+
+**Files Created:**
+- `playwright.config.ts` - Playwright configuration
+- `tests/phase-0.5-demo.spec.ts` - 21 test cases
+
+**Staging URL Tested:** https://staging.modeloptix.com
