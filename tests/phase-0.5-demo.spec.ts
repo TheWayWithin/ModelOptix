@@ -248,9 +248,9 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
       const caseStudyHeading = page.locator('text=/How a Trading Platform Optimized/i');
       await expect(caseStudyHeading).toBeVisible();
 
-      // Net savings should be visible (use first() since appears in multiple places)
-      const netSavings = page.locator('text=/\\$379/').first();
-      await expect(netSavings).toBeVisible();
+      // On mobile, verify the mobile card version of "Net Result" is visible (span, not table cell)
+      const netResultLabel = page.locator('span').filter({ hasText: 'Net Result' });
+      await expect(netResultLabel).toBeVisible();
     });
   });
 
