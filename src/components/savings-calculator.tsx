@@ -136,7 +136,7 @@ export function SavingsCalculator({ onCtaClick }: SavingsCalculatorProps) {
   // Calculate optimization results
   const calculateOptimization = () => {
     const model = modelData[currentModel] ?? { cost: 0.005, label: 'GPT-4o', tier: 'standard' as const, strengths: [] };
-    const useCaseData = useCaseOptimization[useCase] ?? useCaseOptimization['code-generation'];
+    const useCaseData = useCaseOptimization[useCase] ?? useCaseOptimization['code-generation']!;
     const recommendation = useCaseData.recommendations[priority];
     const recommendedModel = modelData[recommendation.model] ?? model;
 
