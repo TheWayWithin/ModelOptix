@@ -558,7 +558,7 @@ const modelCosts = { // per 1K tokens
 - [x] **lint:** `npm run lint` passes - verified 2026-01-18
 - [x] **manual:** User can sign up, log in, log out - OAuth working on staging 2026-01-18
 - [x] **manual:** Protected routes require auth - middleware verified
-- [ ] **manual:** Seed script populates database - deferred to Phase 2
+- [x] **manual:** Seed script populates database - completed 2026-01-19 (6 providers, 28 models, 224 trust scores)
 
 ### Phase 1 Deliverables
 
