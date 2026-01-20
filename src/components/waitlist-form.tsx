@@ -69,7 +69,7 @@ export function WaitlistForm() {
         onChange={(e) => setEmail(e.target.value)}
         required
         disabled={formState === "loading"}
-        className="h-12 flex-1 border-gray-300 bg-white text-base"
+        className="h-12 flex-1 border-gray-300 text-base dark:border-gray-600"
       />
       <Button
         type="submit"
