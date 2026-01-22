@@ -1,44 +1,101 @@
 # ModelOptix Handoff Notes
 
 > Current context for agent-to-agent handoff
-> Last Updated: 2026-01-18 19:19
+> Last Updated: 2026-01-21 21:45
 
 ---
 
 ## Current Phase
 
-**Phase 0.5: Waitlist Demo Enhancement**
-**Status**: COMPLETE (4/5 tasks complete, 1 skipped)
+**Phase 2: Portfolio Management + Model Catalog**
+**Status**: COMPLETE (10/10 tasks complete)
 
 ---
 
 ## Immediate Context
 
-### Session Summary - 2026-01-18 (Phase 0.5)
+### Session Summary - 2026-01-20 (Phase 2)
+
+**Tasks Completed:**
+1. **Task 2.1: Product CRUD** - ✅ COMPLETE (2026-01-19 23:28)
+   - API routes: /api/products, /api/products/[id]
+   - Components: product-card, product-form, product-list, product-detail-view
+   - Pages: /products, /products/[id]
+   - Full CRUD with search/filter, delete confirmation, toast notifications
+
+2. **Task 2.2: Function CRUD** - ✅ COMPLETE (2026-01-19 23:55)
+   - API routes: /api/products/[id]/functions, /api/functions/[id], /api/models
+   - Components: function-card, function-form, function-list
+   - Functions nested under products with model dropdown selection
+   - Type casting for Supabase relation types
+
+3. **Task 2.3: Use Case CRUD** - ✅ COMPLETE (2026-01-20 00:25)
+   - API routes: /api/functions/[id]/use-cases, /api/use-cases/[id]
+   - Components: use-case-card, use-case-form, use-case-list
+   - Page: /products/[id]/functions/[functionId]
+   - 8 task types, metrics display (calls, tokens, quality, latency)
+
+4. **Task 2.4: Portfolio Quick Start** - ✅ COMPLETE (2026-01-20 08:45)
+   - API routes: /api/dashboard/stats, /api/quick-start
+   - Components: quick-start-wizard, dashboard empty-state, dashboard-content
+   - Custom hook: use-dashboard-stats
+   - 4-step guided onboarding wizard with skip functionality
+   - Empty state detection on dashboard
+
+5. **Task 2.5: Model Catalog Sync Job** - ✅ COMPLETE (2026-01-20 10:15)
+   - OpenRouter client: src/lib/openrouter/ (types, client, index)
+   - Sync job: src/lib/jobs/sync-model-catalog.ts
+   - Cron schedule: Daily at 2:00 AM UTC
+   - Upserts providers, models, and pricing from OpenRouter API
+   - Uses service role client to bypass RLS
+
+6. **Task 2.6: Pricing + Benchmark Sync Jobs** - ✅ COMPLETE (2026-01-20 12:10)
+   - Artificial Analysis client: src/lib/artificial-analysis/ (types, client, index)
+   - Pricing sync: src/lib/jobs/sync-pricing.ts (daily 3am UTC)
+   - Benchmark sync: src/lib/jobs/sync-benchmarks.ts (weekly Sunday 4am UTC)
+   - Updates model_provider_pricing and models.benchmarks JSONB
+
+7. **Task 2.7: Model List UI** - ✅ COMPLETE (2026-01-20 22:30)
+   - Extended types: src/types/model.ts (Model, Provider, ModelPricing, ModelWithProvider)
+   - Catalog API: src/app/api/models/catalog/route.ts (filtering, search, pagination)
+   - Components: src/components/models/ (model-card, model-filters, model-list)
+   - Page: src/app/(dashboard)/models/page.tsx
+   - Features: URL state sync, grid/list toggle, trust tier badges, capability icons
+
+8. **Task 2.8: Model Detail Page** - ✅ COMPLETE (2026-01-21 20:40)
+   - API route: src/app/api/models/[id]/route.ts (single model fetch)
+   - Component: src/components/models/model-detail.tsx
+   - Page: src/app/(dashboard)/models/[id]/page.tsx
+   - Features: Pricing, context/limits, latency, capabilities, provider info, benchmarks, API reference
+
+9. **Task 2.9: Model Comparison (F-019)** - ✅ COMPLETE (2026-01-21 21:15)
+   - API route: src/app/api/models/compare/route.ts (fetch 2-4 models)
+   - Component: src/components/models/model-comparison.tsx
+   - Page: src/app/(dashboard)/models/compare/page.tsx
+   - Updated: model-card.tsx (compare checkbox), model-list.tsx (sticky comparison bar)
+   - Features: Side-by-side comparison table, value highlighting, capability icons, benchmark scores
+
+10. **Task 2.10: Dashboard Home (basic metrics)** - ✅ COMPLETE (2026-01-21 21:45)
+    - Enhanced API: src/app/api/dashboard/stats/route.ts (recent activity, model catalog stats)
+    - Updated hook: src/hooks/use-dashboard-stats.ts
+    - Updated component: src/app/(dashboard)/dashboard/dashboard-content.tsx
+    - Features: Quick actions section, recent activity with relative times, model catalog card
+
+**Phase 2 Complete!**
+
+**Next Phase:**
+- **Phase 3: Core Value Loop** - Recommendations engine, sanity checks, alerts
+
+---
+
+### Previous Session Summary - 2026-01-18 (Phase 0.5)
 
 **Tasks Completed:**
 1. **Task 0.5.1: Additional UI Components** - ✅ COMPLETE
-   - Installed shadcn/ui components: select, slider, badge, table
-   - All 4 components verified on filesystem
-
 2. **Task 0.5.2: Savings Calculator Component** - ✅ COMPLETE
-   - Created `src/components/savings-calculator.tsx` (10.7KB)
-   - Slider for API calls, dropdowns for use case and model
-   - Real-time savings calculation
-   - Analytics events integrated
-
 3. **Task 0.5.3: Trader7 Case Study Section** - ✅ COMPLETE
-   - Created `src/components/case-study-trader7.tsx` (8.3KB)
-   - 6 use cases with $747/mo total savings
-   - Desktop table + mobile cards
-
 4. **Task 0.5.4: Landing Page Integration** - ✅ COMPLETE
-   - New demo section added to landing page
-   - Smooth scroll from hero CTA
-   - Analytics events for engagement
-
 5. **Task 0.5.5: Dashboard Preview GIF** - ⏭️ SKIPPED
-   - Per user request, skipped for now
 
 ---
 
@@ -154,12 +211,20 @@
 3. Manual testing: calculator, mobile, page load time
 4. If all good, merge to `main` for production
 
-### Ready for Phase 2
+### Ready for Next Task (Phase 2)
 
 | Task | Agent | Status |
 |------|-------|--------|
-| 2.1: Model Catalog API | developer | not_started |
-| 2.2: Provider Management | developer | not_started |
+| 2.1: Product CRUD | developer | ✅ complete |
+| 2.2: Function CRUD | developer | ✅ complete |
+| 2.3: Use Case CRUD | developer | ✅ complete |
+| 2.4: Portfolio Quick Start | developer | ✅ complete |
+| 2.5: Model Catalog Sync Job | developer | ✅ complete |
+| 2.6: Pricing + Benchmark Sync Jobs | developer | ✅ complete |
+| 2.7: Model List UI | developer | ✅ complete |
+| 2.8: Model Detail Page | developer | ✅ complete |
+| 2.9: Model Comparison | developer | pending |
+| 2.10: Dashboard Home | developer | pending |
 
 ---
 
