@@ -37,6 +37,9 @@ export async function register() {
         reaper,
         cleanupExpiredSessions,
         cleanupGuestSanityChecks,
+        syncModelCatalog,
+        syncPricing,
+        syncBenchmarks,
       } = await import('@/lib/jobs');
 
       console.log('[Instrumentation] Initializing cron jobs...');
@@ -62,12 +65,49 @@ export async function register() {
         await reaper();
       });
 
+      // Model Catalog Sync - Daily at 2:00 AM UTC
+      cron.schedule('0 2 * * *', async () => {
+        console.log('[Cron] Running sync-model-catalog');
+        await runJobWithLock('sync-model-catalog', async () => {
+          const result = await syncModelCatalog();
+          return {
+            itemsProcessed:
+              result.stats.modelsUpdated + result.stats.modelsCreated,
+          };
+        });
+      });
+
+      // Pricing Sync - Daily at 3:00 AM UTC
+      cron.schedule('0 3 * * *', async () => {
+        console.log('[Cron] Running sync-pricing');
+        await runJobWithLock('sync-pricing', async () => {
+          const result = await syncPricing();
+          return {
+            itemsProcessed: result.stats.pricingUpdated,
+          };
+        });
+      });
+
+      // Benchmark Sync - Weekly on Sunday at 4:00 AM UTC
+      cron.schedule('0 4 * * 0', async () => {
+        console.log('[Cron] Running sync-benchmarks');
+        await runJobWithLock('sync-benchmarks', async () => {
+          const result = await syncBenchmarks();
+          return {
+            itemsProcessed: result.stats.benchmarksUpdated,
+          };
+        });
+      });
+
       console.log('[Instrumentation] Cron jobs initialized:');
       console.log('  - cleanup-expired-sessions: 0 1 * * * (daily 1am UTC)');
       console.log(
         '  - cleanup-guest-sanity-checks: 0 6 * * * (daily 6am UTC)'
       );
       console.log('  - reaper: */5 * * * * (every 5 minutes)');
+      console.log('  - sync-model-catalog: 0 2 * * * (daily 2am UTC)');
+      console.log('  - sync-pricing: 0 3 * * * (daily 3am UTC)');
+      console.log('  - sync-benchmarks: 0 4 * * 0 (weekly Sunday 4am UTC)');
     } catch (error) {
       console.error('[Instrumentation] Failed to initialize cron jobs:', error);
       // Don't throw - allow server to start even if cron setup fails
