@@ -10,10 +10,28 @@ import type {
   BillingInterval
 } from './types';
 
-// Initialize Stripe client (server-side only)
-export const stripe = new Stripe(stripeConfig.secretKey, {
-  apiVersion: '2025-12-15.clover',
-  typescript: true,
+// Lazy-initialize Stripe client (server-side only)
+// This prevents build-time errors when env vars aren't available
+let _stripe: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!stripeConfig.secretKey) {
+      throw new Error('STRIPE_SECRET_KEY is not configured');
+    }
+    _stripe = new Stripe(stripeConfig.secretKey, {
+      apiVersion: '2025-12-15.clover',
+      typescript: true,
+    });
+  }
+  return _stripe;
+}
+
+// For backwards compatibility - use getter
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop) {
+    return getStripe()[prop as keyof Stripe];
+  },
 });
 
 /**
