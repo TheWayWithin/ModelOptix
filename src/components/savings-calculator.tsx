@@ -479,7 +479,7 @@ export function SavingsCalculator() {
               size="lg"
               className="w-full bg-accent hover:bg-accent/90 text-white"
             >
-              Email Me My Results
+              Join Waitlist for Real Results
               <svg
                 className="ml-2 h-4 w-4"
                 fill="none"
@@ -490,7 +490,7 @@ export function SavingsCalculator() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
                 />
               </svg>
             </Button>
@@ -510,10 +510,10 @@ export function SavingsCalculator() {
                 />
               </svg>
               <p className="text-sm font-medium text-green-600 dark:text-green-400">
-                You&apos;re on the list!
+                You&apos;re on the waitlist!
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                I&apos;ll send your personalized recommendations soon.
+                We&apos;ll notify you when ModelOptix launches with real, personalized recommendations.
               </p>
             </div>
           ) : (
@@ -623,9 +623,8 @@ export function SavingsCalculator() {
           )}
 
           <p className="text-xs text-center text-muted-foreground">
-            Based on {formatApiCalls(monthlyApiCalls)} calls using{' '}
-            {currentModel} for {useCase.toLowerCase()}.
-            Pricing from January 2026 market data.
+            Illustrative savings based on current market pricing.
+            Actual results depend on your specific usage patterns.
           </p>
         </div>
       </CardContent>
