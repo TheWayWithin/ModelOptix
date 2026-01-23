@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { verifyWebhookSignature } from '@/lib/stripe/client';
 import { getTierFromPriceId } from '@/lib/stripe';
+import { emails } from '@/lib/email';
 import type Stripe from 'stripe';
 
 // Webhook event types we handle
@@ -133,6 +134,33 @@ async function handleCheckoutCompleted(
   }
 
   console.log(`[Stripe Webhook] User ${userId} subscribed to ${tier}`);
+
+  // Send welcome email
+  const customerEmail = session.customer_email || session.customer_details?.email;
+  if (customerEmail) {
+    // Get user's name from profile
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('display_name')
+      .eq('id', userId)
+      .single();
+
+    const userName = profile?.display_name?.split(' ')[0] || 'there';
+    const isTrialing = session.mode === 'subscription' &&
+      (session as unknown as { subscription_data?: { trial_period_days?: number } }).subscription_data?.trial_period_days;
+
+    try {
+      await emails.sendWelcome(customerEmail, {
+        name: userName,
+        tier: tier as 'solo' | 'team' | 'enterprise',
+        isTrialing: Boolean(isTrialing),
+      });
+      console.log(`[Stripe Webhook] Welcome email sent to ${customerEmail}`);
+    } catch (emailError) {
+      // Don't throw - email failure shouldn't fail the webhook
+      console.error('[Stripe Webhook] Failed to send welcome email:', emailError);
+    }
+  }
 }
 
 /**

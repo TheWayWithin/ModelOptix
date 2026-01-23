@@ -1,63 +1,534 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import {
+  Users,
+  Package,
+  DollarSign,
+  Database,
+  Shield,
+  Activity,
+  AlertCircle,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Loader2,
+  RefreshCw,
+  ArrowRight,
+  Sparkles,
+} from 'lucide-react';
+
+interface AdminStats {
+  users: {
+    total: number;
+    byTier: {
+      free: number;
+      solo: number;
+      growth: number;
+      pro: number;
+    };
+    newThisWeek: number;
+    admins: number;
+  };
+  content: {
+    products: number;
+    functions: number;
+    useCases: number;
+  };
+  opportunities: {
+    active: number;
+    accepted: number;
+    dismissed: number;
+    totalSavings: number;
+  };
+  sanityChecks: {
+    today: number;
+    thisWeek: number;
+    total: number;
+    guestChecks: number;
+  };
+  catalog: {
+    models: number;
+    providers: number;
+    trustScores: number;
+  };
+  jobs: {
+    running: number;
+    failed: number;
+    recentRuns: Array<{
+      id: string;
+      job_name: string;
+      status: string;
+      started_at: string;
+      completed_at: string | null;
+    }>;
+  };
+  overrides: {
+    active: number;
+  };
+}
+
 export default function AdminPage() {
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchStats = async (showRefresh = false) => {
+    if (showRefresh) setIsRefreshing(true);
+    try {
+      const res = await fetch('/api/admin/stats');
+      if (!res.ok) {
+        throw new Error('Failed to fetch stats');
+      }
+      const data = await res.json();
+      setStats(data);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+
+  const formatRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return date.toLocaleDateString();
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'running':
+        return <Loader2 className="h-4 w-4 animate-spin text-blue-500" />;
+      case 'completed':
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case 'failed':
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <Clock className="h-4 w-4 text-muted-foreground" />;
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-destructive">
+          <CardHeader>
+            <CardTitle className="text-destructive flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              Error Loading Dashboard
+            </CardTitle>
+            <CardDescription>{error}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={() => fetchStats()}>Retry</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
-        <p className="text-muted-foreground">
-          System overview and administrative controls.
-        </p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Admin Dashboard</h1>
+          <p className="text-muted-foreground">
+            Platform overview and administrative controls
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => fetchStats(true)}
+          disabled={isRefreshing}
+        >
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`}
+          />
+          Refresh
+        </Button>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border border-border bg-card p-6">
-          <div className="text-sm font-medium text-muted-foreground">
-            Total Users
-          </div>
-          <div className="mt-2 text-3xl font-bold">0</div>
+      {/* User Stats */}
+      <div>
+        <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+          <Users className="h-5 w-5" />
+          Users
+        </h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Users</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.users.total || 0}</div>
+              <p className="text-xs text-muted-foreground">
+                +{stats?.users.newThisWeek || 0} this week
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Free</CardTitle>
+              <Badge variant="secondary">Free</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {stats?.users.byTier.free || 0}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Solo</CardTitle>
+              <Badge className="bg-blue-500">Solo</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {stats?.users.byTier.solo || 0}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Growth</CardTitle>
+              <Badge className="bg-purple-500">Growth</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {stats?.users.byTier.growth || 0}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Pro</CardTitle>
+              <Badge className="bg-amber-500">Pro</Badge>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {stats?.users.byTier.pro || 0}
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        <div className="rounded-lg border border-border bg-card p-6">
-          <div className="text-sm font-medium text-muted-foreground">
-            Models in Catalog
-          </div>
-          <div className="mt-2 text-3xl font-bold">0</div>
-        </div>
-        <div className="rounded-lg border border-border bg-card p-6">
-          <div className="text-sm font-medium text-muted-foreground">
-            Active Overrides
-          </div>
-          <div className="mt-2 text-3xl font-bold">0</div>
-        </div>
-        <div className="rounded-lg border border-border bg-card p-6">
-          <div className="text-sm font-medium text-muted-foreground">
-            Running Jobs
-          </div>
-          <div className="mt-2 text-3xl font-bold">0</div>
-        </div>
+      </div>
+
+      {/* Platform Content & Value */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Content Stats */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Platform Content
+            </CardTitle>
+            <CardDescription>User-created content</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.content.products || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Products</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.content.functions || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Functions</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.content.useCases || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Use Cases</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Value Delivered */}
+        <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border-green-200 dark:border-green-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-green-600" />
+              Value Delivered
+            </CardTitle>
+            <CardDescription>Savings from accepted recommendations</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-3xl font-bold text-green-600">
+              {formatCurrency(stats?.opportunities.totalSavings || 0)}
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">
+              monthly recurring savings
+            </p>
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center">
+              <div>
+                <div className="text-lg font-semibold">
+                  {stats?.opportunities.active || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Active</p>
+              </div>
+              <div>
+                <div className="text-lg font-semibold text-green-600">
+                  {stats?.opportunities.accepted || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Accepted</p>
+              </div>
+              <div>
+                <div className="text-lg font-semibold text-muted-foreground">
+                  {stats?.opportunities.dismissed || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Dismissed</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Sanity Checks & Catalog */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Sanity Checks */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5" />
+              Sanity Checks
+            </CardTitle>
+            <CardDescription>Model comparison requests</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.sanityChecks.today || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Today</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.sanityChecks.thisWeek || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">This Week</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.sanityChecks.total || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Total</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-muted-foreground">
+                  {stats?.sanityChecks.guestChecks || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Guest</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Model Catalog */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Model Catalog
+            </CardTitle>
+            <CardDescription>Available models and providers</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.catalog.models || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Models</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.catalog.providers || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Providers</p>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold">
+                  {stats?.catalog.trustScores || 0}
+                </div>
+                <p className="text-xs text-muted-foreground">Trust Scores</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/admin/models">
+                  Manage Models
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Jobs & Overrides */}
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Recent Jobs */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Background Jobs
+            </CardTitle>
+            <CardDescription>
+              {stats?.jobs.running || 0} running, {stats?.jobs.failed || 0} failed
+              this week
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {stats?.jobs.recentRuns && stats.jobs.recentRuns.length > 0 ? (
+              <div className="space-y-3">
+                {stats.jobs.recentRuns.map((job) => (
+                  <div
+                    key={job.id}
+                    className="flex items-center justify-between text-sm"
+                  >
+                    <div className="flex items-center gap-2">
+                      {getStatusIcon(job.status)}
+                      <span className="font-medium">{job.job_name}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {formatRelativeTime(job.started_at)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No recent jobs
+              </p>
+            )}
+            <div className="mt-4">
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/admin/jobs">
+                  View All Jobs
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Editorial Overrides */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Editorial Overrides
+            </CardTitle>
+            <CardDescription>Manual recommendation adjustments</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-4">
+              <div className="text-4xl font-bold">
+                {stats?.overrides.active || 0}
+              </div>
+              <p className="text-sm text-muted-foreground">Active Overrides</p>
+            </div>
+            <div className="mt-4">
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/admin/overrides">
+                  Manage Overrides
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Quick Actions */}
-      <div className="rounded-lg border border-border bg-card p-6">
-        <h2 className="mb-4 text-lg font-semibold">Quick Actions</h2>
-        <div className="flex flex-wrap gap-2">
-          <span className="rounded-md bg-muted px-3 py-2 text-sm">
-            Sync Models
-          </span>
-          <span className="rounded-md bg-muted px-3 py-2 text-sm">
-            Clear Cache
-          </span>
-          <span className="rounded-md bg-muted px-3 py-2 text-sm">
-            Run Reaper
-          </span>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="rounded-lg border border-dashed border-border p-12 text-center">
-        <p className="text-muted-foreground">
-          Admin features will be implemented in Phase 5.
-        </p>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Common administrative tasks</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            <Button variant="outline" asChild>
+              <Link href="/admin/models">
+                <Database className="h-4 w-4 mr-2" />
+                Manage Models
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/admin/overrides">
+                <Shield className="h-4 w-4 mr-2" />
+                Editorial Overrides
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/admin/jobs">
+                <Activity className="h-4 w-4 mr-2" />
+                View Jobs
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href="/admin/users">
+                <Users className="h-4 w-4 mr-2" />
+                Manage Users
+              </Link>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

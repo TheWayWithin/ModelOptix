@@ -13,6 +13,8 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Package, Cpu, Target, TrendingUp, AlertTriangle, DollarSign, Brain, Plus, ArrowRight, Clock } from 'lucide-react'
 import Link from 'next/link'
+import { SavingsSummaryCard } from '@/components/savings/SavingsSummaryCard'
+import { SavingsChart } from '@/components/savings-chart'
 
 function formatRelativeTime(dateString: string): string {
   const date = new Date(dateString)
@@ -201,6 +203,15 @@ export function DashboardContent() {
               <span>View Portfolio</span>
             </Link>
           </Button>
+        </div>
+      </div>
+
+      {/* Savings Section */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold mb-4">Your Savings</h2>
+        <div className="grid gap-4 md:grid-cols-2">
+          <SavingsSummaryCard compact={false} showViewAll={true} />
+          <SavingsChart months={6} showCumulative={true} />
         </div>
       </div>
 

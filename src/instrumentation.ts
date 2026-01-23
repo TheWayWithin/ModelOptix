@@ -40,6 +40,8 @@ export async function register() {
         syncModelCatalog,
         syncPricing,
         syncBenchmarks,
+        generateOpportunities,
+        sendTrialReminders,
       } = await import('@/lib/jobs');
 
       console.log('[Instrumentation] Initializing cron jobs...');
@@ -99,6 +101,23 @@ export async function register() {
         });
       });
 
+      // Opportunity Generation - Daily at 5:00 AM UTC
+      // Runs after model/pricing sync to use fresh data
+      cron.schedule('0 5 * * *', async () => {
+        console.log('[Cron] Running generate-opportunities');
+        await runJobWithLock('generate-opportunities', generateOpportunities);
+      });
+
+      // Trial Reminders - Daily at 9:00 AM UTC
+      // Sends email reminders to users with trials ending soon
+      cron.schedule('0 9 * * *', async () => {
+        console.log('[Cron] Running trial-reminders');
+        await runJobWithLock('trial-reminders', async () => {
+          const result = await sendTrialReminders();
+          return { itemsProcessed: result.remindersSent };
+        });
+      });
+
       console.log('[Instrumentation] Cron jobs initialized:');
       console.log('  - cleanup-expired-sessions: 0 1 * * * (daily 1am UTC)');
       console.log(
@@ -108,6 +127,8 @@ export async function register() {
       console.log('  - sync-model-catalog: 0 2 * * * (daily 2am UTC)');
       console.log('  - sync-pricing: 0 3 * * * (daily 3am UTC)');
       console.log('  - sync-benchmarks: 0 4 * * 0 (weekly Sunday 4am UTC)');
+      console.log('  - generate-opportunities: 0 5 * * * (daily 5am UTC)');
+      console.log('  - trial-reminders: 0 9 * * * (daily 9am UTC)');
     } catch (error) {
       console.error('[Instrumentation] Failed to initialize cron jobs:', error);
       // Don't throw - allow server to start even if cron setup fails

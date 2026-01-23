@@ -26,3 +26,9 @@ export type { SyncPricingResult } from './sync-pricing';
 
 export { syncBenchmarks } from './sync-benchmarks';
 export type { SyncBenchmarksResult } from './sync-benchmarks';
+
+export { generateOpportunities } from './generate-opportunities';
+export type { GenerateOpportunitiesResult } from './generate-opportunities';
+
+export { sendTrialReminders } from './trial-reminder';
+export type { TrialReminderResult } from './trial-reminder';
