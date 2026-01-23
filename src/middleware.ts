@@ -45,7 +45,8 @@ const PUBLIC_API_ROUTES = [
   '/api/waitlist',
   '/api/auth',
   '/api/health',
-  '/api/sanity-check/guest', // Guest sanity check allowed
+  '/api/public', // Public endpoints (models list for guest sanity checks, etc.)
+  '/api/sanity-checks', // Sanity checks (includes guest flow)
   '/api/checkout/success', // Stripe redirect URL - webhook handles actual update
   '/api/webhooks', // Stripe webhooks - verified by signature, not auth
 ];
