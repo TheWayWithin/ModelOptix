@@ -9,6 +9,9 @@ import {
   OpenRouterModelsResponse,
   OpenRouterModel,
   ParsedModelData,
+  ChatCompletionRequest,
+  ChatCompletionResponse,
+  ModelCompletionResult,
 } from './types';
 
 const OPENROUTER_API_BASE = 'https://openrouter.ai/api/v1';
@@ -174,4 +177,157 @@ export function parseOpenRouterModel(model: OpenRouterModel): ParsedModelData {
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Send a chat completion request to OpenRouter
+ * Returns the completion along with latency and token usage
+ */
+export async function chatCompletion(
+  request: ChatCompletionRequest,
+  inputPricePerToken: number,
+  outputPricePerToken: number
+): Promise<ModelCompletionResult> {
+  const apiKey = process.env.OPENROUTER_API_KEY;
+
+  if (!apiKey) {
+    return {
+      modelId: request.model,
+      response: '',
+      latencyMs: 0,
+      promptTokens: 0,
+      completionTokens: 0,
+      totalTokens: 0,
+      cost: 0,
+      error: 'OPENROUTER_API_KEY not configured',
+    };
+  }
+
+  const startTime = Date.now();
+
+  try {
+    const response = await fetch(`${OPENROUTER_API_BASE}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer':
+          process.env.NEXT_PUBLIC_APP_URL || 'https://modeloptix.com',
+        'X-Title': 'ModelOptix Sanity Check',
+      },
+      body: JSON.stringify({
+        model: request.model,
+        messages: request.messages,
+        max_tokens: request.max_tokens || 1024,
+        temperature: request.temperature ?? 0.7,
+        stream: false,
+      }),
+    });
+
+    const latencyMs = Date.now() - startTime;
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      return {
+        modelId: request.model,
+        response: '',
+        latencyMs,
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0,
+        cost: 0,
+        error: `OpenRouter error ${response.status}: ${errorText}`,
+      };
+    }
+
+    const data: ChatCompletionResponse = await response.json();
+
+    // Extract response content
+    const content = data.choices?.[0]?.message?.content || '';
+
+    // Calculate cost
+    const promptTokens = data.usage?.prompt_tokens || 0;
+    const completionTokens = data.usage?.completion_tokens || 0;
+    const cost =
+      promptTokens * inputPricePerToken +
+      completionTokens * outputPricePerToken;
+
+    return {
+      modelId: request.model,
+      response: content,
+      latencyMs,
+      promptTokens,
+      completionTokens,
+      totalTokens: promptTokens + completionTokens,
+      cost,
+    };
+  } catch (error) {
+    const latencyMs = Date.now() - startTime;
+    return {
+      modelId: request.model,
+      response: '',
+      latencyMs,
+      promptTokens: 0,
+      completionTokens: 0,
+      totalTokens: 0,
+      cost: 0,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * Run sanity check - compare two models with the same prompt
+ * Runs both completions in parallel for fairness
+ */
+export async function runSanityCheck(
+  prompt: string,
+  currentModelId: string,
+  recommendedModelId: string,
+  currentPricing: { inputPrice: number; outputPrice: number },
+  recommendedPricing: { inputPrice: number; outputPrice: number },
+  options?: {
+    systemPrompt?: string;
+    maxTokens?: number;
+    temperature?: number;
+  }
+): Promise<{
+  current: ModelCompletionResult;
+  recommended: ModelCompletionResult;
+}> {
+  const messages = [
+    ...(options?.systemPrompt
+      ? [{ role: 'system' as const, content: options.systemPrompt }]
+      : []),
+    { role: 'user' as const, content: prompt },
+  ];
+
+  // Run both completions in parallel
+  const [currentResult, recommendedResult] = await Promise.all([
+    chatCompletion(
+      {
+        model: currentModelId,
+        messages,
+        max_tokens: options?.maxTokens,
+        temperature: options?.temperature,
+      },
+      currentPricing.inputPrice,
+      currentPricing.outputPrice
+    ),
+    chatCompletion(
+      {
+        model: recommendedModelId,
+        messages,
+        max_tokens: options?.maxTokens,
+        temperature: options?.temperature,
+      },
+      recommendedPricing.inputPrice,
+      recommendedPricing.outputPrice
+    ),
+  ]);
+
+  return {
+    current: currentResult,
+    recommended: recommendedResult,
+  };
 }

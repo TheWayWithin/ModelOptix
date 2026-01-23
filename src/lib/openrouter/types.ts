@@ -43,6 +43,62 @@ export interface OpenRouterModelsResponse {
 }
 
 /**
+ * Chat Completion Types
+ */
+
+export interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
+export interface ChatCompletionRequest {
+  model: string; // OpenRouter model ID (e.g., "openai/gpt-4o")
+  messages: ChatMessage[];
+  max_tokens?: number;
+  temperature?: number;
+  top_p?: number;
+  stream?: boolean;
+}
+
+export interface ChatCompletionUsage {
+  prompt_tokens: number;
+  completion_tokens: number;
+  total_tokens: number;
+}
+
+export interface ChatCompletionChoice {
+  index: number;
+  message: {
+    role: 'assistant';
+    content: string;
+  };
+  finish_reason: string;
+}
+
+export interface ChatCompletionResponse {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: ChatCompletionChoice[];
+  usage: ChatCompletionUsage;
+}
+
+/**
+ * Sanity Check Result from a single model
+ */
+export interface ModelCompletionResult {
+  modelId: string;
+  response: string;
+  latencyMs: number;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+  cost: number;
+  error?: string;
+}
+
+/**
  * Parsed model data for our database schema
  */
 export interface ParsedModelData {
