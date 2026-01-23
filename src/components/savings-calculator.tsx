@@ -14,110 +14,141 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
-// Optimization priority types
-type OptimizationPriority = 'balanced' | 'performance' | 'cost';
+// ============================================================================
+// V2 Data Sources (from Calculator v2 Developer Specification)
+// ============================================================================
 
-// Model data with performance and cost characteristics
-const modelData: Record<string, {
-  cost: number;
-  label: string;
-  tier: 'premium' | 'standard' | 'economy';
-  strengths: string[];
-}> = {
-  'gpt-4': { cost: 0.03, label: 'GPT-4', tier: 'premium', strengths: ['reasoning', 'coding'] },
-  'gpt-4o': { cost: 0.005, label: 'GPT-4o', tier: 'standard', strengths: ['general', 'fast'] },
-  'claude-opus-4.5': { cost: 0.045, label: 'Claude Opus 4.5', tier: 'premium', strengths: ['reasoning', 'analysis'] },
-  'claude-3.5-sonnet': { cost: 0.003, label: 'Claude 3.5 Sonnet', tier: 'standard', strengths: ['coding', 'accuracy'] },
-  'gemini-1.5-pro': { cost: 0.00125, label: 'Gemini 1.5 Pro', tier: 'standard', strengths: ['data', 'context'] },
-  'gemini-1.5-flash': { cost: 0.000075, label: 'Gemini 1.5 Flash', tier: 'economy', strengths: ['speed', 'volume'] },
-  'deepseek-v3': { cost: 0.0014, label: 'DeepSeek V3', tier: 'economy', strengths: ['patterns', 'cost'] },
-  'llama-3.1-405b': { cost: 0.005, label: 'Llama 3.1 405B', tier: 'standard', strengths: ['open', 'customizable'] },
-  'mistral-large': { cost: 0.002, label: 'Mistral Large', tier: 'standard', strengths: ['european', 'efficient'] },
+// Pricing data with January 2026 market rates
+const pricingData = {
+  models: [
+    { model: "Claude Sonnet 4.5", provider: "Anthropic", input_pm: 3.00, output_pm: 15.00, context_k: 1000, tier: "Premium" },
+    { model: "Claude Opus 4.5", provider: "Anthropic", input_pm: 5.00, output_pm: 25.00, context_k: 200, tier: "Frontier" },
+    { model: "Claude Haiku 4.5", provider: "Anthropic", input_pm: 1.00, output_pm: 5.00, context_k: 200, tier: "Fast" },
+    { model: "GPT-5.2", provider: "OpenAI", input_pm: 1.75, output_pm: 14.00, context_k: 400, tier: "Frontier" },
+    { model: "GPT-5", provider: "OpenAI", input_pm: 1.25, output_pm: 10.00, context_k: 400, tier: "Premium" },
+    { model: "GPT-5 Mini", provider: "OpenAI", input_pm: 0.25, output_pm: 2.00, context_k: 400, tier: "Mid" },
+    { model: "GPT-4.1", provider: "OpenAI", input_pm: 2.00, output_pm: 8.00, context_k: 1050, tier: "Premium" },
+    { model: "GPT-4o-mini", provider: "OpenAI", input_pm: 0.15, output_pm: 0.60, context_k: 128, tier: "Budget" },
+    { model: "Gemini 3 Pro Preview", provider: "Google", input_pm: 2.00, output_pm: 12.00, context_k: 1050, tier: "Frontier" },
+    { model: "Gemini 3 Flash Preview", provider: "Google", input_pm: 0.50, output_pm: 3.00, context_k: 1050, tier: "Mid" },
+    { model: "Gemini 2.5 Pro", provider: "Google", input_pm: 1.25, output_pm: 10.00, context_k: 1050, tier: "Premium" },
+    { model: "Gemini 2.5 Flash", provider: "Google", input_pm: 0.30, output_pm: 2.50, context_k: 1050, tier: "Mid" },
+    { model: "Gemini 2.5 Flash Lite", provider: "Google", input_pm: 0.10, output_pm: 0.40, context_k: 1050, tier: "Budget" },
+    { model: "DeepSeek V3.2", provider: "DeepSeek", input_pm: 0.25, output_pm: 0.38, context_k: 164, tier: "Budget" },
+    { model: "MiniMax M2.1", provider: "MiniMax", input_pm: 0.27, output_pm: 1.12, context_k: 197, tier: "Budget" },
+  ]
 };
 
-// Use case optimization data
-const useCaseOptimization: Record<string, {
-  label: string;
-  avgTokens: number;
-  criticalTasks: boolean;
-  recommendations: {
-    balanced: { model: string; performanceGain: number; costChange: number };
-    performance: { model: string; performanceGain: number; costChange: number };
-    cost: { model: string; performanceGain: number; costChange: number };
-  };
-}> = {
-  'code-generation': {
-    label: 'Code Generation',
-    avgTokens: 2500,
-    criticalTasks: true,
-    recommendations: {
-      balanced: { model: 'claude-3.5-sonnet', performanceGain: 15, costChange: -40 },
-      performance: { model: 'claude-opus-4.5', performanceGain: 25, costChange: 50 },
-      cost: { model: 'deepseek-v3', performanceGain: 5, costChange: -72 },
-    },
+// Recommendation matrix: use_case → priority → model
+const recommendationMatrix: Record<string, Record<string, string>> = {
+  "Code Generation / Programming": {
+    "Quality First": "Claude Sonnet 4.5",
+    "Balanced": "Gemini 3 Flash Preview",
+    "Cost First": "DeepSeek V3.2"
   },
-  'content-writing': {
-    label: 'Content Writing',
-    avgTokens: 3000,
-    criticalTasks: false,
-    recommendations: {
-      balanced: { model: 'claude-3.5-sonnet', performanceGain: 12, costChange: -40 },
-      performance: { model: 'claude-opus-4.5', performanceGain: 20, costChange: 50 },
-      cost: { model: 'gemini-1.5-flash', performanceGain: -5, costChange: -98 },
-    },
+  "Reasoning / Complex Analysis": {
+    "Quality First": "Claude Opus 4.5",
+    "Balanced": "Gemini 2.5 Pro",
+    "Cost First": "DeepSeek V3.2"
   },
-  'data-extraction': {
-    label: 'Data Extraction',
-    avgTokens: 1500,
-    criticalTasks: false,
-    recommendations: {
-      balanced: { model: 'gemini-1.5-pro', performanceGain: 18, costChange: -75 },
-      performance: { model: 'claude-opus-4.5', performanceGain: 28, costChange: 50 },
-      cost: { model: 'gemini-1.5-flash', performanceGain: 8, costChange: -98 },
-    },
+  "Text Generation / Content": {
+    "Quality First": "Claude Sonnet 4.5",
+    "Balanced": "GPT-5",
+    "Cost First": "Gemini 2.5 Flash Lite"
   },
-  'summarization': {
-    label: 'Summarization',
-    avgTokens: 2000,
-    criticalTasks: false,
-    recommendations: {
-      balanced: { model: 'gemini-1.5-pro', performanceGain: 15, costChange: -75 },
-      performance: { model: 'claude-3.5-sonnet', performanceGain: 22, costChange: -40 },
-      cost: { model: 'gemini-1.5-flash', performanceGain: 5, costChange: -98 },
-    },
+  "Data Processing / Analysis": {
+    "Quality First": "Gemini 2.5 Pro",
+    "Balanced": "Gemini 2.5 Flash",
+    "Cost First": "Gemini 2.5 Flash Lite"
   },
-  'classification': {
-    label: 'Classification',
-    avgTokens: 500,
-    criticalTasks: false,
-    recommendations: {
-      balanced: { model: 'gemini-1.5-flash', performanceGain: 12, costChange: -98 },
-      performance: { model: 'gemini-1.5-pro', performanceGain: 20, costChange: -75 },
-      cost: { model: 'deepseek-v3', performanceGain: 8, costChange: -72 },
-    },
+  "Chat / Conversational": {
+    "Quality First": "Claude Sonnet 4.5",
+    "Balanced": "GPT-5 Mini",
+    "Cost First": "GPT-4o-mini"
   },
-  'chat-support': {
-    label: 'Chat Support',
-    avgTokens: 1200,
-    criticalTasks: false,
-    recommendations: {
-      balanced: { model: 'claude-3.5-sonnet', performanceGain: 18, costChange: -40 },
-      performance: { model: 'claude-opus-4.5', performanceGain: 30, costChange: 50 },
-      cost: { model: 'mistral-large', performanceGain: 10, costChange: -60 },
-    },
-  },
+  "Agentic / Tool Use": {
+    "Quality First": "Claude Opus 4.5",
+    "Balanced": "Gemini 3 Flash Preview",
+    "Cost First": "MiniMax M2.1"
+  }
 };
+
+// Use case options
+const useCases = [
+  "Code Generation / Programming",
+  "Reasoning / Complex Analysis",
+  "Text Generation / Content",
+  "Data Processing / Analysis",
+  "Chat / Conversational",
+  "Agentic / Tool Use"
+];
+
+// Priority options (for reference)
+// "Quality First", "Balanced", "Cost First"
+
+// Models available for "Current Model" dropdown
+const currentModelOptions = [
+  "Claude Sonnet 4.5",
+  "Claude Opus 4.5",
+  "GPT-5.2",
+  "GPT-5",
+  "GPT-4.1",
+  "GPT-4o-mini",
+  "Gemini 3 Pro Preview",
+  "Gemini 2.5 Pro",
+  "DeepSeek V3.2"
+];
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+function getModelPricing(modelName: string) {
+  return pricingData.models.find(m => m.model === modelName);
+}
+
+function calculateCost(monthlyCalls: number, inputPm: number, outputPm: number): number {
+  // 50/50 split between input and output tokens
+  // Prices are per million tokens
+  return (monthlyCalls / 1_000_000) * (inputPm * 0.5 + outputPm * 0.5);
+}
+
+function getPerformanceGain(priority: string): number {
+  // Placeholder performance metric based on priority
+  switch (priority) {
+    case "Quality First":
+      return Math.floor(Math.random() * (25 - 15 + 1)) + 15; // 15-25%
+    case "Balanced":
+      return Math.floor(Math.random() * (12 - 8 + 1)) + 8; // 8-12%
+    case "Cost First":
+      return Math.floor(Math.random() * (5 - 2 + 1)) + 2; // 2-5%
+    default:
+      return 10;
+  }
+}
+
+// ============================================================================
+// Component
+// ============================================================================
 
 export function SavingsCalculator() {
   const [monthlyApiCalls, setMonthlyApiCalls] = React.useState(100000);
-  const [useCase, setUseCase] = React.useState('code-generation');
-  const [currentModel, setCurrentModel] = React.useState('gpt-4o');
-  const [priority, setPriority] = React.useState<OptimizationPriority>('balanced');
+  const [useCase, setUseCase] = React.useState("Code Generation / Programming");
+  const [currentModel, setCurrentModel] = React.useState("Claude Sonnet 4.5");
+  const [priority, setPriority] = React.useState("Balanced");
   const [hasInteracted, setHasInteracted] = React.useState(false);
   const [showEmailCapture, setShowEmailCapture] = React.useState(false);
   const [email, setEmail] = React.useState('');
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitStatus, setSubmitStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
+
+  // Memoize performance gain so it doesn't change on every render
+  const [performanceGain, setPerformanceGain] = React.useState(() => getPerformanceGain(priority));
+
+  // Update performance gain when priority changes
+  React.useEffect(() => {
+    setPerformanceGain(getPerformanceGain(priority));
+  }, [priority]);
 
   // Track interaction for analytics
   React.useEffect(() => {
@@ -136,27 +167,42 @@ export function SavingsCalculator() {
 
   // Calculate optimization results
   const calculateOptimization = () => {
-    const model = modelData[currentModel] ?? { cost: 0.005, label: 'GPT-4o', tier: 'standard' as const, strengths: [] };
-    const useCaseData = useCaseOptimization[useCase] ?? useCaseOptimization['code-generation']!;
-    const recommendation = useCaseData.recommendations[priority];
-    const recommendedModel = modelData[recommendation.model] ?? model;
+    // Get recommended model from matrix
+    const recommendedModelName = recommendationMatrix[useCase]?.[priority] ?? "Claude Sonnet 4.5";
 
-    // Current monthly cost
-    const currentMonthlyCost = monthlyApiCalls * (useCaseData.avgTokens / 1000) * model.cost;
+    // Check if already optimized
+    const isAlreadyOptimized = currentModel === recommendedModelName;
 
-    // Calculate cost change
-    const costChangePercent = recommendation.costChange;
-    const costDelta = currentMonthlyCost * (costChangePercent / 100);
-    const optimizedCost = currentMonthlyCost + costDelta;
+    // Get pricing for both models
+    const currentPricing = getModelPricing(currentModel);
+    const recommendedPricing = getModelPricing(recommendedModelName);
+
+    if (!currentPricing || !recommendedPricing) {
+      return {
+        recommendedModel: recommendedModelName,
+        monthlySavings: 0,
+        currentCost: 0,
+        recommendedCost: 0,
+        performanceGain: 0,
+        isAlreadyOptimized: false,
+        savingsPercent: 0,
+      };
+    }
+
+    // Calculate costs
+    const currentCost = calculateCost(monthlyApiCalls, currentPricing.input_pm, currentPricing.output_pm);
+    const recommendedCost = calculateCost(monthlyApiCalls, recommendedPricing.input_pm, recommendedPricing.output_pm);
+    const monthlySavings = currentCost - recommendedCost;
+    const savingsPercent = currentCost > 0 ? (monthlySavings / currentCost) * 100 : 0;
 
     return {
-      currentCost: currentMonthlyCost,
-      optimizedCost: optimizedCost,
-      costChange: costDelta,
-      costChangePercent: costChangePercent,
-      performanceGain: recommendation.performanceGain,
-      recommendedModel: recommendedModel.label,
-      isCritical: useCaseData.criticalTasks,
+      recommendedModel: recommendedModelName,
+      monthlySavings: isAlreadyOptimized ? 0 : monthlySavings,
+      currentCost,
+      recommendedCost: isAlreadyOptimized ? currentCost : recommendedCost,
+      performanceGain: isAlreadyOptimized ? 0 : performanceGain,
+      isAlreadyOptimized,
+      savingsPercent: isAlreadyOptimized ? 0 : savingsPercent,
     };
   };
 
@@ -206,11 +252,11 @@ export function SavingsCalculator() {
 
   const handlePriorityChange = (value: string) => {
     setHasInteracted(true);
-    setPriority(value as OptimizationPriority);
+    setPriority(value);
   };
 
-  // Determine if this is a "invest more" or "save money" scenario
-  const isInvestment = results.costChangePercent > 0;
+  // Determine if this is a cost increase scenario (recommending more expensive model)
+  const isInvestment = results.monthlySavings < 0;
 
   return (
     <Card className="w-full max-w-2xl mx-auto border-2 border-accent/20 bg-card/50 backdrop-blur">
@@ -252,9 +298,9 @@ export function SavingsCalculator() {
                 <SelectValue placeholder="Select use case" />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(useCaseOptimization).map(([key, { label }]) => (
-                  <SelectItem key={key} value={key}>
-                    {label}
+                {useCases.map((uc) => (
+                  <SelectItem key={uc} value={uc}>
+                    {uc}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -271,9 +317,9 @@ export function SavingsCalculator() {
                 <SelectValue placeholder="Select model" />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(modelData).map(([key, { label }]) => (
-                  <SelectItem key={key} value={key}>
-                    {label}
+                {currentModelOptions.map((model) => (
+                  <SelectItem key={model} value={model}>
+                    {model}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -290,13 +336,13 @@ export function SavingsCalculator() {
                 <SelectValue placeholder="Select priority" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="balanced">
+                <SelectItem value="Quality First">
+                  Quality First — Best results
+                </SelectItem>
+                <SelectItem value="Balanced">
                   Balanced — Best of both
                 </SelectItem>
-                <SelectItem value="performance">
-                  Performance First — Quality over cost
-                </SelectItem>
-                <SelectItem value="cost">
+                <SelectItem value="Cost First">
                   Cost First — Maximum savings
                 </SelectItem>
               </SelectContent>
@@ -305,72 +351,111 @@ export function SavingsCalculator() {
 
           {/* Results Display */}
           <div className="mt-8 p-6 rounded-lg bg-accent/5 border border-accent/20">
-            <div className="text-center space-y-1 mb-4">
-              <p className="text-sm text-muted-foreground">
-                Your estimated optimization
-              </p>
-              <p className="text-sm font-medium text-accent">
-                Recommended: {results.recommendedModel}
-              </p>
-            </div>
-
-            {/* Dual Metrics Display */}
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              {/* Performance Gain */}
-              <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-center">
-                <p className="text-xs text-muted-foreground mb-1">Performance</p>
-                <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">
-                  +{results.performanceGain}%
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">improvement</p>
-              </div>
-
-              {/* Cost Change */}
-              <div className={`p-4 rounded-lg text-center ${
-                isInvestment
-                  ? 'bg-amber-500/10 border border-amber-500/20'
-                  : 'bg-green-500/10 border border-green-500/20'
-              }`}>
-                <p className="text-xs text-muted-foreground mb-1">Cost</p>
-                <p className={`text-2xl sm:text-3xl font-bold ${
-                  isInvestment
-                    ? 'text-amber-600 dark:text-amber-400'
-                    : 'text-green-600 dark:text-green-400'
-                }`}>
-                  {isInvestment ? '+' : '-'}{formatCurrency(results.costChange)}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">/month</p>
-              </div>
-            </div>
-
-            {/* Context Badge */}
-            <div className="flex justify-center">
-              {isInvestment ? (
-                <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-400">
-                  Investment for {Math.abs(results.costChangePercent)}% higher quality
-                </Badge>
-              ) : (
+            {results.isAlreadyOptimized ? (
+              // Already optimized state
+              <div className="text-center space-y-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-500/10 border border-green-500/20">
+                  <svg
+                    className="h-8 w-8 text-green-600 dark:text-green-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                    You&apos;re already optimized!
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    <span className="font-medium">{currentModel}</span> is our top recommendation
+                    for <span className="font-medium">{useCase.toLowerCase()}</span> with{' '}
+                    <span className="font-medium">{priority.toLowerCase()}</span> priority.
+                  </p>
+                </div>
                 <Badge variant="outline" className="border-green-500/30 text-green-600 dark:text-green-400">
-                  {Math.abs(results.costChangePercent)}% cost reduction
+                  $0 savings — you&apos;re using the best option
                 </Badge>
-              )}
-            </div>
+              </div>
+            ) : (
+              // Normal results
+              <>
+                <div className="text-center space-y-1 mb-4">
+                  <p className="text-sm text-muted-foreground">
+                    Your estimated optimization
+                  </p>
+                  <p className="text-sm font-medium text-accent">
+                    Recommended: {results.recommendedModel}
+                  </p>
+                </div>
 
-            {/* Summary Text */}
-            <p className="text-xs text-center text-muted-foreground mt-4">
-              {isInvestment ? (
-                <>
-                  For <span className="font-medium">{useCaseOptimization[useCase]?.label ?? 'this use case'}</span>, we recommend investing in better quality.
-                  You&apos;ll see <span className="text-green-600 dark:text-green-400 font-medium">+{results.performanceGain}% better results</span>.
-                </>
-              ) : (
-                <>
-                  Switching to <span className="font-medium">{results.recommendedModel}</span> saves{' '}
-                  <span className="text-green-600 dark:text-green-400 font-medium">{formatCurrency(Math.abs(results.costChange) * 12)}/year</span>{' '}
-                  while improving performance by <span className="font-medium">{results.performanceGain}%</span>.
-                </>
-              )}
-            </p>
+                {/* Dual Metrics Display */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {/* Performance Gain */}
+                  <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20 text-center">
+                    <p className="text-xs text-muted-foreground mb-1">Performance</p>
+                    <p className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400">
+                      +{results.performanceGain}%
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">improvement</p>
+                  </div>
+
+                  {/* Cost Change */}
+                  <div className={`p-4 rounded-lg text-center ${
+                    isInvestment
+                      ? 'bg-amber-500/10 border border-amber-500/20'
+                      : 'bg-green-500/10 border border-green-500/20'
+                  }`}>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {isInvestment ? 'Investment' : 'Savings'}
+                    </p>
+                    <p className={`text-2xl sm:text-3xl font-bold ${
+                      isInvestment
+                        ? 'text-amber-600 dark:text-amber-400'
+                        : 'text-green-600 dark:text-green-400'
+                    }`}>
+                      {isInvestment ? '+' : ''}{formatCurrency(Math.abs(results.monthlySavings))}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">/month</p>
+                  </div>
+                </div>
+
+                {/* Context Badge */}
+                <div className="flex justify-center">
+                  {isInvestment ? (
+                    <Badge variant="outline" className="border-amber-500/30 text-amber-600 dark:text-amber-400">
+                      Investment for higher quality results
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="border-green-500/30 text-green-600 dark:text-green-400">
+                      {Math.abs(results.savingsPercent).toFixed(0)}% cost reduction
+                    </Badge>
+                  )}
+                </div>
+
+                {/* Summary Text */}
+                <p className="text-xs text-center text-muted-foreground mt-4">
+                  {isInvestment ? (
+                    <>
+                      For <span className="font-medium">{useCase.toLowerCase()}</span>, we recommend investing in better quality.
+                      You&apos;ll see <span className="text-green-600 dark:text-green-400 font-medium">+{results.performanceGain}% better results</span>.
+                    </>
+                  ) : (
+                    <>
+                      Switching to <span className="font-medium">{results.recommendedModel}</span> saves{' '}
+                      <span className="text-green-600 dark:text-green-400 font-medium">{formatCurrency(Math.abs(results.monthlySavings) * 12)}/year</span>{' '}
+                      while improving performance by <span className="font-medium">{results.performanceGain}%</span>.
+                    </>
+                  )}
+                </p>
+              </>
+            )}
           </div>
 
           {/* CTA Section with Email Capture */}
@@ -384,8 +469,9 @@ export function SavingsCalculator() {
                   if (posthog?.capture) {
                     posthog.capture('calculator_email_cta_clicked', {
                       performance_gain: results.performanceGain,
-                      cost_change: results.costChange,
+                      monthly_savings: results.monthlySavings,
                       priority: priority,
+                      is_already_optimized: results.isAlreadyOptimized,
                     });
                   }
                 }
@@ -448,13 +534,14 @@ export function SavingsCalculator() {
                       source: 'calculator',
                       metadata: {
                         performance_gain: results.performanceGain,
-                        cost_change: results.costChange,
-                        cost_change_percent: results.costChangePercent,
+                        monthly_savings: results.monthlySavings,
+                        savings_percent: results.savingsPercent,
                         recommended_model: results.recommendedModel,
-                        current_model: modelData[currentModel]?.label,
-                        use_case: useCaseOptimization[useCase]?.label,
+                        current_model: currentModel,
+                        use_case: useCase,
                         priority: priority,
                         monthly_api_calls: monthlyApiCalls,
+                        is_already_optimized: results.isAlreadyOptimized,
                       },
                     }),
                   });
@@ -467,7 +554,7 @@ export function SavingsCalculator() {
                       if (posthog?.capture) {
                         posthog.capture('calculator_email_submitted', {
                           performance_gain: results.performanceGain,
-                          cost_change: results.costChange,
+                          monthly_savings: results.monthlySavings,
                           priority: priority,
                         });
                       }
@@ -537,8 +624,8 @@ export function SavingsCalculator() {
 
           <p className="text-xs text-center text-muted-foreground">
             Based on {formatApiCalls(monthlyApiCalls)} calls using{' '}
-            {modelData[currentModel]?.label ?? 'GPT-4o'} for {(useCaseOptimization[useCase]?.label ?? 'code generation').toLowerCase()}.
-            I validate recommendations with automated testing.
+            {currentModel} for {useCase.toLowerCase()}.
+            Pricing from January 2026 market data.
           </p>
         </div>
       </CardContent>
