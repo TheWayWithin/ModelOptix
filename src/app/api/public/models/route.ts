@@ -20,7 +20,6 @@ export async function GET() {
         id,
         name,
         display_name,
-        provider,
         openrouter_id,
         context_length,
         providers (
