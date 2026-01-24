@@ -698,7 +698,7 @@ const modelCosts = { // per 1K tokens
 | 5.4 | Admin: Model Management | developer | p0 | ✅ complete - 2026-01-23 00:25 |
 | 5.5 | Admin: Provider Management | developer | p0 | ✅ complete - 2026-01-23 00:30 |
 | 5.6 | Admin: Trust Queue | developer | p1 | ✅ complete - 2026-01-23 |
-| 5.7 | Admin: Parameter Support | developer | p1 | pending |
+| 5.7 | Admin: Parameter Support | developer | p1 | ✅ complete - 2026-01-24 |
 | 5.8 | Admin: Editorial Overrides | developer | p0 | ✅ complete - 2026-01-23 00:35 |
 | 5.9 | Email Templates (welcome, alerts, trial, digest) | developer | p0 | ✅ complete - 2026-01-23 22:25 |
 | 5.10 | Trial Reminder Job | developer | p0 | ✅ complete - 2026-01-23 22:30 (pre-existing) |

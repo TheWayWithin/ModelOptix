@@ -18,6 +18,7 @@ import {
   X,
   Loader2,
   ClipboardList,
+  Sliders,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,7 @@ const navItems: NavItem[] = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/models', label: 'Model Catalog', icon: Database },
+  { href: '/admin/parameters', label: 'Parameters', icon: Sliders },
   { href: '/admin/trust', label: 'Trust Queue', icon: ShieldCheck },
   { href: '/admin/overrides', label: 'Editorial Overrides', icon: ShieldAlert },
   { href: '/admin/audit', label: 'Audit Logs', icon: ClipboardList },
