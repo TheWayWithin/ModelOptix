@@ -1,11 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { UseCase, CreateUseCaseInput, TASK_TYPES, TASK_TYPE_LABELS, TaskType } from '@/types/use-case';
+import {
+  UseCase,
+  CreateUseCaseInput,
+  PRIORITY_NEEDS,
+  PRIORITY_NEED_LABELS,
+  PriorityNeed,
+  INPUT_TYPES,
+  OUTPUT_TYPES,
+  InputType,
+  OutputType,
+} from '@/types/use-case';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -30,15 +41,32 @@ interface UseCaseFormProps {
   onSubmit: (data: CreateUseCaseInput) => Promise<void>;
 }
 
+const INPUT_TYPE_LABELS: Record<InputType, string> = {
+  text: 'Text',
+  code: 'Code',
+  structured: 'Structured Data',
+  multimodal: 'Multimodal (Images)',
+};
+
+const OUTPUT_TYPE_LABELS: Record<OutputType, string> = {
+  text: 'Text',
+  code: 'Code',
+  json: 'JSON',
+  classification: 'Classification',
+};
+
 export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFormProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [taskType, setTaskType] = useState<TaskType>('other');
-  const [currentMonthlyCalls, setCurrentMonthlyCalls] = useState('0');
-  const [avgInputTokens, setAvgInputTokens] = useState('1000');
-  const [avgOutputTokens, setAvgOutputTokens] = useState('500');
-  const [qualityThreshold, setQualityThreshold] = useState('80');
-  const [latencyRequirementMs, setLatencyRequirementMs] = useState('');
+  const [primaryNeed, setPrimaryNeed] = useState<PriorityNeed>('quality');
+  const [secondaryNeed, setSecondaryNeed] = useState<PriorityNeed | ''>('');
+  const [inputType, setInputType] = useState<InputType | ''>('text');
+  const [outputType, setOutputType] = useState<OutputType | ''>('text');
+  const [requiredContext, setRequiredContext] = useState('4096');
+  const [estimatedMonthlyTokens, setEstimatedMonthlyTokens] = useState('');
+  const [requiresVision, setRequiresVision] = useState(false);
+  const [requiresFunctionCalling, setRequiresFunctionCalling] = useState(false);
+  const [requiresStreaming, setRequiresStreaming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isEditing = !!useCase;
@@ -47,21 +75,27 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
     if (useCase) {
       setName(useCase.name);
       setDescription(useCase.description || '');
-      setTaskType(useCase.task_type);
-      setCurrentMonthlyCalls(useCase.current_monthly_calls.toString());
-      setAvgInputTokens(useCase.avg_input_tokens.toString());
-      setAvgOutputTokens(useCase.avg_output_tokens.toString());
-      setQualityThreshold((useCase.quality_threshold * 100).toString());
-      setLatencyRequirementMs(useCase.latency_requirement_ms?.toString() || '');
+      setPrimaryNeed(useCase.primary_need);
+      setSecondaryNeed(useCase.secondary_need || '');
+      setInputType(useCase.input_type || '');
+      setOutputType(useCase.output_type || '');
+      setRequiredContext(useCase.required_context?.toString() || '4096');
+      setEstimatedMonthlyTokens(useCase.estimated_monthly_tokens?.toString() || '');
+      setRequiresVision(useCase.requires_vision);
+      setRequiresFunctionCalling(useCase.requires_function_calling);
+      setRequiresStreaming(useCase.requires_streaming);
     } else {
       setName('');
       setDescription('');
-      setTaskType('other');
-      setCurrentMonthlyCalls('0');
-      setAvgInputTokens('1000');
-      setAvgOutputTokens('500');
-      setQualityThreshold('80');
-      setLatencyRequirementMs('');
+      setPrimaryNeed('quality');
+      setSecondaryNeed('');
+      setInputType('text');
+      setOutputType('text');
+      setRequiredContext('4096');
+      setEstimatedMonthlyTokens('');
+      setRequiresVision(false);
+      setRequiresFunctionCalling(false);
+      setRequiresStreaming(false);
     }
   }, [useCase, open]);
 
@@ -74,12 +108,15 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
       await onSubmit({
         name,
         description: description || null,
-        task_type: taskType,
-        current_monthly_calls: parseInt(currentMonthlyCalls) || 0,
-        avg_input_tokens: parseInt(avgInputTokens) || 1000,
-        avg_output_tokens: parseInt(avgOutputTokens) || 500,
-        quality_threshold: (parseInt(qualityThreshold) || 80) / 100,
-        latency_requirement_ms: latencyRequirementMs ? parseInt(latencyRequirementMs) : null,
+        primary_need: primaryNeed,
+        secondary_need: secondaryNeed || null,
+        input_type: inputType || null,
+        output_type: outputType || null,
+        required_context: parseInt(requiredContext) || 4096,
+        estimated_monthly_tokens: estimatedMonthlyTokens ? parseInt(estimatedMonthlyTokens) : null,
+        requires_vision: requiresVision,
+        requires_function_calling: requiresFunctionCalling,
+        requires_streaming: requiresStreaming,
       });
       onOpenChange(false);
     } finally {
@@ -95,8 +132,8 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
             <SheetTitle>{isEditing ? 'Edit Use Case' : 'Add Use Case'}</SheetTitle>
             <SheetDescription>
               {isEditing
-                ? 'Update the use case details and metrics.'
-                : 'Define a new AI use case with its usage patterns.'}
+                ? 'Update the use case details and requirements.'
+                : 'Define a new AI use case with its requirements.'}
             </SheetDescription>
           </SheetHeader>
           <div className="grid gap-4 py-4">
@@ -123,15 +160,35 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="task-type">Task Type *</Label>
-              <Select value={taskType} onValueChange={(value) => setTaskType(value as TaskType)}>
+              <Label htmlFor="primary-need">Primary Need *</Label>
+              <Select value={primaryNeed} onValueChange={(value) => setPrimaryNeed(value as PriorityNeed)}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select a task type" />
+                  <SelectValue placeholder="What matters most?" />
                 </SelectTrigger>
                 <SelectContent>
-                  {TASK_TYPES.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {TASK_TYPE_LABELS[type]}
+                  {PRIORITY_NEEDS.map((need) => (
+                    <SelectItem key={need} value={need}>
+                      {PRIORITY_NEED_LABELS[need]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                What&apos;s most important for this use case?
+              </p>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="secondary-need">Secondary Need</Label>
+              <Select value={secondaryNeed} onValueChange={(value) => setSecondaryNeed(value as PriorityNeed | '')}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Optional - second priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">None</SelectItem>
+                  {PRIORITY_NEEDS.filter(n => n !== primaryNeed).map((need) => (
+                    <SelectItem key={need} value={need}>
+                      {PRIORITY_NEED_LABELS[need]}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -140,68 +197,94 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="monthly-calls">Monthly Calls</Label>
-                <Input
-                  id="monthly-calls"
-                  type="number"
-                  min="0"
-                  value={currentMonthlyCalls}
-                  onChange={(e) => setCurrentMonthlyCalls(e.target.value)}
-                  placeholder="0"
-                />
+                <Label htmlFor="input-type">Input Type</Label>
+                <Select value={inputType} onValueChange={(value) => setInputType(value as InputType | '')}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INPUT_TYPES.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {INPUT_TYPE_LABELS[type]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="quality">Quality Threshold (%)</Label>
-                <Input
-                  id="quality"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={qualityThreshold}
-                  onChange={(e) => setQualityThreshold(e.target.value)}
-                  placeholder="80"
-                />
+                <Label htmlFor="output-type">Output Type</Label>
+                <Select value={outputType} onValueChange={(value) => setOutputType(value as OutputType | '')}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OUTPUT_TYPES.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {OUTPUT_TYPE_LABELS[type]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="input-tokens">Avg Input Tokens</Label>
+                <Label htmlFor="context">Required Context (tokens)</Label>
                 <Input
-                  id="input-tokens"
+                  id="context"
                   type="number"
                   min="0"
-                  value={avgInputTokens}
-                  onChange={(e) => setAvgInputTokens(e.target.value)}
-                  placeholder="1000"
+                  value={requiredContext}
+                  onChange={(e) => setRequiredContext(e.target.value)}
+                  placeholder="4096"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="output-tokens">Avg Output Tokens</Label>
+                <Label htmlFor="monthly-tokens">Est. Monthly Tokens</Label>
                 <Input
-                  id="output-tokens"
+                  id="monthly-tokens"
                   type="number"
                   min="0"
-                  value={avgOutputTokens}
-                  onChange={(e) => setAvgOutputTokens(e.target.value)}
-                  placeholder="500"
+                  value={estimatedMonthlyTokens}
+                  onChange={(e) => setEstimatedMonthlyTokens(e.target.value)}
+                  placeholder="Optional"
                 />
               </div>
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="latency">Latency Requirement (ms)</Label>
-              <Input
-                id="latency"
-                type="number"
-                min="0"
-                value={latencyRequirementMs}
-                onChange={(e) => setLatencyRequirementMs(e.target.value)}
-                placeholder="Optional - e.g., 500"
-              />
-              <p className="text-xs text-muted-foreground">
-                Leave empty if latency is not critical for this use case.
-              </p>
+            <div className="space-y-3">
+              <Label>Capabilities Required</Label>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="vision"
+                  checked={requiresVision}
+                  onCheckedChange={(checked) => setRequiresVision(checked === true)}
+                />
+                <label htmlFor="vision" className="text-sm">
+                  Vision (image input)
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="function-calling"
+                  checked={requiresFunctionCalling}
+                  onCheckedChange={(checked) => setRequiresFunctionCalling(checked === true)}
+                />
+                <label htmlFor="function-calling" className="text-sm">
+                  Function/Tool Calling
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="streaming"
+                  checked={requiresStreaming}
+                  onCheckedChange={(checked) => setRequiresStreaming(checked === true)}
+                />
+                <label htmlFor="streaming" className="text-sm">
+                  Streaming Response
+                </label>
+              </div>
             </div>
           </div>
           <SheetFooter>

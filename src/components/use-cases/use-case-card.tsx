@@ -1,10 +1,10 @@
 'use client';
 
-import { UseCase, TASK_TYPE_LABELS } from '@/types/use-case';
+import { UseCase, PRIORITY_NEED_LABELS } from '@/types/use-case';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, Pencil, Trash2, Zap, Clock } from 'lucide-react';
+import { MoreHorizontal, Pencil, Trash2, Eye, Wrench, Radio } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,13 +19,12 @@ interface UseCaseCardProps {
 }
 
 export function UseCaseCard({ useCase, onEdit, onDelete }: UseCaseCardProps) {
-  const formatNumber = (num: number) => {
+  const formatNumber = (num: number | null) => {
+    if (num === null) return 'N/A';
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
     if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
     return num.toString();
   };
-
-  const totalTokens = useCase.avg_input_tokens + useCase.avg_output_tokens;
 
   return (
     <Card>
@@ -34,7 +33,7 @@ export function UseCaseCard({ useCase, onEdit, onDelete }: UseCaseCardProps) {
           <div className="flex items-center gap-2">
             <CardTitle className="text-lg truncate">{useCase.name}</CardTitle>
             <Badge variant="secondary" className="shrink-0">
-              {TASK_TYPE_LABELS[useCase.task_type]}
+              {PRIORITY_NEED_LABELS[useCase.primary_need]}
             </Badge>
           </div>
           {useCase.description && (
@@ -66,22 +65,41 @@ export function UseCaseCard({ useCase, onEdit, onDelete }: UseCaseCardProps) {
         </DropdownMenu>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <Zap className="h-4 w-4" />
-            <span>{formatNumber(useCase.current_monthly_calls)} calls/mo</span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <span className="font-mono text-xs">{formatNumber(totalTokens)} tokens</span>
-          </div>
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <span>Quality: {(useCase.quality_threshold * 100).toFixed(0)}%</span>
-          </div>
-          {useCase.latency_requirement_ms && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Clock className="h-4 w-4" />
-              <span>{useCase.latency_requirement_ms}ms</span>
-            </div>
+        <div className="flex flex-wrap gap-3 text-sm">
+          {useCase.input_type && (
+            <span className="text-muted-foreground">
+              Input: <span className="capitalize">{useCase.input_type}</span>
+            </span>
+          )}
+          {useCase.output_type && (
+            <span className="text-muted-foreground">
+              Output: <span className="capitalize">{useCase.output_type}</span>
+            </span>
+          )}
+          {useCase.estimated_monthly_tokens && (
+            <span className="text-muted-foreground">
+              ~{formatNumber(useCase.estimated_monthly_tokens)} tokens/mo
+            </span>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2 mt-3">
+          {useCase.requires_vision && (
+            <Badge variant="outline" className="text-xs">
+              <Eye className="h-3 w-3 mr-1" />
+              Vision
+            </Badge>
+          )}
+          {useCase.requires_function_calling && (
+            <Badge variant="outline" className="text-xs">
+              <Wrench className="h-3 w-3 mr-1" />
+              Tools
+            </Badge>
+          )}
+          {useCase.requires_streaming && (
+            <Badge variant="outline" className="text-xs">
+              <Radio className="h-3 w-3 mr-1" />
+              Streaming
+            </Badge>
           )}
         </div>
       </CardContent>

@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { TASK_TYPES } from '@/types/use-case';
+import { PRIORITY_NEEDS } from '@/types/use-case';
 
 export async function GET(
   _request: NextRequest,
@@ -44,6 +44,7 @@ export async function GET(
     .order('created_at', { ascending: false });
 
   if (error) {
+    console.error('Error fetching use cases:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
@@ -89,21 +90,27 @@ export async function POST(
   const {
     name,
     description,
-    task_type,
-    current_monthly_calls,
-    avg_input_tokens,
-    avg_output_tokens,
-    quality_threshold,
-    latency_requirement_ms,
+    primary_need,
+    secondary_need,
+    tertiary_need,
+    use_equal_weights,
+    required_context,
+    estimated_monthly_tokens,
+    input_type,
+    output_type,
+    requires_vision,
+    requires_function_calling,
+    requires_streaming,
+    current_model_id,
   } = body;
 
   if (!name?.trim()) {
     return NextResponse.json({ error: 'Name is required' }, { status: 400 });
   }
 
-  if (!task_type || !TASK_TYPES.includes(task_type)) {
+  if (!primary_need || !PRIORITY_NEEDS.includes(primary_need)) {
     return NextResponse.json(
-      { error: `Invalid task type. Must be one of: ${TASK_TYPES.join(', ')}` },
+      { error: `Invalid primary need. Must be one of: ${PRIORITY_NEEDS.join(', ')}` },
       { status: 400 }
     );
   }
@@ -114,17 +121,25 @@ export async function POST(
       function_id: functionId,
       name: name.trim(),
       description: description?.trim() || null,
-      task_type,
-      current_monthly_calls: current_monthly_calls ?? 0,
-      avg_input_tokens: avg_input_tokens ?? 1000,
-      avg_output_tokens: avg_output_tokens ?? 500,
-      quality_threshold: quality_threshold ?? 0.80,
-      latency_requirement_ms: latency_requirement_ms ?? null,
+      primary_need,
+      secondary_need: secondary_need || null,
+      tertiary_need: tertiary_need || null,
+      use_equal_weights: use_equal_weights ?? false,
+      required_context: required_context ?? 4096,
+      estimated_monthly_tokens: estimated_monthly_tokens ?? null,
+      input_type: input_type || null,
+      output_type: output_type || null,
+      requires_vision: requires_vision ?? false,
+      requires_function_calling: requires_function_calling ?? false,
+      requires_streaming: requires_streaming ?? false,
+      current_model_id: current_model_id || null,
+      status: 'active',
     })
     .select()
     .single();
 
   if (error) {
+    console.error('Error creating use case:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
