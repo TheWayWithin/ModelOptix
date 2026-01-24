@@ -1,14 +1,275 @@
 # ModelOptix Handoff Notes
 
 > Current context for agent-to-agent handoff
-> Last Updated: 2026-01-21 21:45
+> Last Updated: 2026-01-24 (Migrations Deployed)
 
 ---
 
 ## Current Phase
 
-**Phase 2: Portfolio Management + Model Catalog**
-**Status**: COMPLETE (10/10 tasks complete)
+**Phase 5: Polish, Admin & Launch** - IN PROGRESS (12/14 tasks complete)
+
+---
+
+## Latest Session - 2026-01-24 (Sentry Setup)
+
+### Task 5.11: Sentry + PostHog Integration ✅
+
+**Sentry Configured:**
+- Created Sentry project "modeloptix" in org "the-way-within"
+- Added 4 environment variables to both Production and Staging:
+  - SENTRY_DSN
+  - SENTRY_ORG
+  - SENTRY_PROJECT
+  - SENTRY_AUTH_TOKEN
+- Both environments deployed
+
+**PostHog:** Already working (configured previously)
+
+---
+
+## Previous Session - 2026-01-23 23:15 (Audit Log Infrastructure)
+
+### Task 5.13: Audit Log Infrastructure ✅
+
+**Files Created:**
+- `supabase/migrations/005_audit_logs.sql` - Table, enums, indexes, RLS
+- `src/types/audit.ts` - TypeScript types and constants
+- `src/lib/audit/index.ts` - Audit service with logging + query functions
+- `src/app/api/admin/audit/route.ts` - API with filters + CSV export
+- `src/app/admin/audit/page.tsx` - Admin UI with filtering, pagination, diff viewer
+
+**Key Features:**
+- 20 audit action types, 7 entity types
+- Before/after state tracking with JSON diff
+- 2-year retention policy for compliance
+- CSV export for compliance audits
+- IP address + user agent logging
+
+**Migration Status:**
+- [x] Deploy `006_audit_logs.sql` to Staging - 2026-01-24
+- [x] Deploy `006_audit_logs.sql` to Production - 2026-01-24
+
+---
+
+## Previous Session - 2026-01-23 23:00 (Performance + Security Review)
+
+### Task 5.12: Performance + Security Review ✅
+
+**Security Review:**
+- Authentication: A (middleware protects routes, rate limiting, CSRF)
+- Authorization: A (admin checks at middleware + API level, RLS enforced)
+- Input Validation: A (Supabase parameterized queries, TypeScript)
+- Secrets: A (all secrets server-side only)
+- Webhooks: A (Stripe signature verification)
+
+**Fix Applied:**
+- Added security headers to `next.config.mjs`:
+  - HSTS, X-Frame-Options, X-Content-Type-Options
+  - Referrer-Policy, Permissions-Policy
+
+**Performance Review:**
+- Bundle size: A (200 kB shared, acceptable)
+- Database: A (parallel queries, proper projections)
+- RSC: A (proper client/server separation)
+
+**Verdict: Production Ready**
+
+---
+
+## Previous Session - 2026-01-23 22:25 (Email Templates)
+
+### Task 5.9: Email Templates ✅
+
+**React Email System Created:**
+- `src/emails/components/` - Shared components (header, footer, button, card)
+- `src/emails/welcome.tsx` - Welcome email
+- `src/emails/alert.tsx` - Opportunity/cost alert email
+- `src/emails/trial-reminder.tsx` - Trial expiration reminder
+- `src/emails/weekly-digest.tsx` - Weekly digest for free tier
+
+**Dependencies Added:**
+- `@react-email/components` ^1.0.6
+- `react-email` ^5.2.5
+
+**Note:** Existing HTML templates in `src/lib/email/templates.ts` remain functional. React Email templates are an enhancement providing:
+- Reusable React components
+- Better maintainability
+- Preview capability
+
+---
+
+## Previous Session - 2026-01-23 (Phase 5 Progress)
+
+### Tasks Completed:
+
+**Task 5.1: Savings Tracking (F-017, F-018)** ✅
+- `supabase/migrations/004_savings_tracking.sql` - New table with RLS
+- `src/types/savings.ts` - TypeScript interfaces
+- `src/lib/savings/record-savings.ts` - Server logic
+- `src/app/api/savings/route.ts` - API endpoint
+- `src/components/savings/SavingsSummaryCard.tsx` - Dashboard card
+- `src/app/(dashboard)/savings/page.tsx` - Detail page with CSV export
+
+**Task 5.3: Admin Dashboard** ✅
+- `src/app/api/admin/stats/route.ts` - Platform stats API (service role)
+- `src/app/admin/page.tsx` - Full dashboard with real-time metrics
+
+**Task 5.4: Admin Model Management** ✅
+- `src/app/api/admin/models/route.ts` - GET (list + search + pagination) + PATCH (update)
+- `src/app/admin/models/page.tsx` - Model catalog table with edit modal
+- `src/components/ui/dialog.tsx` - New shadcn/ui dialog component
+- `src/components/ui/switch.tsx` - New shadcn/ui switch component
+- Added `@radix-ui/react-switch` dependency
+
+**Task 5.5: Admin Provider Management** ✅
+- `src/app/api/admin/providers/route.ts` - GET (list + search + model counts) + PATCH (update)
+- `src/app/admin/providers/page.tsx` - Provider table with edit modal
+
+**Task 5.8: Admin Editorial Overrides** ✅
+- `src/app/api/admin/editorial-overrides/route.ts` - Full CRUD (GET/POST/PATCH/DELETE)
+- `src/app/admin/editorial-overrides/page.tsx` - Override management with create/edit/delete
+
+**Task 5.2: Notification Preferences** ✅
+- `src/app/api/settings/notifications/route.ts` - GET/POST/DELETE for preferences
+- Updated `src/app/(dashboard)/dashboard/settings/page.tsx` - Full notification controls
+
+**Task 5.6: Admin Trust Queue** ✅
+- `src/app/admin/trust/page.tsx` - Trust queue page with search, filters, progress tracking
+- `src/components/admin/trust-score-editor.tsx` - Modal for editing 8 trust dimensions
+- `src/app/api/admin/trust/route.ts` - GET (list models) + POST (create scores)
+- `src/app/api/admin/trust/[modelId]/route.ts` - GET/PUT for model-specific scores
+- `src/types/trust.ts` - Updated with 8 dimensions matching DB schema + admin types
+- `src/app/admin/layout.tsx` - Added Trust Queue to admin nav
+- 8 trust dimensions: data_handling, transparency, security, reliability, consistency, safety, accuracy, cost_stability
+- Each dimension has: score (0-100), confidence, evidence, source_url, notes
+- Audit trail via reviewed_by and reviewed_at fields
+
+### Features Implemented:
+- **Dashboard**: Real-time platform metrics, user counts, value delivered
+- **Models**: Paginated list, search, edit (name, description, context length, active toggle)
+- **Providers**: Paginated list, search, edit (name, slug, trust tier, status, HQ, docs URL)
+- **Editorial Overrides**: Full CRUD, three types (exclude/downrank/flag), severity levels, expiration dates
+
+### Migration Status:
+- [x] Deploy 004_savings_tracking.sql to Staging - 2026-01-24
+- [x] Deploy 004_savings_tracking.sql to Production - 2026-01-24
+- [x] Deploy 005_trial_reminder_tracking.sql to Staging - 2026-01-24
+- [x] Deploy 005_trial_reminder_tracking.sql to Production - 2026-01-24
+
+### Verification:
+- ✅ Build passes
+- ✅ All files verified on filesystem
+
+---
+
+## Previous Session - 2026-01-22 (Payment E2E Tests)
+
+### Session Summary
+
+Created comprehensive Playwright E2E tests for payment user journeys. Fixed critical hydration/bundling bugs discovered during testing.
+
+### Tests Created (11 passing, 4 skipped):
+
+**tests/e2e/payments.spec.ts** (314 lines)
+- 6 Pricing Page tests (display, toggle, pricing, CTAs, trust elements)
+- 2 Checkout Flow tests (unauthenticated redirects to signup)
+- 3 Checkout Callback tests (success, cancel, error handling)
+- 4 skipped tests (require TEST_USER_EMAIL/PASSWORD credentials)
+
+### Critical Bugs Fixed:
+
+**1. Stripe SDK Client Bundling Issue** 🚨
+- **Symptom**: Hydration error "Neither apiKey nor config.authenticator provided"
+- **Root Cause**: `@/lib/stripe/index.ts` re-exported `client.ts` which initializes Stripe SDK at module load with server-only `STRIPE_SECRET_KEY`. Client components importing from `@/lib/stripe` bundled the SDK.
+- **Fix**: Modified `src/lib/stripe/index.ts` to only export types/config. API routes import from `@/lib/stripe/client` directly.
+
+**2. Middleware Missing Stripe Endpoints**
+- Added `/api/checkout/success` and `/api/webhooks` to PUBLIC_API_ROUTES
+
+**3. PostHog SSR Issues**
+- Refactored to dynamic imports with `src/components/posthog-wrapper.tsx`
+
+### Files Modified:
+- `src/lib/stripe/index.ts` - Critical: removed client.ts re-export
+- `src/middleware.ts` - Added Stripe public routes
+- `src/components/posthog-provider.tsx` - Dynamic import
+- All Stripe API routes - Changed imports to `@/lib/stripe/client`
+
+### Verification:
+- ✅ 11 tests pass, 4 skipped (need test credentials)
+- ✅ Build passes
+- ✅ Pushed to develop (staging.modeloptix.com)
+
+---
+
+## Phase 4 Summary (COMPLETE)
+
+All 11 monetization tasks completed:
+- Stripe integration with checkout flow
+- Trial flow (7-day, card upfront)
+- 6 webhook handlers for subscription lifecycle
+- Customer Portal integration
+- Settings page (profile + subscription management)
+- Tier limits enforced (products: 1/3/10/unlimited, sanity checks: 3/10/30/100/500)
+- E2E tests for payment journeys
+
+---
+
+## Remaining Phase 5 Tasks
+
+### P0 Tasks (Must Have):
+| ID | Task | Description | Status |
+|----|------|-------------|--------|
+| 5.1 | Savings Tracking | Track savings from model switches (F-017, F-018) | ✅ DONE |
+| 5.2 | Notification Preferences | User settings for alerts/emails (F-023) | pending |
+| 5.3 | Admin Dashboard | Platform overview metrics | ✅ DONE |
+| 5.3 | Admin Dashboard | Admin panel home page |
+| 5.4 | Admin: Model Management | CRUD for models |
+| 5.5 | Admin: Provider Management | CRUD for providers |
+| 5.8 | Admin: Editorial Overrides | Manual recommendation adjustments |
+| 5.9 | Email Templates | Welcome, alerts, trial reminders, digest |
+| 5.10 | Trial Reminder Job | Email job for trial expiring users |
+| 5.11 | Sentry + PostHog Integration | Error tracking + analytics |
+| 5.12 | Performance + Security Review | Optimization and security audit |
+| 5.14 | Stripe Live Mode Setup | Switch from test to live keys |
+
+### P1 Tasks (Nice to Have):
+| ID | Task | Description |
+|----|------|-------------|
+| 5.6 | Admin: Trust Queue | ✅ DONE - Trust score review workflow |
+| 5.7 | Admin: Parameter Support | Parameter support matrix management |
+| 5.13 | Audit Log Infrastructure | 2-year retention for compliance |
+
+### Recommended Starting Point:
+- **5.1 Savings Tracking** - User-visible value, shows ROI
+- OR **5.3-5.5 Admin Dashboard** - Operational tools for managing data
+
+---
+
+## Key Files Created in Phase 3
+
+### Recommendation Engine
+- `src/lib/recommendations/fit-score.ts` - FitScore calculation
+- `src/lib/recommendations/weights.ts` - Weight system
+- `src/lib/recommendations/opportunity-generator.ts` - Opportunity generation
+
+### Sanity Check
+- `src/lib/sanity-check/service.ts` - OpenRouter integration
+- `src/lib/sanity-check/quota.ts` - Quota enforcement
+- `src/components/sanity-check/` - Form, results, evaluation, quota display
+
+### Opportunities
+- `src/app/api/opportunities/` - List and detail endpoints
+- `src/components/opportunities/` - Card, list, detail, filters
+
+### Trust
+- `src/types/trust.ts` - Trust types and helpers
+- `src/app/(dashboard)/trust/` - Trust dashboard pages
+
+### Guest Flow
+- `src/lib/guest-session.ts` - Token management
+- `src/app/try/` - Public sanity check page
 
 ---
 
@@ -211,20 +472,21 @@
 3. Manual testing: calculator, mobile, page load time
 4. If all good, merge to `main` for production
 
-### Ready for Next Task (Phase 2)
+### Ready for Next Phase (Phase 4: Monetization)
 
-| Task | Agent | Status |
-|------|-------|--------|
-| 2.1: Product CRUD | developer | ✅ complete |
-| 2.2: Function CRUD | developer | ✅ complete |
-| 2.3: Use Case CRUD | developer | ✅ complete |
-| 2.4: Portfolio Quick Start | developer | ✅ complete |
-| 2.5: Model Catalog Sync Job | developer | ✅ complete |
-| 2.6: Pricing + Benchmark Sync Jobs | developer | ✅ complete |
-| 2.7: Model List UI | developer | ✅ complete |
-| 2.8: Model Detail Page | developer | ✅ complete |
-| 2.9: Model Comparison | developer | pending |
-| 2.10: Dashboard Home | developer | pending |
+| Task | Agent | Priority | Status |
+|------|-------|----------|--------|
+| 4.1: Stripe Product + Price Setup | developer | p0 | pending |
+| 4.2: Checkout Session API | developer | p0 | pending |
+| 4.3: Pricing Page UI | developer | p0 | pending |
+| 4.4: Customer Portal Integration | developer | p0 | pending |
+| 4.5: Webhook Handlers | developer | p0 | pending |
+| 4.6: Subscription Status Sync | developer | p0 | pending |
+| 4.7: Trial Period Logic | developer | p0 | pending |
+| 4.8: Usage-Based Billing | developer | p1 | pending |
+| 4.9: Invoice History | developer | p1 | pending |
+| 4.10: Payment Method Management | developer | p1 | pending |
+| 4.11: End-to-End Onboarding Funnel | developer | p0 | pending |
 
 ---
 

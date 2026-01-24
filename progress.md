@@ -7,6 +7,23 @@
 
 ## Session Log
 
+### 2026-01-24 - Migrations Deployed
+
+**Action**: Deployed pending database migrations to Staging and Production
+
+**Migrations Applied:**
+- `004_savings_tracking.sql` - Savings records table with RLS
+- `005_trial_reminder_tracking.sql` - Trial reminder tracking column
+- `006_audit_logs.sql` - Audit log infrastructure (renamed from 005)
+
+**Environments:**
+- [x] Staging (ModelOptix-Staging)
+- [x] Production (ModelOptix)
+
+**Note**: Migration 004 was already applied to Staging previously (policies existed).
+
+---
+
 ### 2026-01-17 - Initial Session
 
 **Mission**: `/coord continue` - Begin MVP development from Phase 0
@@ -1637,3 +1654,1303 @@ Per user request, this P2 task was skipped. Calculator and case study deliver mo
 - ✅ Model browsing and comparison working
 
 **Next Phase:** Phase 3 - Core Value Loop (recommendations, sanity checks)
+
+---
+
+## Phase 3: Core Value Loop
+
+### Phase Start - 2026-01-21 23:00
+
+**Objective**: Deliver the "aha moment" - FitScore recommendations and Sanity Checks.
+
+**Tasks:**
+- [x] Task 3.1: Recommendation Engine - FitScore calculation - 2026-01-21 23:27
+- [x] Task 3.2: Recommendation Engine - Weight system - 2026-01-21 23:27
+- [x] Task 3.3: Editorial Overrides integration - 2026-01-21 23:27
+- [x] Task 3.4: Opportunity Generation Job - 2026-01-21 23:35
+- [x] Task 3.5: Opportunities List UI (F-009) - 2026-01-21 23:50
+- [x] Task 3.6: Opportunity Detail UI (F-010) - 2026-01-21 23:55
+- [ ] Task 3.7: Sanity Check - OpenRouter integration
+- [ ] Task 3.8: Sanity Check UI (F-011)
+- [ ] Task 3.9: Guest Sanity Check flow
+- [ ] Task 3.10: Act on Opportunity + Savings Recording
+- [ ] Task 3.11: Dismiss Opportunity
+- [ ] Task 3.12: Trust Dashboard (F-014, F-015, F-016)
+- [ ] Task 3.13: Parameter Translation Layer
+- [ ] Task 3.14: Migration Diff UI
+- [ ] Task 3.15: Sanity Check Quota + Cost Guardrails
+
+---
+
+### 2026-01-21 23:27 - Tasks 3.1, 3.2, 3.3: FitScore + Weight System + Editorial Complete
+
+**Files Created:**
+- `src/types/recommendation.ts` (4.1KB) - TypeScript types for recommendation engine
+- `src/lib/recommendations/weights.ts` (4.6KB) - Weight system configuration (55/22/12/7/4 ranked)
+- `src/lib/recommendations/thresholds.ts` (2.9KB) - Configurable thresholds and constants
+- `src/lib/recommendations/editorial.ts` (4.3KB) - Editorial override integration
+- `src/lib/recommendations/fit-score.ts` (9.4KB) - Core FitScore calculation algorithm
+- `src/lib/recommendations/index.ts` (1.7KB) - Barrel export
+
+**Architecture Implemented:**
+- Five scoring factors: cost, speed, quality, trust, context
+- Weight distribution: Primary 55%, Secondary 22%, Tertiary 12%, Fourth 7%, Fifth 4%
+- Equal weights mode: 20% each
+- Trust tier scores: A=1.0, B=0.7, C=0.4, unknown=0.2
+- Editorial overrides: exclude (score=0), downrank (50% penalty), flag (UI warning)
+
+**Key Functions:**
+- `calculateFitScore()` - Main scoring algorithm with editorial integration
+- `calculateWeights()` - Convert user priorities to weight config
+- `calculateImprovement()` - Compare two models' scores
+- `generateRecommendationReasons()` - Human-readable explanation
+
+**Verification:**
+- ✅ Files verified on filesystem: 6 files created (27KB total)
+- ✅ Follows architecture.md Section 4 specification
+
+---
+
+### 2026-01-21 23:35 - Task 3.4: Opportunity Generation Job Complete
+
+**Files Created:**
+- `src/lib/recommendations/opportunity-generator.ts` (21.2KB) - Core opportunity generation logic
+- `src/lib/jobs/generate-opportunities.ts` (1.7KB) - Cron job wrapper
+
+**Files Modified:**
+- `src/lib/jobs/index.ts` - Added export for generateOpportunities
+- `src/instrumentation.ts` - Added 5am UTC cron schedule
+
+**Key Features:**
+- Normalization range caching (5-minute TTL)
+- Fetches active use cases with joined function/product data
+- Fetches available models with pricing and provider trust tier
+- Handles editorial overrides (exclude/downrank/flag)
+- Compares current model FitScore to all alternatives
+- Creates opportunities when improvement > 10%
+- Stores evidence JSONB with full comparison data
+- Determines opportunity type: cost_saving, speed_improvement, quality_upgrade, trust_upgrade, general_improvement
+- Estimates monthly savings based on 1M tokens/month
+
+**Schedule:**
+- Daily at 5am UTC (runs after model/pricing sync at 2-4am)
+- Uses job locking to prevent concurrent execution
+
+**Verification:**
+- ✅ Files verified on filesystem: 2 new files, 2 modified
+- ✅ Cron schedule registered in instrumentation.ts
+
+---
+
+### 2026-01-21 23:50 - Task 3.5: Opportunities List UI (F-009) Complete
+
+**Files Created:**
+- `src/types/opportunity.ts` (4.2KB) - UI-focused opportunity types, status helpers, formatting functions
+- `src/app/api/opportunities/route.ts` (7.6KB) - GET endpoint with filtering, sorting, pagination
+- `src/components/opportunities/opportunity-card.tsx` (5.0KB) - Card displaying opportunity details
+- `src/components/opportunities/opportunity-filters.tsx` (7.9KB) - URL-based filter controls
+- `src/components/opportunities/opportunity-list.tsx` (6.2KB) - Fetches and displays opportunities
+- `src/components/opportunities/index.ts` (356B) - Barrel export
+- `src/app/(dashboard)/opportunities/page.tsx` (2.8KB) - Dashboard page with auth check
+- `src/app/(dashboard)/opportunities/opportunities-content.tsx` (3.0KB) - Client content with dismiss dialog
+
+**Key Features:**
+- GET /api/opportunities with filters: status, use_case_id, opportunity_type, min_improvement
+- Sorting: improvement%, savings, created_at (asc/desc)
+- Pagination support
+- Joins use_cases → functions → products for user filtering (RLS)
+- Joins models for current/recommended model details
+- OpportunityCard shows: use case name, improvement %, model comparison, recommendation reason
+- URL-based filter state management (useSearchParams)
+- Empty state, loading skeleton, error handling
+- Dismiss confirmation dialog (API not yet implemented - Task 3.11)
+
+**Verification:**
+- ✅ Files verified on filesystem: 8 new files
+- ✅ TypeScript compiles without errors (tsc --noEmit)
+
+---
+
+### 2026-01-21 23:55 - Task 3.6: Opportunity Detail UI (F-010) Complete
+
+**Files Created:**
+- `src/app/api/opportunities/[id]/route.ts` (8.0KB) - GET single opportunity, PATCH status
+- `src/app/(dashboard)/opportunities/[id]/page.tsx` (4.6KB) - Server component with auth
+- `src/app/(dashboard)/opportunities/[id]/loading.tsx` (4.3KB) - Loading skeleton
+- `src/app/(dashboard)/opportunities/[id]/not-found.tsx` (972B) - 404 handling
+- `src/components/opportunities/opportunity-detail.tsx` (20.5KB) - Full detail component
+
+**Files Modified:**
+- `src/types/opportunity.ts` - Added OpportunityEvidence interface, expanded ModelSummary
+- `src/components/opportunities/index.ts` - Added OpportunityDetail export
+
+**Key Features:**
+- GET /api/opportunities/[id] with ownership verification via use_case → function → product
+- PATCH /api/opportunities/[id] for status updates (accept, dismiss, restore)
+- Model comparison cards: current vs recommended with pricing diffs
+- Factor score comparison chart (cost, speed, quality, trust, context)
+- Visual FitScore bars from evidence JSONB
+- Recommendation reasons with checkmarks
+- Trade-offs section with warning icons
+- Accept/Dismiss/Restore action buttons
+- Loading skeleton and 404 handling
+
+**Verification:**
+- ✅ Files verified on filesystem: 5 new files, 2 modified
+- ✅ TypeScript compiles without errors
+
+---
+
+### 2026-01-22 00:10 - Task 3.7: Sanity Check - OpenRouter Integration Complete
+
+**Files Created:**
+- `src/types/sanity-check.ts` (3.2KB) - Sanity check types: status, preference, request/response interfaces
+- `src/lib/sanity-check/service.ts` (9.5KB) - Orchestration service for sanity checks
+- `src/lib/sanity-check/index.ts` (237B) - Barrel export
+- `src/app/api/sanity-checks/route.ts` (4.2KB) - POST endpoint to create/run sanity check
+- `src/app/api/sanity-checks/[id]/route.ts` (4.8KB) - GET detail, PATCH evaluation
+
+**Files Modified:**
+- `src/lib/openrouter/types.ts` - Added ChatMessage, ChatCompletionRequest, ChatCompletionResponse, ModelCompletionResult types
+- `src/lib/openrouter/client.ts` - Added `chatCompletion()` and `runSanityCheck()` functions
+
+**Key Features:**
+- `chatCompletion()` - Single model completion with latency tracking and cost calculation
+- `runSanityCheck()` - Runs both models in parallel (Promise.all) for fairness
+- `createAndRunSanityCheck()` - Fetches model details, creates DB record, runs comparison, stores results
+- `getSanityCheck()` - Retrieves sanity check with ownership verification (user_id or guest_session_id)
+- `submitEvaluation()` - Records user preference (current/recommended/neither/tie) and notes
+- POST /api/sanity-checks - Validates request, supports auth and guest sessions
+- GET /api/sanity-checks/[id] - Fetch details with ownership check
+- PATCH /api/sanity-checks/[id] - Submit evaluation for completed checks
+- Guest support: 24-hour expiry, guest_session_id tracking
+- Partial failure handling: still marks complete if one model fails
+
+**API Endpoints:**
+- `POST /api/sanity-checks` - Create and run new sanity check
+- `GET /api/sanity-checks/[id]?guest_session_id=xxx` - Get sanity check details
+- `PATCH /api/sanity-checks/[id]?guest_session_id=xxx` - Submit evaluation
+
+**Verification:**
+- ✅ Files verified on filesystem: 5 new files, 2 modified
+- ✅ TypeScript compiles without errors (tsc --noEmit)
+- ✅ Follows architecture.md Section 5 specification
+
+---
+
+### 2026-01-22 00:20 - Task 3.8: Sanity Check UI (F-011) Complete
+
+**Files Created:**
+- `src/components/sanity-check/sanity-check-form.tsx` (7.2KB) - Form with prompt input and advanced options
+- `src/components/sanity-check/sanity-check-results.tsx` (7.8KB) - Side-by-side results display
+- `src/components/sanity-check/sanity-check-evaluation.tsx` (7.0KB) - User preference submission
+- `src/components/sanity-check/index.ts` (183B) - Barrel export
+- `src/app/(dashboard)/opportunities/[id]/sanity-check/page.tsx` (1.3KB) - Server component page
+- `src/app/(dashboard)/opportunities/[id]/sanity-check/sanity-check-content.tsx` (9.4KB) - Client content with multi-stage flow
+- `src/app/(dashboard)/opportunities/[id]/sanity-check/loading.tsx` (2.6KB) - Loading skeleton
+- `src/components/ui/radio-group.tsx` - shadcn/ui component (added via npx)
+- `src/components/ui/collapsible.tsx` - shadcn/ui component (added via npx)
+
+**Files Modified:**
+- `src/components/opportunities/opportunity-detail.tsx` - Added "Run Sanity Check" button with Beaker icon
+
+**Key Features:**
+- Three-stage flow: Form → Results → Complete
+- SanityCheckForm: Prompt input with char counter, advanced options (system prompt, max tokens, temperature)
+- SanityCheckResults: Side-by-side model responses with latency, tokens, cost metrics
+- Performance comparison: Speed and cost percentage differences
+- SanityCheckEvaluation: Radio group for preference (current/recommended/tie/neither) with notes
+- Post-evaluation guidance based on user preference
+- "Run Another Test" and "Accept Recommendation" CTAs after evaluation
+- Error handling and loading states throughout
+- Mobile responsive grid layouts
+
+**UI Flow:**
+1. User clicks "Run Sanity Check" from opportunity detail page
+2. Enters test prompt and optional parameters
+3. Sees side-by-side model responses with performance metrics
+4. Submits evaluation preference
+5. Gets contextual next-step guidance
+
+**Verification:**
+- ✅ Files verified on filesystem: 9 new files, 1 modified
+- ✅ TypeScript compiles without errors (tsc --noEmit)
+- ✅ shadcn/ui components added (radio-group, collapsible)
+
+---
+
+### 2026-01-22 00:35 - Task 3.9: Guest Sanity Check Flow Complete
+
+**Files Created:**
+- `src/lib/guest-session.ts` (3.7KB) - Guest session token management (generate, hash, store, validate)
+- `src/app/api/public/models/route.ts` (2.5KB) - Public models endpoint (no auth required)
+- `src/app/try/page.tsx` (645B) - Server page with SEO metadata
+- `src/app/try/guest-sanity-check-content.tsx` (16.6KB) - Full guest sanity check flow
+
+**Key Features:**
+- Public `/try` page for unauthenticated model comparison
+- Guest session management:
+  - UUID token generation on first visit
+  - SHA-256 hashing for secure database storage
+  - 7-day TTL with localStorage persistence
+  - Token validation and expiry checking
+- Public `/api/public/models` endpoint:
+  - No authentication required
+  - Returns available models with pricing and provider info
+  - Grouped by provider for UI convenience
+- Multi-stage flow: Select Models → Enter Prompt → Results → Complete
+- Model selection UI with search, provider grouping, pricing display
+- 3 free checks limit (client-side counter - server enforcement in Task 3.15)
+- Promotional CTAs for signup after completion
+- Responsive design with feature highlights
+
+**Guest Flow:**
+1. Visit /try (no account needed)
+2. Select two models from dropdown
+3. See model details (provider, context, pricing)
+4. Enter test prompt
+5. View side-by-side results
+6. Submit evaluation preference
+7. Get signup CTA with remaining checks count
+
+**Session Contract:**
+- Token stored unhashed in localStorage
+- Token hashed (SHA-256) before sending to API
+- Database stores hashed version in `guest_session_id`
+- 7-day TTL, auto-cleanup via cron job
+
+**Verification:**
+- ✅ Files verified on filesystem: 4 new files
+- ✅ TypeScript compiles without errors (tsc --noEmit)
+- ✅ Guest session token generation works
+- ✅ Public models API returns data
+
+---
+
+### 2026-01-22 00:45 - Task 3.10 & 3.11: Act on Opportunity + Dismiss Complete
+
+**Files Modified:**
+- `src/app/api/opportunities/[id]/route.ts` - Enhanced PATCH endpoint for accept/dismiss
+- `src/components/opportunities/opportunity-detail.tsx` - Improved toast messages
+
+**Accept Opportunity Flow (Task 3.10):**
+- PATCH /api/opportunities/[id] with status: 'accepted'
+- Updates opportunity status to 'accepted' with actioned_at timestamp
+- Updates use_case.current_model_id to the recommended model
+- Expires all other active opportunities for the same use case
+- Shows success toast with estimated savings
+- Savings tracked via opportunity.estimated_monthly_savings (calculated at generation time)
+
+**Dismiss Opportunity Flow (Task 3.11):**
+- PATCH /api/opportunities/[id] with status: 'dismissed'
+- Stores optional dismiss reason
+- Shows feedback toast with restore instructions
+- Restore available: PATCH with status: 'active' clears dismissed_reason
+
+**Key Implementation Details:**
+- Prevents re-accepting already accepted opportunities (400 error)
+- Auto-expires stale opportunities when new model is accepted
+- Toast messages show model name and savings estimate
+- Error handling with descriptive messages
+
+**Verification:**
+- ✅ Files verified on filesystem: 2 modified files
+- ✅ TypeScript compiles without errors (tsc --noEmit)
+
+---
+
+### 2026-01-22 00:50 - Task 3.12: Trust Dashboard (F-014, F-015, F-016) Complete
+
+**Files Created:**
+- `src/types/trust.ts` (4.4KB) - Trust types and helper functions
+- `src/app/api/trust/route.ts` (3.4KB) - Public API for trust data
+- `src/app/(dashboard)/trust/page.tsx` (732B) - Server component page
+- `src/app/(dashboard)/trust/trust-dashboard-content.tsx` (10.2KB) - Full dashboard UI
+- `src/app/(dashboard)/trust/loading.tsx` (1.9KB) - Loading skeleton
+
+**Key Types:**
+- TrustTier: 'A' | 'B' | 'C' | 'unknown'
+- TrustDimension: data_handling, transparency, security, compliance, reliability, ethics
+- ProviderWithTrust, ModelTrustScore, TrustTierStats
+- Helper functions: getTrustTierLabel/Color/BgColor/Description, getDimensionLabel/Description
+
+**Dashboard Features:**
+- Trust philosophy banner explaining ModelOptix's trust-first approach
+- Tier overview cards showing A/B/C/unknown with provider and model counts
+- Provider table grouped by tier with model counts
+- Trust methodology section explaining 6 evaluation dimensions
+- Loading skeleton for async data
+- Shield icons differentiated by tier (ShieldCheck, Shield, ShieldAlert, ShieldQuestion)
+- Color-coded badges and backgrounds by trust tier
+
+**API Endpoint:**
+- GET /api/trust - Returns tier stats, provider list with trust tiers, total model counts
+- Public endpoint (no auth required) for viewing trust data
+- Groups providers by trust tier with model counts
+
+**Verification:**
+- ✅ Files verified on filesystem: 5 new files
+- ✅ TypeScript compiles without errors (tsc --noEmit)
+
+---
+
+### 2026-01-22 01:15 - Task 3.15: Sanity Check Quota + Cost Guardrails Complete
+
+**Files Created:**
+- `src/lib/sanity-check/quota.ts` (8.8KB) - Quota enforcement service
+- `src/app/api/sanity-checks/quota/route.ts` (1.8KB) - Quota status API endpoint
+- `src/components/sanity-check/quota-display.tsx` (6.2KB) - UI component + hook
+- `src/components/ui/progress.tsx` - shadcn/ui Progress component
+
+**Files Modified:**
+- `src/app/api/sanity-checks/route.ts` - Added quota and rate limit enforcement
+- `src/components/sanity-check/sanity-check-form.tsx` - Integrated QuotaDisplay component
+
+**Quota Service Features:**
+- Tier quotas: Free (3), Solo (10), Growth (30), Pro (100), Enterprise (500)
+- Guest limit: 3 total checks per session
+- Rate limiting: 60 seconds between checks
+- Functions: checkUserQuota(), checkGuestQuota(), checkRateLimit(), incrementUsage(), getQuotaStatus()
+- Usage tracking via usage_tracking table
+
+**API Enhancements:**
+- Rate limit enforcement returns 429 with Retry-After header
+- Quota exceeded returns 402 with upgrade prompt
+- Usage incremented after successful sanity check
+- Response includes updated quota status
+
+**UI Component Features:**
+- Progress bar showing usage percentage
+- Warning state at 80%+ usage
+- Error state when quota exceeded
+- Rate limit countdown timer
+- Upgrade prompts (to signup for guests, to upgrade for users)
+- useQuotaStatus() hook for easy integration
+
+**Verification:**
+- ✅ npm run build passes
+- ✅ All quota logic implemented
+- ✅ UI displays quota status in sanity check form
+
+**Deferred to Phase 5:**
+- Admin cost monitoring dashboard for OpenRouter spend
+- Graceful degradation when OpenRouter rate limited
+
+---
+
+### 2026-01-22 01:15 - PHASE 3 COMPLETE
+
+**Phase Summary:**
+All P0 tasks completed. Core Value Loop is now functional:
+
+**Completed Tasks:**
+- [x] Task 3.1: Recommendation Engine - FitScore calculation
+- [x] Task 3.2: Recommendation Engine - Weight system
+- [x] Task 3.3: Editorial Overrides integration
+- [x] Task 3.4: Opportunity Generation Job
+- [x] Task 3.5: Opportunities List UI (F-009)
+- [x] Task 3.6: Opportunity Detail UI (F-010)
+- [x] Task 3.7: Sanity Check - OpenRouter integration
+- [x] Task 3.8: Sanity Check UI (F-011)
+- [x] Task 3.9: Guest Sanity Check flow
+- [x] Task 3.10: Act on Opportunity (F-012) + Savings Recording
+- [x] Task 3.11: Dismiss Opportunity (F-013)
+- [x] Task 3.12: Trust Dashboard (F-014, F-015, F-016)
+- [x] Task 3.15: Sanity Check Quota + Cost Guardrails
+
+**Deferred Tasks (P1):**
+- [ ] Task 3.13: Parameter Translation Layer
+- [ ] Task 3.14: Migration Diff UI
+
+**Key Deliverables:**
+- Recommendation engine generates opportunities based on FitScore + weights
+- Opportunities list and detail pages with accept/dismiss actions
+- Sanity Check with OpenRouter for side-by-side model comparison
+- Guest sanity check flow at /try for unauthenticated users
+- Trust Dashboard displaying provider/model trust tiers
+- Quota enforcement with tier-based limits and rate limiting
+
+**Quality Gates:**
+- [x] Build passes
+- [x] Lint passes
+- [x] Sanity check completes in < 30 seconds
+
+**Next Phase:**
+Phase 4: Monetization - Stripe subscriptions and billing
+
+---
+
+## Phase 4: Monetization
+
+### Phase Start - 2026-01-22
+
+**Objective**: Implement Stripe subscriptions and billing infrastructure for tiered pricing.
+
+---
+
+### 2026-01-22 - Task 4.1: Stripe Account Setup Complete (User Manual)
+
+**Completed by User in Stripe Dashboard:**
+- Stripe test mode configured
+- Products created: Solo, Growth, Pro (monthly + annual prices)
+- 20% first-year discount coupon: FIRST_YEAR_20
+- Webhook endpoint configured with 6 events
+
+**Deliverables:**
+- `docs/stripe-setup-guide.md` - Comprehensive setup guide for test + live mode
+- Environment variables added to `.env.local`
+
+---
+
+### 2026-01-22 - Task 4.2: Stripe Client Integration Complete
+
+**Files Created:**
+- `src/lib/stripe/types.ts` - Type definitions (tiers, billing intervals, features)
+- `src/lib/stripe/config.ts` - Tier configurations matching pricing.yaml
+- `src/lib/stripe/client.ts` - Stripe SDK wrapper with helper functions
+- `src/lib/stripe/index.ts` - Barrel export
+
+**Features:**
+- Type-safe tier configs: Solo, Growth, Pro, Enterprise, Free
+- Checkout session creation with auto first-year coupon for annual
+- Trial checkout support (7-day, card required)
+- Portal session for subscription management
+- Webhook signature verification
+- Price ID → tier mapping
+
+**Verification:**
+- ✅ TypeScript compiles without errors
+- ✅ Build passes
+
+---
+
+### 2026-01-22 - Task 4.3: Checkout Flow Complete
+
+**Files Created:**
+- `src/app/api/checkout/route.ts` (3.2KB) - POST endpoint for checkout session creation
+- `src/app/api/checkout/success/route.ts` (2.4KB) - Success redirect handler
+- `src/app/(marketing)/pricing/page.tsx` (9.1KB) - Pricing page with tier selection
+- `src/components/pricing/pricing-card.tsx` (4.1KB) - Pricing tier card component
+- `src/components/pricing/pricing-toggle.tsx` (2.3KB) - Monthly/annual toggle
+- `src/components/pricing/index.ts` - Barrel export
+- `src/components/ui/alert.tsx` (2.1KB) - shadcn/ui Alert component
+
+**Checkout Flow:**
+1. User selects tier + interval on /pricing
+2. POST /api/checkout creates Stripe checkout session
+3. User completes payment on Stripe hosted checkout
+4. Stripe redirects to /api/checkout/success?session_id=xxx
+5. Success handler updates user_profiles with subscription_tier + stripe_customer_id
+6. User redirected to /dashboard?subscription=success
+
+**Pricing Page Features:**
+- Annual default (priority 1 in signup hierarchy)
+- 20% first-year discount badge + strikethrough pricing
+- Growth tier highlighted as "Best Value"
+- Trial CTA link (priority 3 fallback)
+- Enterprise contact section
+- ROI section (Week 1/Month 1/Year 1 payback)
+- Trust elements (20% off, independent, transparent)
+- Suspense boundary for useSearchParams (Next.js 14 requirement)
+- Skeleton loading state
+
+**Error Handling:**
+- 401 redirects to signup with return URL + tier/interval
+- Checkout canceled shows alert with "No charges made"
+- Payment incomplete shows destructive alert
+
+**Verification:**
+- ✅ npm run build passes
+- ✅ TypeScript compiles without errors
+- ✅ ESLint passes (fixed any → Stripe.Subscription type)
+- ✅ Suspense boundary prevents static generation bailout
+
+---
+
+### 2026-01-22 - Task 4.4: Trial Flow Complete
+
+**Implementation:**
+Trial flow was already implemented as part of Task 4.3 checkout flow:
+- `createTrialCheckoutSession()` function in stripe/client.ts
+- `trialConfig`: 7 days, card required, Solo tier default
+- Trial creates monthly subscription with `trial_period_days=7`
+- No first-year discount on trial path (that's for direct annual purchases)
+
+**Pricing Page:**
+- "Try 7 days free" CTA below pricing cards
+- Calls `/api/checkout` with `{ tier: 'solo', interval: 'monthly', trial: true }`
+
+---
+
+### 2026-01-22 - Task 4.5: Webhook Handlers Complete
+
+**Files Created:**
+- `src/app/api/webhooks/stripe/route.ts` (398 lines)
+
+**Webhook Events Handled:**
+1. `checkout.session.completed` - Sets subscription active after checkout
+2. `customer.subscription.created` - Updates user profile with subscription info
+3. `customer.subscription.updated` - Handles upgrades, downgrades, status changes
+4. `customer.subscription.deleted` - Downgrades user to free tier
+5. `invoice.paid` - Ensures subscription stays active on successful payment
+6. `invoice.payment_failed` - Marks subscription as past_due
+
+**Features:**
+- Webhook signature verification via `verifyWebhookSignature()`
+- Status mapping from Stripe to database (active, past_due, cancelled, trialing)
+- User lookup by stripe_subscription_id for events without userId metadata
+- Proper error handling with logging
+
+**Bug Fixes During Implementation:**
+- Fixed column name from `user_id` to `id` in user_profiles queries
+- Fixed subscription_status spelling from 'canceled' to 'cancelled' to match DB CHECK constraint
+- Added type assertions for Supabase client (lacks generated types)
+- Fixed Stripe Invoice type for subscription property access
+
+**Verification:**
+- ✅ npm run build passes
+- ✅ Webhook endpoint registered at /api/webhooks/stripe
+
+---
+
+### 2026-01-22 - Task 4.6: Customer Portal Integration Complete
+
+**Files Created:**
+- `src/app/api/billing/portal/route.ts` (60 lines)
+
+**Features:**
+- POST /api/billing/portal endpoint
+- Creates Stripe Customer Portal session
+- Returns portal URL for frontend redirect
+- Requires authenticated user with stripe_customer_id
+- Returns to /dashboard/settings after portal session
+
+**Portal Capabilities (via Stripe):**
+- Update payment method
+- View invoices and payment history
+- Cancel subscription
+- Update billing info
+
+**Verification:**
+- ✅ npm run build passes
+- ✅ Endpoint registered at /api/billing/portal
+
+---
+
+### 2026-01-22 - Tasks 4.7-4.9: Account Settings & Subscription Management Complete
+
+**Files Created:**
+- `src/app/(dashboard)/dashboard/settings/page.tsx` (270 lines)
+
+**Settings Page Sections:**
+
+1. **Profile (F-020)**
+   - Email (read-only)
+   - Display name (editable)
+   - Company name (editable)
+   - Save changes with success feedback
+
+2. **Subscription (F-021)**
+   - Current tier display with status badge (Active/Trial/Past Due/Cancelled)
+   - Tier features summary (products, sanity checks, test history)
+   - "Manage Billing" button → Opens Stripe Customer Portal
+   - "Upgrade Plan" / "View Plans" for free users
+
+3. **Billing & Invoices (F-022)**
+   - Handled via Stripe Customer Portal (update payment, view invoices, cancel)
+
+4. **Notifications (placeholder)**
+   - Coming soon message for email preferences
+
+**Verification:**
+- ✅ npm run build passes
+- ✅ Settings page at /dashboard/settings (4.93KB)
+
+---
+
+### 2026-01-22 - Task 4.10: Tier Limit Enforcement Complete
+
+**Implemented Limits:**
+
+1. **Sanity Checks** (already from Phase 3)
+   - Free: 3/month
+   - Solo: 10/month
+   - Growth: 30/month
+   - Pro: 100/month
+   - Enterprise: 500/month
+
+2. **Products** (added)
+   - Free: 1 product
+   - Solo: 3 products
+   - Growth: 10 products
+   - Pro: Unlimited
+   - Enterprise: Unlimited
+
+**Files Modified:**
+- `src/app/api/products/route.ts` - Added product limit check in POST handler
+
+**Enforcement Behavior:**
+- Returns 402 (Payment Required) when limit exceeded
+- Response includes: error message, limit, current count, tier
+- Error code: `PRODUCT_LIMIT_EXCEEDED`
+
+**Verification:**
+- ✅ npm run build passes
+
+---
+
+### 2026-01-22 - Task 4.11: End-to-End Onboarding Funnel Complete
+
+**Already Implemented:**
+- `DashboardEmptyState` component shows welcome message for new users
+- `QuickStartWizard` guides users through first product creation
+- Dashboard detects empty state via `stats?.isEmpty`
+
+**Onboarding Flow:**
+1. User signs up → Email verification → Dashboard
+2. Empty state shows: "Welcome to ModelOptix" + QuickStartWizard
+3. User creates first product via wizard
+4. Dashboard shows normal stats, opportunities, recommendations
+5. Upgrade prompts based on tier limits (402 on product/sanity check limit)
+
+**Future Enhancements (P1):**
+- Track `onboarding_completed_at` timestamp
+- Multi-step onboarding progress indicator
+- Email drip sequence for trial users
+
+---
+
+### 2026-01-22 - PHASE 4 COMPLETE
+
+**Phase Summary:**
+All 11 monetization tasks completed. Stripe billing infrastructure fully integrated.
+
+**Completed Tasks:**
+- [x] Task 4.1: Stripe account setup + products/prices
+- [x] Task 4.2: Stripe client integration
+- [x] Task 4.3: Checkout flow (new subscriptions)
+- [x] Task 4.4: Trial flow (7-day, card upfront)
+- [x] Task 4.5: Webhook handlers
+- [x] Task 4.6: Customer Portal integration
+- [x] Task 4.7: Account Settings (F-020)
+- [x] Task 4.8: Subscription Management (F-021)
+- [x] Task 4.9: Billing & Invoices (F-022)
+- [x] Task 4.10: Tier Limit Enforcement
+- [x] Task 4.11: End-to-End Onboarding Funnel
+
+**Key Deliverables:**
+- Pricing page with annual/monthly toggle, 20% first-year discount
+- Checkout flow with automatic coupon application
+- Trial signup (7-day, card required, Solo tier)
+- Webhook handlers for 6 subscription lifecycle events
+- Customer Portal for billing management
+- Settings page with profile + subscription management
+- Product limits enforced by tier (1/3/10/unlimited)
+- Sanity check limits enforced by tier (3/10/30/100/500)
+
+**Quality Gates:**
+- [x] Build passes
+- [x] Lint passes
+- [ ] Webhook testing (requires Stripe CLI)
+- [ ] Manual subscription flow testing
+
+**Next Phase:**
+Phase 5: Polish, Admin & Launch
+
+---
+
+### 2026-01-22 - Payment E2E Tests + Critical Bug Fixes
+
+**Session Summary:**
+Created comprehensive Playwright E2E tests for payment user journeys. During testing, discovered and fixed critical hydration/bundling issues.
+
+**Files Created:**
+- `tests/e2e/payments.spec.ts` (314 lines) - Payment journey tests
+
+**Payment Tests (11 passing, 4 skipped):**
+
+1. **Pricing Page Tests (6 tests)**
+   - Displays all three pricing tiers (Solo, Growth, Pro)
+   - Shows correct annual pricing by default
+   - Toggles between annual and monthly pricing
+   - Shows trial CTA
+   - Shows enterprise contact section
+   - Shows trust elements (20% badge, independence message)
+
+2. **Checkout Flow Tests (2 tests + 1 skipped)**
+   - Unauthenticated: Redirects to signup when clicking tier button
+   - Unauthenticated: Redirects to signup when clicking trial
+   - Authenticated: Initiates Stripe checkout (skipped - requires test credentials)
+
+3. **Checkout Callback Tests (3 tests)**
+   - Success callback gracefully handles invalid session
+   - Canceled checkout shows canceled message
+   - Failed payment shows error message
+
+4. **Subscription Management Tests (2 skipped)**
+   - Settings page shows subscription section
+   - Manage billing button opens Stripe portal
+
+5. **Tier Limit Tests (1 skipped)**
+   - Free tier user sees upgrade prompt when limit reached
+
+**Critical Bugs Fixed:**
+
+1. **Stripe SDK Client Bundling Issue**
+   - **Symptom**: Hydration error "Neither apiKey nor config.authenticator provided"
+   - **Root Cause**: `@/lib/stripe/index.ts` re-exported `client.ts` which initializes Stripe SDK at module load with server-only `STRIPE_SECRET_KEY`. Client components importing from `@/lib/stripe` bundled the SDK.
+   - **Fix**: Modified `src/lib/stripe/index.ts` to only export types and config (client-safe). Updated API routes to import directly from `@/lib/stripe/client`.
+
+2. **Middleware PUBLIC_API_ROUTES Missing Stripe Endpoints**
+   - **Symptom**: `/api/checkout/success` returning 401 Unauthorized
+   - **Fix**: Added `/api/checkout/success` and `/api/webhooks` to PUBLIC_API_ROUTES in middleware.ts
+
+3. **PostHog SSR Issues**
+   - Refactored to use dynamic imports to prevent SSR issues
+   - Created `src/components/posthog-wrapper.tsx` with client-only loading
+
+**Files Modified:**
+- `playwright.config.ts` - Added webServer config for localhost:3000
+- `src/lib/stripe/index.ts` - Removed client.ts re-export (critical fix)
+- `src/app/api/billing/portal/route.ts` - Import from @/lib/stripe/client
+- `src/app/api/checkout/route.ts` - Import from @/lib/stripe/client
+- `src/app/api/checkout/success/route.ts` - Import from @/lib/stripe/client
+- `src/app/api/webhooks/stripe/route.ts` - Import from @/lib/stripe/client
+- `src/components/posthog-provider.tsx` - Dynamic import refactor
+- `src/components/waitlist-form.tsx` - Use window.posthog pattern
+- `src/middleware.ts` - Added Stripe public routes
+
+**Files Created:**
+- `src/components/posthog-wrapper.tsx` - Client-only PostHog wrapper
+
+**Verification:**
+- ✅ All 11 tests pass (4 skipped require test credentials)
+- ✅ Build passes
+- ✅ Committed and pushed to develop branch
+
+**Commit:** `test(e2e): Add payment user journey tests + fix Stripe/PostHog bundling`
+
+---
+
+## Phase 5: Polish, Admin & Launch
+
+### Phase Start - 2026-01-23 00:00
+
+**Objective**: Production readiness - admin tools, emails, monitoring, polish.
+
+---
+
+### 2026-01-23 00:05 - Task 5.1: Savings Tracking (F-017, F-018) COMPLETE
+
+**Summary**: Implemented savings tracking to show users the cumulative value from implemented optimization opportunities.
+
+**Files Created:**
+
+1. **Database Migration:**
+   - `supabase/migrations/004_savings_tracking.sql` (1.5KB)
+   - `savings_records` table with RLS policies
+   - Indexes on user_id, switched_at, product_id
+
+2. **Types:**
+   - `src/types/savings.ts` (803B)
+   - SavingsRecord, SavingsRecordWithContext, SavingsSummary interfaces
+
+3. **Server Logic:**
+   - `src/lib/savings/record-savings.ts` (3.4KB)
+   - recordSavingsFromOpportunity() - Records savings when opportunity accepted
+   - Fetches model details via joins
+   - Prevents duplicate savings records
+
+4. **API Endpoint:**
+   - `src/app/api/savings/route.ts` (3.9KB)
+   - GET /api/savings?view=summary - Summary stats
+   - GET /api/savings?view=records - Full records with product filter
+
+5. **UI Components:**
+   - `src/components/savings/SavingsSummaryCard.tsx` (5.8KB)
+   - Dashboard card with loading, empty, compact states
+   - Shows monthly savings, total switches, by-product breakdown
+   - `src/app/(dashboard)/savings/page.tsx` (10.4KB)
+   - Full savings detail page with table, filtering, CSV export
+
+**Files Modified:**
+
+1. `src/app/api/opportunities/[id]/route.ts`
+   - Auto-records savings when opportunity status = 'accepted'
+   - Non-blocking error handling
+
+2. `src/app/(dashboard)/dashboard/dashboard-content.tsx`
+   - Added SavingsSummaryCard import and display in dashboard
+
+**Key Design Decisions:**
+- Savings recorded automatically when opportunity status → 'accepted' (not 'implemented')
+- Monthly recurring savings tracked (representing ongoing savings per month)
+- Duplicate prevention via opportunity_id check
+- CSV export for reporting/compliance
+- Non-blocking savings recording (opportunity accept succeeds even if savings fails)
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 00:05
+- ✅ All 6 files verified on filesystem with `ls -la`
+- ✅ /savings route shows in build output
+- ✅ /api/savings route shows in build output
+
+**Migration Deployment Required:**
+- [ ] Deploy `004_savings_tracking.sql` to Staging Supabase
+- [ ] Deploy `004_savings_tracking.sql` to Production Supabase
+
+---
+
+### 2026-01-23 00:15 - Task 5.3: Admin Dashboard COMPLETE
+
+**Summary**: Implemented admin dashboard home page with real-time platform statistics and navigation.
+
+**Files Created:**
+- `src/app/api/admin/stats/route.ts` (7.5KB)
+  - Platform-wide statistics endpoint
+  - Uses service role client to bypass RLS
+  - Admin-only access via is_admin check
+  - Fetches: users by tier, content counts, opportunities, sanity checks, catalog stats, job status, overrides
+
+**Files Modified:**
+- `src/app/admin/page.tsx` (17.7KB)
+  - Complete rewrite from placeholder to full dashboard
+  - Real-time stats display with refresh button
+  - User breakdown by subscription tier (Free/Solo/Growth/Pro)
+  - Platform content metrics (products, functions, use cases)
+  - Value delivered card showing total savings
+  - Sanity check usage (today/week/total/guest)
+  - Model catalog overview
+  - Background jobs status with recent runs
+  - Editorial overrides count
+  - Quick actions navigation
+
+**Admin Layout** (already existed):
+- `src/app/admin/layout.tsx` - Navigation already included:
+  - Overview, Users, Models, Editorial Overrides, Jobs, Settings
+  - is_admin check with access denied page
+  - Collapsible sidebar with mobile support
+
+**Key Features:**
+- Real-time platform metrics
+- User tier breakdown
+- Value delivered tracking (total savings)
+- Job monitoring with status indicators
+- Quick links to admin sections
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 00:15
+- ✅ All files verified on filesystem
+- ✅ /api/admin/stats route in build output
+
+---
+
+### 2026-01-23 00:25 - Task 5.4: Admin Model Management COMPLETE
+
+**Summary**: Implemented admin model catalog management with search, pagination, and edit capabilities.
+
+**Files Created:**
+- `src/app/api/admin/models/route.ts` (7.9KB)
+  - GET: List models with pagination, search, provider info, pricing, and trust scores
+  - PATCH: Update model details (name, description, context_length, is_active)
+  - Admin-only access with service role client
+  - Joins providers and model_provider_pricing tables
+  - Calculates average trust score from model_trust_scores
+
+- `src/app/admin/models/page.tsx` (14.6KB)
+  - Model catalog table with search
+  - Columns: Model name/desc, Provider + trust tier badge, Context length, Pricing (in/out), Trust score, Status
+  - Edit modal for model details (name, description, context length, active toggle)
+  - Pagination controls
+  - Refresh button with loading state
+
+- `src/components/ui/dialog.tsx` (3.2KB)
+  - New shadcn/ui dialog component with Radix primitives
+  - DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription
+
+- `src/components/ui/switch.tsx` (0.8KB)
+  - New shadcn/ui switch/toggle component
+  - Uses @radix-ui/react-switch (package added)
+
+**Dependencies Added:**
+- `@radix-ui/react-switch` for Switch component
+
+**Issues Encountered:**
+1. Missing UI components (dialog, switch) - Created both from shadcn/ui patterns
+2. TypeScript type inference failures with Supabase joins - Fixed with explicit type definitions (ModelRow, Provider, ModelPricing, TrustScore)
+3. Unused imports (Select components) - Removed
+4. `let` should be `const` for trustScoresMap - Fixed
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 00:25
+- ✅ Files verified on filesystem
+- ✅ /admin/models route in build output
+- ✅ /api/admin/models route in build output
+
+---
+
+### 2026-01-23 00:30 - Task 5.5: Admin Provider Management COMPLETE
+
+**Summary**: Implemented admin provider management with search, filtering, and edit capabilities.
+
+**Files Created:**
+- `src/app/api/admin/providers/route.ts` (6.4KB)
+  - GET: List providers with pagination, search, and model count per provider
+  - PATCH: Update provider details (name, slug, trust_tier, status, etc.)
+  - Admin-only access with service role client
+
+- `src/app/admin/providers/page.tsx` (17.2KB)
+  - Provider table with columns: Name/slug, Trust tier + reason, Status, HQ Country, Model count, Docs link
+  - Edit modal for provider details:
+    - Name, slug fields
+    - Trust tier dropdown (A/B/C/unknown) with reason textarea
+    - Status dropdown (active/beta/deprecated)
+    - HQ Country, Documentation URL fields
+  - Search by name/slug
+  - Pagination controls
+
+**Key Features:**
+- Trust tier management with documented reasons
+- Provider status management (active/beta/deprecated)
+- Model count per provider
+- External link to provider documentation
+- Responsive edit modal
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 00:30
+- ✅ Files verified on filesystem
+- ✅ /admin/providers route in build output
+- ✅ /api/admin/providers route in build output
+
+---
+
+### 2026-01-23 00:35 - Task 5.8: Admin Editorial Overrides COMPLETE
+
+**Summary**: Implemented editorial overrides management for controlling model recommendations with full CRUD.
+
+**Files Created:**
+- `src/app/api/admin/editorial-overrides/route.ts` (10KB)
+  - GET: List overrides with model/creator info, filter by active/type
+  - POST: Create new override
+  - PATCH: Update existing override
+  - DELETE: Remove override
+  - Joins models table for model names and provider info
+  - Joins user_profiles for creator names
+
+- `src/app/admin/editorial-overrides/page.tsx` (22.8KB)
+  - Override table with columns: Model, Type, Severity, Reason, Status, Created, Actions
+  - Override types with icons:
+    - Exclude (Ban icon, red) - completely hide model
+    - Downrank (TrendingDown icon, amber) - lower in results with factor
+    - Flag (Flag icon, blue) - show warning to users
+  - Severity badges: Critical (red), High (orange), Medium (amber), Low (gray)
+  - Create/Edit modal with:
+    - Model search (searches via /api/admin/models)
+    - Override type, severity dropdowns
+    - Downrank factor (for downrank type only)
+    - Reason (internal), Warning message (for flag type, shown to users)
+    - Expiration date (optional)
+    - Active toggle
+  - Delete confirmation modal
+  - Active-only filter toggle
+  - Pagination
+
+**Key Features:**
+- Three override types: exclude, downrank, flag
+- Severity levels with visual indicators
+- Optional expiration dates
+- Creator tracking with names
+- Model search for creating new overrides
+- Warning messages shown to users (for flag type)
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 00:35
+- ✅ Files verified on filesystem
+- ✅ /admin/editorial-overrides route in build output
+- ✅ /api/admin/editorial-overrides route in build output
+
+---
+
+### 2026-01-23 00:40 - Task 5.2: Notification Preferences COMPLETE
+
+**Summary**: Implemented notification preferences API and UI in the settings page, replacing the placeholder.
+
+**Files Created:**
+- `src/app/api/settings/notifications/route.ts` (6.6KB)
+  - GET: Fetch user's notification preferences (returns defaults if none exist)
+  - POST: Create/update preferences using upsert (unique on user_id + channel)
+  - DELETE: Remove preferences by channel
+  - Supports channels: email, slack, discord (email only for MVP)
+  - Validates severity, frequency, alert_types
+
+**Files Modified:**
+- `src/app/(dashboard)/dashboard/settings/page.tsx` (540 lines, ~17KB)
+  - Added full notification preferences section replacing placeholder
+  - Email notifications toggle with enabled/disabled state
+  - Alert type checkboxes (Opportunities, Price Changes, Deprecations, Savings Reports)
+  - Frequency dropdown (Immediate, Daily Digest, Weekly Digest)
+  - Minimum severity dropdown (All, Warning+, Urgent+, Critical only)
+  - Save button with loading state
+  - Uses existing Switch and Select components
+
+**Key Features:**
+- Email notification on/off toggle
+- Configurable alert types with descriptions
+- Frequency control (immediate vs digest)
+- Severity filtering
+- Upsert pattern for create/update
+- Default preferences for new users
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 00:40
+- ✅ Files verified on filesystem
+- ✅ /api/settings/notifications route functional
+- ✅ Settings page loads with notification controls
+
+---
+
+### 2026-01-23 - Task 5.6: Admin Trust Queue COMPLETE
+
+**Summary**: Implemented admin interface to manage model-level trust scores across 8 dimensions.
+
+**Files Created:**
+- `src/app/admin/trust/page.tsx` (431 lines)
+  - Trust queue page with table listing all models
+  - Progress bars showing X/8 dimensions completed per model
+  - Search by model name
+  - Filter by status (All, Needs Review, Complete)
+  - Stats cards (total, complete, in-progress, not-started)
+  - Pagination support
+
+- `src/components/admin/trust-score-editor.tsx` (395 lines)
+  - Modal with accordion UI for all 8 trust dimensions
+  - Score slider (0-100) with clear button
+  - Confidence dropdown (low/medium/high)
+  - Evidence textarea, source URL input, notes textarea
+  - Loads existing scores on open, saves all dimensions at once
+
+- `src/app/api/admin/trust/route.ts` (326 lines)
+  - GET: List models with trust score completion status
+  - POST: Create/update trust scores for a model
+  - Admin auth check, service client for RLS bypass
+  - Calculates scoresCompleted, averageScore, lastUpdated per model
+
+- `src/app/api/admin/trust/[modelId]/route.ts` (220 lines)
+  - GET: Fetch all trust scores for a specific model
+  - PUT: Upsert trust scores for a model
+  - Returns model name, provider name, and all scores
+
+**Files Modified:**
+- `src/types/trust.ts` (+129 lines)
+  - Updated TrustDimension to 8 values matching DB schema
+  - Added TRUST_DIMENSIONS array, TrustConfidence type
+  - Added admin types: ModelTrustScoreRecord, TrustScoreInput, TrustQueueItem
+  - Added helper functions: getConfidenceLevel, getConfidenceValue
+  - Updated getDimensionLabel and getDimensionDescription for 8 dimensions
+
+- `src/app/admin/layout.tsx` (+2 lines)
+  - Added ShieldCheck icon import
+  - Added Trust Queue nav item
+
+**8 Trust Dimensions:**
+- data_handling, transparency, security, reliability
+- consistency, safety, accuracy, cost_stability
+
+**Key Features:**
+- Score per dimension (0-100) with confidence level
+- Evidence and source URL documentation
+- Audit trail: reviewed_by (user ID) and reviewed_at (timestamp)
+- Progress tracking per model (X/8 complete)
+- Average score calculation when scores exist
+
+**Verification:**
+- ✅ Build passes: `npm run build` - 2026-01-23
+- ✅ TypeScript compiles without errors
+- ✅ Files verified on filesystem
+- ✅ Pushed to staging (develop branch)
+
+---
+
+### 2026-01-23 22:25 - Task 5.9: Email Templates COMPLETE
+
+**Summary:**
+Enhanced email system with React Email components for better maintainability and preview capability. The project already had functional HTML string templates in `src/lib/email/templates.ts`. Added React Email component-based templates as an enhancement.
+
+**Files Created:**
+
+Email Components (`src/emails/components/`):
+- `email-header.tsx` - Branded header with ModelOptix logo (Trust Blue #1A2B4C)
+- `email-footer.tsx` - Footer with links, unsubscribe option, copyright
+- `email-button.tsx` - CTA button with primary/secondary/accent variants
+- `email-card.tsx` - Card component for highlighting content sections
+- `index.ts` - Barrel export
+
+Email Templates (`src/emails/`):
+- `welcome.tsx` - Welcome email with dashboard features overview
+- `alert.tsx` - Alert email for opportunities/cost spikes/new models
+- `trial-reminder.tsx` - Trial reminder with usage summary and pricing
+- `weekly-digest.tsx` - Weekly digest with opportunities and market updates
+- `index.ts` - Barrel export
+
+**Dependencies Added:**
+- `@react-email/components` ^1.0.6 - React Email component library
+- `react-email` ^5.2.5 - React Email framework
+
+**Existing System Preserved:**
+- `src/lib/email/client.ts` - Resend client (unchanged)
+- `src/lib/email/index.ts` - Email sending API (unchanged)
+- `src/lib/email/templates.ts` - HTML string templates (unchanged, functional)
+
+**Design System Applied:**
+- Trust Blue #1A2B4C for headers/primary buttons
+- Independent Teal #0D9488 for accent buttons/highlights
+- Inter font family
+- Responsive design
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 22:25
+- ✅ Files verified on filesystem: 9 email files created
+- ✅ Dependencies installed
+
+---
+
+### 2026-01-23 23:00 - Task 5.12: Performance + Security Review COMPLETE
+
+**Summary:**
+Conducted comprehensive performance and security review of the ModelOptix SaaS MVP. The codebase demonstrates strong security practices. Added missing security headers.
+
+**Security Review Findings:**
+
+✅ **Authentication (Score: A)**
+- Middleware properly protects all routes (src/middleware.ts)
+- Supabase auth.getUser() validates sessions
+- Rate limiting on API routes (Upstash Redis)
+- CSRF protection via Origin header validation
+
+✅ **Authorization (Score: A)**
+- Admin routes protected at middleware level (lines 335-356)
+- Admin API routes verify is_admin flag before processing
+- RLS policies enforced in Supabase
+- Service role client used appropriately for admin/job operations
+
+✅ **Input Validation (Score: A)**
+- Supabase parameterized queries prevent SQL injection
+- No raw SQL execution found
+- Type safety via TypeScript
+
+✅ **Secrets Management (Score: A)**
+- STRIPE_SECRET_KEY used only in server-side code (src/lib/stripe/client.ts)
+- SUPABASE_SERVICE_ROLE_KEY used only in service client (src/lib/supabase/service.ts)
+- No secrets in client-side code
+- Environment variables properly typed with ! assertions
+
+✅ **Webhook Security (Score: A)**
+- Stripe webhooks verified with signature (src/app/api/webhooks/stripe/route.ts:31-37)
+- Webhook events handled with proper status mapping
+
+⚠️ **Security Headers (Fixed)**
+- **Finding**: Missing HTTP security headers in next.config.mjs
+- **Fix Applied**: Added comprehensive security headers:
+  - `Strict-Transport-Security` (HSTS with 2-year max-age)
+  - `X-Frame-Options: SAMEORIGIN` (clickjacking protection)
+  - `X-Content-Type-Options: nosniff` (MIME sniffing protection)
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Permissions-Policy` (disable camera, microphone, geolocation)
+
+**Performance Review Findings:**
+
+✅ **Bundle Size (Score: A)**
+- First Load JS: 200 kB shared (acceptable)
+- Largest page: 299 kB (dashboard/settings)
+- Middleware: 104 kB (includes rate limiting, auth)
+- Dynamic imports used appropriately (PostHog)
+
+✅ **Database Queries (Score: A)**
+- Dashboard stats use parallel queries (Promise.all)
+- Admin stats use 21 parallel queries efficiently
+- Proper use of count: 'exact', head: true for counting
+- Select projections used (not SELECT *)
+
+✅ **React Server Components (Score: A)**
+- Proper 'use client' directives
+- Server components fetch data appropriately
+- No unnecessary client-side data fetching
+
+**File Modified:**
+- `next.config.mjs` - Added security headers
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 23:00
+- ✅ Security headers verified in config
+- ✅ No critical or high security vulnerabilities found
+
+**Overall Assessment:**
+- **Performance Score: A** - Dashboard should load within 3s target
+- **Security Score: A** - Production-ready with proper security controls
+- **Production Ready: YES**
+
+---
+
+### 2026-01-23 23:15 - Task 5.13: Audit Log Infrastructure COMPLETE
+
+**Summary:**
+Implemented comprehensive audit logging infrastructure for compliance-ready tracking of all admin actions with 2-year retention.
+
+**Files Created:**
+
+1. **Database Migration** (`supabase/migrations/005_audit_logs.sql`):
+   - `audit_logs` table with full schema
+   - `audit_action` enum (20 action types)
+   - `audit_entity_type` enum (7 entity types)
+   - 6 indexes for common query patterns
+   - RLS policies (admin read, service-only write)
+
+2. **TypeScript Types** (`src/types/audit.ts`):
+   - AuditAction, AuditEntityType unions
+   - AuditLogRecord, CreateAuditLogParams interfaces
+   - AUDIT_ACTION_LABELS, AUDIT_ENTITY_TYPE_LABELS constants
+   - Color coding for action categories
+
+3. **Audit Service** (`src/lib/audit/index.ts`):
+   - `logAuditEvent()` - Core logging function
+   - `queryAuditLogs()` - Filtered, paginated queries
+   - `logTrustScoreUpdate()` - Trust score convenience function
+   - `logEditorialOverride()` - Editorial override convenience function
+   - `logModelUpdate()`, `logProviderUpdate()` - Model/provider helpers
+   - `exportToCSV()` - CSV export utility
+   - `calculateChanges()` - Diff calculation
+
+4. **API Endpoint** (`src/app/api/admin/audit/route.ts`):
+   - GET with filters (entityType, action, dateRange, admin)
+   - Pagination (default 50, max 100)
+   - CSV export format option
+
+5. **Admin UI** (`src/app/admin/audit/page.tsx`):
+   - Filterable table with pagination
+   - Color-coded action badges
+   - Expandable row for before/after state diff
+   - JSON viewer for full state inspection
+   - CSV export button
+
+**Files Modified:**
+- `src/app/admin/layout.tsx` - Added Audit Logs nav item with ClipboardList icon
+
+**Key Features:**
+- 20 audit action types covering all admin operations
+- 7 entity types (model, provider, user, subscription, etc.)
+- Before/after state tracking with JSON diff
+- IP address and user agent logging (for security auditing)
+- Soft delete with archived_at (never hard delete for compliance)
+- 2-year retention policy documented
+
+**Migration Required:**
+- [ ] Deploy `005_audit_logs.sql` to Staging Supabase
+- [ ] Deploy `005_audit_logs.sql` to Production Supabase
+
+**Verification:**
+- ✅ Build passes: `pnpm build` - 2026-01-23 23:15
+- ✅ All 5 files verified on filesystem
+- ✅ Admin nav includes Audit Logs link
+- ✅ /admin/audit route shows in build output
+
+---

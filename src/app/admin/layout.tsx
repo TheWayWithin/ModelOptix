@@ -17,6 +17,7 @@ import {
   Menu,
   X,
   Loader2,
+  ClipboardList,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,7 @@ const navItems: NavItem[] = [
   { href: '/admin/models', label: 'Model Catalog', icon: Database },
   { href: '/admin/trust', label: 'Trust Queue', icon: ShieldCheck },
   { href: '/admin/overrides', label: 'Editorial Overrides', icon: ShieldAlert },
+  { href: '/admin/audit', label: 'Audit Logs', icon: ClipboardList },
   { href: '/admin/jobs', label: 'Jobs', icon: Activity },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
