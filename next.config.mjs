@@ -25,11 +25,46 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
   },
+
+  // Security headers
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+    ];
+  },
 };
 
-// Wrap with Sentry
+// Wrap with Sentry (only if SENTRY_AUTH_TOKEN is available for source map upload)
 // Set SENTRY_DSN in environment to enable error tracking
-export default withSentryConfig(nextConfig, {
+const sentryConfig = {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
@@ -41,8 +76,6 @@ export default withSentryConfig(nextConfig, {
   project: process.env.SENTRY_PROJECT,
 
   // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-  // This can increase your server load as well as your hosting bill.
-  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-side errors will fail.
   tunnelRoute: '/monitoring',
 
   // Hides source maps from generated client bundles
@@ -53,4 +86,10 @@ export default withSentryConfig(nextConfig, {
 
   // Enables automatic instrumentation of Vercel Cron Monitors (if using Vercel)
   automaticVercelMonitors: false,
-});
+
+  // Skip source map upload if auth token not available at build time
+  // This allows builds to succeed without Sentry build secrets
+  skipSentryWebpackPluginUpload: !process.env.SENTRY_AUTH_TOKEN,
+};
+
+export default withSentryConfig(nextConfig, sentryConfig);
