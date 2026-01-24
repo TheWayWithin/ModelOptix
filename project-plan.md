@@ -785,6 +785,7 @@ Features deferred from MVP for future implementation:
 | ID | Feature | Notes |
 |----|---------|-------|
 | F-003a+ | OpenRouter Import | Enhancement to Portfolio Quick Start - import usage data |
+| F-036 | Parameter Support Auto-Sync | Sync parameter compatibility data from OpenRouter API to populate parameter_support table |
 | F-024 | Real-time Alerts | Alerts UI and delivery |
 | F-025 | Alert List | View and manage alerts |
 | F-026 | Weekly Digest | Email digest for free tier |
