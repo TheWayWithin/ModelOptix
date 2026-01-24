@@ -201,6 +201,7 @@ export default function AdminParametersPage() {
   const openAddModal = () => {
     setEditingParam(null);
     setIsAddingNew(true);
+    setError(null);
     setParamForm({
       parameter_name: '',
       is_supported: true,
@@ -216,6 +217,7 @@ export default function AdminParametersPage() {
   const openEditModal = (param: ParameterSupportRecord) => {
     setEditingParam(param);
     setIsAddingNew(false);
+    setError(null);
     setParamForm({
       parameter_name: param.parameter_name,
       is_supported: param.is_supported,
@@ -558,6 +560,11 @@ export default function AdminParametersPage() {
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
+              {error && (
+                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                  {error}
+                </div>
+              )}
               {isAddingNew && (
                 <div className="grid gap-2">
                   <Label htmlFor="parameter_name">Parameter Name</Label>
