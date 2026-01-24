@@ -1,27 +1,22 @@
 'use client';
 
-import { FunctionWithModel } from '@/types/function';
+import { Function, FunctionWithUseCaseCount } from '@/types/function';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MoreHorizontal, Pencil, Trash2, Cpu, ChevronRight } from 'lucide-react';
+import { MoreHorizontal, Pencil, Trash2, ChevronRight, Layers } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-
-interface FunctionWithUseCaseCount extends FunctionWithModel {
-  use_case_count?: number;
-}
 
 interface FunctionCardProps {
   func: FunctionWithUseCaseCount;
   productId: string;
-  onEdit: (func: FunctionWithModel) => void;
-  onDelete: (func: FunctionWithModel) => void;
+  onEdit: (func: Function) => void;
+  onDelete: (func: Function) => void;
 }
 
 export function FunctionCard({ func, productId, onEdit, onDelete }: FunctionCardProps) {
@@ -82,22 +77,13 @@ export function FunctionCard({ func, productId, onEdit, onDelete }: FunctionCard
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Cpu className="h-4 w-4 text-muted-foreground" />
-            {func.model ? (
-              <Badge variant="secondary" className="text-xs">
-                {func.model.provider} - {func.model.name}
-              </Badge>
-            ) : (
-              <span className="text-sm text-muted-foreground">No model assigned</span>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Layers className="h-4 w-4" />
+            <span className="text-sm">
               {useCaseCount} use case{useCaseCount !== 1 ? 's' : ''}
             </span>
-            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
           </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
       </CardContent>
     </Card>

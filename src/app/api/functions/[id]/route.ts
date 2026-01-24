@@ -21,17 +21,14 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch function with model details
+    // Fetch function with use case count
+    // Note: Functions don't have model relationship - use cases do
     // RLS will enforce that user can only access functions through their products
     const { data: func, error } = await supabase
       .from('functions')
       .select(`
         *,
-        model:models(
-          id,
-          name,
-          provider
-        ),
+        use_cases(count),
         product:products!inner(
           id,
           name,
@@ -51,7 +48,16 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    return NextResponse.json({ function: func });
+    // Add use_case_count from aggregation
+    const typedFunc = func as unknown as {
+      use_cases: [{ count: number }];
+    };
+    const responseFunc = {
+      ...func,
+      use_case_count: typedFunc.use_cases?.[0]?.count ?? 0,
+    };
+
+    return NextResponse.json({ function: responseFunc });
   } catch (error) {
     console.error('Unexpected error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -103,7 +109,7 @@ export async function PATCH(
     // Parse request body
     const body: UpdateFunctionInput = await request.json();
 
-    // Build update object
+    // Build update object (note: functions don't have current_model_id - use cases do)
     const updateData: Record<string, unknown> = {
       updated_at: new Date().toISOString(),
     };
@@ -119,23 +125,12 @@ export async function PATCH(
       updateData.description = body.description?.trim() || null;
     }
 
-    if (body.current_model_id !== undefined) {
-      updateData.current_model_id = body.current_model_id || null;
-    }
-
     // Update function
     const { data: updatedFunc, error } = await supabase
       .from('functions')
       .update(updateData)
       .eq('id', id)
-      .select(`
-        *,
-        model:models(
-          id,
-          name,
-          provider
-        )
-      `)
+      .select('*')
       .single();
 
     if (error) {

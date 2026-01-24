@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { FunctionWithModel } from '@/types/function';
+import { Function, FunctionWithUseCaseCount } from '@/types/function';
 import { FunctionCard } from './function-card';
 import { FunctionForm } from './function-form';
 import { Button } from '@/components/ui/button';
@@ -23,12 +23,12 @@ interface FunctionListProps {
 }
 
 export function FunctionList({ productId }: FunctionListProps) {
-  const [functions, setFunctions] = useState<FunctionWithModel[]>([]);
+  const [functions, setFunctions] = useState<FunctionWithUseCaseCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [editingFunction, setEditingFunction] = useState<FunctionWithModel | null>(null);
-  const [deletingFunction, setDeletingFunction] = useState<FunctionWithModel | null>(null);
+  const [editingFunction, setEditingFunction] = useState<Function | null>(null);
+  const [deletingFunction, setDeletingFunction] = useState<Function | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
 
@@ -58,7 +58,7 @@ export function FunctionList({ productId }: FunctionListProps) {
     setFormOpen(true);
   };
 
-  const handleEdit = (func: FunctionWithModel) => {
+  const handleEdit = (func: Function) => {
     setEditingFunction(func);
     setFormOpen(true);
   };

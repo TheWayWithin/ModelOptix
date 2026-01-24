@@ -32,16 +32,11 @@ export async function GET(
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    // Fetch functions with model details and use case count
+    // Fetch functions with use case count
     const { data: functions, error } = await supabase
       .from('functions')
       .select(`
         *,
-        model:models(
-          id,
-          name,
-          provider_id
-        ),
         use_cases(count)
       `)
       .eq('product_id', productId)
@@ -60,15 +55,12 @@ export async function GET(
         product_id: string;
         name: string;
         description: string | null;
-        current_model_id: string | null;
         created_at: string;
         updated_at: string;
-        model: { id: string; name: string; provider_id: string } | null;
         use_cases: [{ count: number }];
       };
       return {
         ...func,
-        model: typedFunc.model,
         use_case_count: typedFunc.use_cases?.[0]?.count ?? 0,
       };
     }) || [];
@@ -118,23 +110,15 @@ export async function POST(
       return NextResponse.json({ error: 'Function name is required' }, { status: 400 });
     }
 
-    // Create function
+    // Create function (note: functions don't have model relationship - use cases do)
     const { data: newFunction, error } = await supabase
       .from('functions')
       .insert({
         product_id: productId,
         name: body.name.trim(),
         description: body.description?.trim() || null,
-        current_model_id: body.current_model_id || null,
       })
-      .select(`
-        *,
-        model:models(
-          id,
-          name,
-          provider
-        )
-      `)
+      .select('*')
       .single();
 
     if (error) {

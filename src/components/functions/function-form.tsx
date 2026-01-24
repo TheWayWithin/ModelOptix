@@ -1,19 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { FunctionWithModel, CreateFunctionInput, UpdateFunctionInput } from '@/types/function';
-import { ModelOption } from '@/types/model';
+import { Function, CreateFunctionInput, UpdateFunctionInput } from '@/types/function';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Sheet,
   SheetContent,
@@ -27,7 +19,7 @@ import { Loader2 } from 'lucide-react';
 interface FunctionFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  func?: FunctionWithModel | null;
+  func?: Function | null;
   productId: string;
   onSuccess: () => void;
 }
@@ -35,34 +27,10 @@ interface FunctionFormProps {
 export function FunctionForm({ open, onOpenChange, func, productId, onSuccess }: FunctionFormProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [currentModelId, setCurrentModelId] = useState<string>('');
-  const [models, setModels] = useState<ModelOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingModels, setIsLoadingModels] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isEditing = !!func;
-
-  // Fetch models for dropdown
-  useEffect(() => {
-    async function fetchModels() {
-      setIsLoadingModels(true);
-      try {
-        const response = await fetch('/api/models');
-        if (response.ok) {
-          const data = await response.json();
-          setModels(data.models || []);
-        }
-      } catch (err) {
-        console.error('Failed to fetch models:', err);
-      } finally {
-        setIsLoadingModels(false);
-      }
-    }
-    if (open) {
-      fetchModels();
-    }
-  }, [open]);
 
   // Reset form when opening/closing or when func changes
   useEffect(() => {
@@ -70,11 +38,9 @@ export function FunctionForm({ open, onOpenChange, func, productId, onSuccess }:
       if (func) {
         setName(func.name);
         setDescription(func.description || '');
-        setCurrentModelId(func.current_model_id || '');
       } else {
         setName('');
         setDescription('');
-        setCurrentModelId('');
       }
       setError(null);
     }
@@ -95,7 +61,6 @@ export function FunctionForm({ open, onOpenChange, func, productId, onSuccess }:
       const body: CreateFunctionInput | UpdateFunctionInput = {
         name: name.trim(),
         description: description.trim() || undefined,
-        current_model_id: currentModelId || undefined,
       };
 
       const response = await fetch(url, {
@@ -126,7 +91,7 @@ export function FunctionForm({ open, onOpenChange, func, productId, onSuccess }:
           <SheetDescription>
             {isEditing
               ? 'Update the function details below.'
-              : 'Add a new AI-powered function to your product.'}
+              : 'Add a new AI-powered function to your product. You can add use cases with model assignments after creating the function.'}
           </SheetDescription>
         </SheetHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-4">
@@ -149,29 +114,6 @@ export function FunctionForm({ open, onOpenChange, func, productId, onSuccess }:
               placeholder="What does this function do?"
               rows={3}
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="model">Current Model</Label>
-            <Select
-              value={currentModelId}
-              onValueChange={setCurrentModelId}
-              disabled={isLoadingModels}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={isLoadingModels ? 'Loading models...' : 'Select a model (optional)'} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="">No model selected</SelectItem>
-                {models.map((model) => (
-                  <SelectItem key={model.id} value={model.id}>
-                    {model.displayName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Optionally assign the current AI model used for this function.
-            </p>
           </div>
           {error && (
             <p className="text-sm text-destructive">{error}</p>
