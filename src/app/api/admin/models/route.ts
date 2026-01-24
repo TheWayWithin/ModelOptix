@@ -23,13 +23,16 @@ interface ModelRow {
   provider_id: string;
   context_length: number | null;
   max_output_tokens: number | null;
-  input_modalities: string[] | null;
-  output_modalities: string[] | null;
-  capabilities: string[] | null;
+  supports_vision: boolean;
+  supports_function_calling: boolean;
+  supports_streaming: boolean;
+  supports_json_mode: boolean;
+  capabilities: Record<string, unknown> | null;
   latency_p50: number | null;
   latency_p95: number | null;
   benchmarks: Record<string, number> | null;
-  is_active: boolean;
+  is_available: boolean;
+  status: string;
   created_at: string;
   updated_at: string;
   providers: Provider | null;
@@ -93,13 +96,16 @@ export async function GET(request: NextRequest) {
         provider_id,
         context_length,
         max_output_tokens,
-        input_modalities,
-        output_modalities,
+        supports_vision,
+        supports_function_calling,
+        supports_streaming,
+        supports_json_mode,
         capabilities,
         latency_p50,
         latency_p95,
         benchmarks,
-        is_active,
+        is_available,
+        status,
         created_at,
         updated_at,
         providers (
@@ -184,13 +190,16 @@ export async function GET(request: NextRequest) {
       providerTrustTier: model.providers?.trust_tier || 'unknown',
       contextLength: model.context_length,
       maxOutputTokens: model.max_output_tokens,
-      inputModalities: model.input_modalities,
-      outputModalities: model.output_modalities,
+      supportsVision: model.supports_vision,
+      supportsFunctionCalling: model.supports_function_calling,
+      supportsStreaming: model.supports_streaming,
+      supportsJsonMode: model.supports_json_mode,
       capabilities: model.capabilities,
       latencyP50: model.latency_p50,
       latencyP95: model.latency_p95,
       benchmarks: model.benchmarks,
-      isActive: model.is_active,
+      isAvailable: model.is_available,
+      status: model.status,
       avgTrustScore: trustScoresMap[model.id] || null,
       pricing: model.model_provider_pricing?.find((p) => p.is_primary) || null,
       createdAt: model.created_at,
@@ -257,7 +266,8 @@ export async function PATCH(request: NextRequest) {
       'context_length',
       'max_output_tokens',
       'capabilities',
-      'is_active',
+      'is_available',
+      'status',
     ];
 
     const filteredUpdates: Record<string, unknown> = {};
