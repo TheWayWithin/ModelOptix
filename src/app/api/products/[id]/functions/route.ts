@@ -40,7 +40,7 @@ export async function GET(
         model:models(
           id,
           name,
-          provider
+          provider_id
         ),
         use_cases(count)
       `)
@@ -63,7 +63,7 @@ export async function GET(
         current_model_id: string | null;
         created_at: string;
         updated_at: string;
-        model: { id: string; name: string; provider: string } | null;
+        model: { id: string; name: string; provider_id: string } | null;
         use_cases: [{ count: number }];
       };
       return {
