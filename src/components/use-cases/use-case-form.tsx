@@ -12,6 +12,7 @@ import {
   InputType,
   OutputType,
 } from '@/types/use-case';
+import { ModelOption } from '@/types/model';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -58,6 +59,7 @@ const OUTPUT_TYPE_LABELS: Record<OutputType, string> = {
 export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFormProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [currentModelId, setCurrentModelId] = useState<string>('');
   const [primaryNeed, setPrimaryNeed] = useState<PriorityNeed>('quality');
   const [secondaryNeed, setSecondaryNeed] = useState<PriorityNeed | ''>('');
   const [inputType, setInputType] = useState<InputType | ''>('text');
@@ -69,12 +71,38 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
   const [requiresStreaming, setRequiresStreaming] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Model selection
+  const [models, setModels] = useState<ModelOption[]>([]);
+  const [isLoadingModels, setIsLoadingModels] = useState(false);
+
   const isEditing = !!useCase;
+
+  // Fetch models when form opens
+  useEffect(() => {
+    async function fetchModels() {
+      setIsLoadingModels(true);
+      try {
+        const response = await fetch('/api/models');
+        if (response.ok) {
+          const data = await response.json();
+          setModels(data.models || []);
+        }
+      } catch (err) {
+        console.error('Failed to fetch models:', err);
+      } finally {
+        setIsLoadingModels(false);
+      }
+    }
+    if (open) {
+      fetchModels();
+    }
+  }, [open]);
 
   useEffect(() => {
     if (useCase) {
       setName(useCase.name);
       setDescription(useCase.description || '');
+      setCurrentModelId(useCase.current_model_id || '');
       setPrimaryNeed(useCase.primary_need);
       setSecondaryNeed(useCase.secondary_need || '');
       setInputType(useCase.input_type || '');
@@ -87,6 +115,7 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
     } else {
       setName('');
       setDescription('');
+      setCurrentModelId('');
       setPrimaryNeed('quality');
       setSecondaryNeed('');
       setInputType('text');
@@ -108,6 +137,7 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
       await onSubmit({
         name,
         description: description || null,
+        current_model_id: currentModelId || null,
         primary_need: primaryNeed,
         secondary_need: secondaryNeed || null,
         input_type: inputType || null,
@@ -157,6 +187,30 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
                 placeholder="Describe what this use case does..."
                 rows={3}
               />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="current-model">Current Model</Label>
+              <Select
+                value={currentModelId}
+                onValueChange={setCurrentModelId}
+                disabled={isLoadingModels}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={isLoadingModels ? 'Loading models...' : 'Select your current model'} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">No model selected</SelectItem>
+                  {models.map((model) => (
+                    <SelectItem key={model.id} value={model.id}>
+                      {model.displayName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Which AI model are you currently using for this use case? This helps us find cheaper alternatives.
+              </p>
             </div>
 
             <div className="grid gap-2">
