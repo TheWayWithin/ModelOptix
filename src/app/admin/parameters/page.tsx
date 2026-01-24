@@ -1,5 +1,6 @@
 'use client';
 
+// Admin Parameter Support - Task 5.7
 import { useEffect, useState, useCallback } from 'react';
 import {
   Card,
