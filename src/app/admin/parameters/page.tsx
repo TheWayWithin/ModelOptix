@@ -164,11 +164,12 @@ export default function AdminParametersPage() {
       if (!res.ok) throw new Error('Failed to fetch parameters');
 
       const data = await res.json();
-      setSelectedModel(data.model);
-      setParameters(data.parameters);
+      setSelectedModel(data.model || null);
+      setParameters(data.parameters || []);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
+      setParameters([]);
     } finally {
       setIsLoadingParameters(false);
     }
@@ -403,7 +404,7 @@ export default function AdminParametersPage() {
                 {selectedModel.name}
               </h1>
               <p className="text-muted-foreground">
-                {selectedModel.providerName} • {parameters.length} parameters
+                {selectedModel.providerName} • {parameters?.length || 0} parameters
               </p>
             </div>
           </div>
@@ -467,7 +468,7 @@ export default function AdminParametersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {parameters.length === 0 ? (
+                  {(!parameters || parameters.length === 0) ? (
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-8">
                         <p className="text-muted-foreground">
