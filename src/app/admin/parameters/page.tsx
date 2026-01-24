@@ -175,9 +175,11 @@ export default function AdminParametersPage() {
     }
   }, []);
 
+  // Fetch models on mount only
   useEffect(() => {
     fetchModels(1);
-  }, [fetchModels]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleModelSearch = (e: React.FormEvent) => {
     e.preventDefault();
