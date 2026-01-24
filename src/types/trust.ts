@@ -14,14 +14,36 @@ export type TrustTier = 'A' | 'B' | 'C' | 'unknown';
 
 /**
  * Trust score dimensions for evaluating models.
+ * These 8 dimensions match the database schema constraint.
  */
 export type TrustDimension =
   | 'data_handling'
   | 'transparency'
   | 'security'
-  | 'compliance'
   | 'reliability'
-  | 'ethics';
+  | 'consistency'
+  | 'safety'
+  | 'accuracy'
+  | 'cost_stability';
+
+/**
+ * All trust dimensions in display order.
+ */
+export const TRUST_DIMENSIONS: TrustDimension[] = [
+  'data_handling',
+  'transparency',
+  'security',
+  'reliability',
+  'consistency',
+  'safety',
+  'accuracy',
+  'cost_stability',
+];
+
+/**
+ * Confidence levels for trust scores.
+ */
+export type TrustConfidence = 'low' | 'medium' | 'high';
 
 /**
  * Provider with trust tier information.
@@ -135,9 +157,11 @@ export function getDimensionLabel(dimension: TrustDimension): string {
     data_handling: 'Data Handling',
     transparency: 'Transparency',
     security: 'Security',
-    compliance: 'Compliance',
     reliability: 'Reliability',
-    ethics: 'Ethics',
+    consistency: 'Consistency',
+    safety: 'Safety',
+    accuracy: 'Accuracy',
+    cost_stability: 'Cost Stability',
   };
   return labels[dimension];
 }
@@ -150,9 +174,11 @@ export function getDimensionDescription(dimension: TrustDimension): string {
     data_handling: 'How the provider handles, stores, and processes your data',
     transparency: 'Clarity about model capabilities, limitations, and training data',
     security: 'Infrastructure security, encryption, and access controls',
-    compliance: 'Adherence to regulations (GDPR, SOC 2, etc.)',
     reliability: 'Uptime, consistency, and service level agreements',
-    ethics: 'Ethical AI practices, bias mitigation, and responsible development',
+    consistency: 'Consistent output quality and behavior across requests',
+    safety: 'Content safety, guardrails, and responsible AI practices',
+    accuracy: 'Factual accuracy and hallucination rate',
+    cost_stability: 'Pricing predictability and cost transparency',
   };
   return descriptions[dimension];
 }
@@ -165,4 +191,101 @@ export interface TrustOverviewResponse {
   providers: ProviderWithTrust[];
   totalModels: number;
   lastUpdated: string | null;
+}
+
+// =============================================================================
+// Admin Trust Queue Types
+// =============================================================================
+
+/**
+ * Full database record for model trust scores.
+ */
+export interface ModelTrustScoreRecord {
+  id: string;
+  model_id: string;
+  dimension: TrustDimension;
+  score: number | null;
+  confidence: number;
+  evidence: string | null;
+  source_url: string | null;
+  sample_size: number | null;
+  measurement_period_days: number | null;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  notes: string | null;
+  measured_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * Trust score input for creating/updating scores.
+ */
+export interface TrustScoreInput {
+  dimension: TrustDimension;
+  score: number | null;
+  confidence: number;
+  evidence: string | null;
+  source_url: string | null;
+  notes: string | null;
+}
+
+/**
+ * Item in the trust queue list view.
+ */
+export interface TrustQueueItem {
+  id: string;
+  name: string;
+  providerName: string;
+  providerTrustTier: TrustTier;
+  scoresCompleted: number;
+  totalDimensions: number;
+  averageScore: number | null;
+  lastUpdated: string | null;
+}
+
+/**
+ * Response type for trust queue list API.
+ */
+export interface TrustQueueResponse {
+  models: TrustQueueItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+/**
+ * Response type for single model trust scores API.
+ */
+export interface ModelTrustScoresResponse {
+  modelId: string;
+  modelName: string;
+  providerName: string;
+  scores: ModelTrustScoreRecord[];
+}
+
+/**
+ * Convert confidence number (0-100) to level string.
+ */
+export function getConfidenceLevel(confidence: number): TrustConfidence {
+  if (confidence >= 70) return 'high';
+  if (confidence >= 40) return 'medium';
+  return 'low';
+}
+
+/**
+ * Convert confidence level string to default number.
+ */
+export function getConfidenceValue(level: TrustConfidence): number {
+  switch (level) {
+    case 'high':
+      return 85;
+    case 'medium':
+      return 50;
+    case 'low':
+      return 25;
+  }
 }
