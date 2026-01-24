@@ -1,0 +1,81 @@
+2026-01-19T12:36:09.000000000Z [inf]  Starting Container
+2026-01-19T12:36:10.334429377Z [inf]  
+2026-01-19T12:36:10.334436281Z [inf]  > modeloptix@0.1.0 start /app
+2026-01-19T12:36:10.334442275Z [inf]  > next start
+2026-01-19T12:36:10.334449471Z [inf]  
+2026-01-19T12:36:10.511832686Z [inf]    ▲ Next.js 14.2.35
+2026-01-19T12:36:10.511841711Z [inf]    - Local:        http://localhost:8080
+2026-01-19T12:36:10.511847520Z [inf]  
+2026-01-19T12:36:10.511852846Z [inf]   ✓ Starting...
+2026-01-19T12:36:10.699341111Z [inf]  [Instrumentation] Initializing cron jobs...
+2026-01-19T12:36:10.727239951Z [inf]  [Instrumentation] Cron jobs initialized:
+2026-01-19T12:36:10.727248432Z [inf]    - cleanup-expired-sessions: 0 1 * * * (daily 1am UTC)
+2026-01-19T12:36:10.727254151Z [inf]    - cleanup-guest-sanity-checks: 0 6 * * * (daily 6am UTC)
+2026-01-19T12:36:10.727260589Z [inf]    - reaper: */5 * * * * (every 5 minutes)
+2026-01-19T12:36:10.727266400Z [inf]   ✓ Ready in 399ms
+2026-01-19T12:40:02.938802775Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T12:35:00.044Z
+2026-01-19T12:40:02.938819252Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T12:40:02.938832320Z [err]    code: 'PGRST205',
+2026-01-19T12:40:02.938861690Z [err]    details: null,
+2026-01-19T12:40:02.938872466Z [err]    hint: null,
+2026-01-19T12:40:02.938880847Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T12:40:02.938888853Z [err]  [2026-01-19T12:40:00.436Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
+2026-01-19T12:40:02.938892140Z [err]  }
+2026-01-19T12:40:02.938938967Z [inf]  [Cron] Running reaper
+2026-01-19T12:40:22.228105028Z [err]  [req_mkl5kupv_jefue3xy] Auth error: Auth session missing!
+2026-01-19T12:45:03.632000791Z [inf]  [Cron] Running reaper
+2026-01-19T12:45:03.632008780Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T12:40:00.029Z
+2026-01-19T12:45:03.632019330Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T12:45:03.632026328Z [err]    code: 'PGRST205',
+2026-01-19T12:45:03.632033533Z [err]    details: null,
+2026-01-19T12:45:03.632040032Z [err]    hint: null,
+2026-01-19T12:45:03.632047482Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T12:45:03.632054432Z [err]  }
+2026-01-19T12:45:03.632061352Z [err]  [2026-01-19T12:45:00.306Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
+2026-01-19T12:50:06.477514177Z [inf]  [Cron] Running reaper
+2026-01-19T12:50:06.477520134Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T12:45:00.038Z
+2026-01-19T12:50:06.477525238Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T12:50:06.477530143Z [err]    code: 'PGRST205',
+2026-01-19T12:50:06.477534595Z [err]    details: null,
+2026-01-19T12:50:06.477540059Z [err]    hint: null,
+2026-01-19T12:50:06.477544340Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T12:50:06.477549167Z [err]  }
+2026-01-19T12:50:06.477554984Z [err]  [2026-01-19T12:50:00.374Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
+2026-01-19T12:55:09.126358199Z [err]  }
+2026-01-19T12:55:09.126380974Z [err]  [2026-01-19T12:55:00.243Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
+2026-01-19T12:55:09.126403505Z [inf]  [Cron] Running reaper
+2026-01-19T12:55:09.126411684Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T12:50:00.031Z
+2026-01-19T12:55:09.126447489Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T12:55:09.126456128Z [err]    code: 'PGRST205',
+2026-01-19T12:55:09.126461967Z [err]    details: null,
+2026-01-19T12:55:09.126483914Z [err]    hint: null,
+2026-01-19T12:55:09.126489488Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T12:58:50.180481662Z [err]  [req_mkl68oru_7jzmawtv] Auth error: Auth session missing!
+2026-01-19T12:59:09.567628952Z [err]  [req_mkl6916p_mu9s1hgi] Auth error: Auth session missing!
+2026-01-19T13:00:10.216859321Z [inf]  [Cron] Running reaper
+2026-01-19T13:00:10.216876335Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T12:55:00.030Z
+2026-01-19T13:00:10.216883171Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T13:00:10.216897926Z [err]    code: 'PGRST205',
+2026-01-19T13:00:10.216905685Z [err]    details: null,
+2026-01-19T13:00:10.216912539Z [err]    hint: null,
+2026-01-19T13:00:10.216919421Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T13:00:10.216925835Z [err]  }
+2026-01-19T13:00:10.216934858Z [err]  [2026-01-19T13:00:00.370Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
+2026-01-19T13:05:06.748420192Z [inf]  [Cron] Running reaper
+2026-01-19T13:05:06.748424668Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T13:00:00.026Z
+2026-01-19T13:05:06.748429045Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T13:05:06.748433415Z [err]    code: 'PGRST205',
+2026-01-19T13:05:06.748440680Z [err]    details: null,
+2026-01-19T13:05:06.748445865Z [err]    hint: null,
+2026-01-19T13:05:06.748450542Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T13:05:06.748454680Z [err]  }
+2026-01-19T13:05:06.748459554Z [err]  [2026-01-19T13:05:00.272Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
+2026-01-19T13:10:01.373208584Z [inf]  [Cron] Running reaper
+2026-01-19T13:10:01.373232893Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T13:05:00.028Z
+2026-01-19T13:10:01.373240971Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T13:10:01.373247761Z [err]    code: 'PGRST205',
+2026-01-19T13:10:01.373254863Z [err]    details: null,
+2026-01-19T13:10:01.373260900Z [err]    hint: null,
+2026-01-19T13:10:01.373267061Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T13:10:01.373273320Z [err]  }
+2026-01-19T13:10:01.373280568Z [err]  [2026-01-19T13:10:00.367Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
