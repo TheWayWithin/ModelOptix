@@ -7,7 +7,7 @@ interface ModelRow {
   id: string;
   name: string;
   provider_id: string;
-  is_active: boolean;
+  is_available: boolean;
   providers: {
     id: string;
     name: string;
@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         id,
         name,
         provider_id,
-        is_active,
+        is_available,
         providers (
           id,
           name,
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
       providerName: model.providers?.name || 'Unknown',
       providerTrustTier: model.providers?.trust_tier || 'unknown',
       parameterCount: parameterCountMap[model.id] || 0,
-      isActive: model.is_active,
+      isAvailable: model.is_available,
     }));
 
     return NextResponse.json({

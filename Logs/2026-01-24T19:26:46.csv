@@ -1,0 +1,43 @@
+2026-01-24T19:26:46.000000000Z [inf]  Starting Container
+2026-01-24T19:26:46.760776183Z [inf]  [Instrumentation] Initializing cron jobs...
+2026-01-24T19:26:46.771520108Z [inf]  [Instrumentation] Cron jobs initialized:
+2026-01-24T19:26:46.771523628Z [inf]    - cleanup-expired-sessions: 0 1 * * * (daily 1am UTC)
+2026-01-24T19:26:46.771527368Z [inf]    - cleanup-guest-sanity-checks: 0 6 * * * (daily 6am UTC)
+2026-01-24T19:26:46.771530358Z [inf]    - reaper: */5 * * * * (every 5 minutes)
+2026-01-24T19:26:46.771533138Z [inf]    - sync-model-catalog: 0 2 * * * (daily 2am UTC)
+2026-01-24T19:26:46.771535498Z [inf]    - sync-pricing: 0 3 * * * (daily 3am UTC)
+2026-01-24T19:26:46.771538678Z [inf]    - sync-benchmarks: 0 4 * * 0 (weekly Sunday 4am UTC)
+2026-01-24T19:26:46.771541668Z [inf]    - generate-opportunities: 0 5 * * * (daily 5am UTC)
+2026-01-24T19:26:46.771543968Z [inf]    - trial-reminders: 0 9 * * * (daily 9am UTC)
+2026-01-24T19:26:46.772141986Z [inf]   ✓ Ready in 333ms
+2026-01-24T19:28:46.802968382Z [err]  (node:21) [DEP0060] DeprecationWarning: The `util._extend` API is deprecated. Please use Object.assign() instead.
+2026-01-24T19:28:46.802972302Z [err]  (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-01-24T19:30:06.862119645Z [inf]  [Cron] Running reaper
+2026-01-24T19:30:06.862124395Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-24T19:25:00.020Z
+2026-01-24T19:30:06.862127964Z [inf]  [Reaper] No stale jobs found
+2026-01-24T19:34:17.033090264Z [inf]  [req_mkspkhsj_v9rw6r7n] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/stats
+2026-01-24T19:34:24.650632564Z [inf]  [req_mkspko4m_04wmbwyn] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/parameters
+2026-01-24T19:34:24.807123468Z [err]  Error fetching models: {
+2026-01-24T19:34:24.807128368Z [err]    code: '42703',
+2026-01-24T19:34:24.807131788Z [err]    details: null,
+2026-01-24T19:34:24.807135318Z [err]    hint: null,
+2026-01-24T19:34:24.807138888Z [err]    message: 'column models.is_active does not exist'
+2026-01-24T19:34:24.807141868Z [err]  }
+2026-01-24T19:34:44.807263546Z [inf]  [req_mkspl15p_dvo0th9f] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/models
+2026-01-24T19:34:44.807266926Z [err]  Error fetching admin models: {
+2026-01-24T19:34:44.807270126Z [err]    code: '42703',
+2026-01-24T19:34:44.807273456Z [err]    details: null,
+2026-01-24T19:34:44.807276606Z [err]    hint: null,
+2026-01-24T19:34:44.807280786Z [err]    message: 'column models.input_modalities does not exist'
+2026-01-24T19:34:44.807283706Z [err]  }
+2026-01-24T19:35:04.805105107Z [inf]  [Cron] Running reaper
+2026-01-24T19:35:04.805108857Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-24T19:30:00.016Z
+2026-01-24T19:35:04.805112307Z [inf]  [Reaper] No stale jobs found
+2026-01-24T19:35:13.816568200Z [inf]  [req_mksplq0u_e11atmmk] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust
+2026-01-24T19:35:53.862669065Z [inf]  [req_mkspmf2n_0uakkvtl] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust
+2026-01-24T19:35:53.862672285Z [inf]  [req_mkspmh6p_416vfwkm] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust
+2026-01-24T19:36:23.863511825Z [inf]  [req_mkspn2kt_fre19dun] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust
+2026-01-24T19:36:23.863514665Z [inf]  [req_mkspn5wt_zdlvkago] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust
+2026-01-24T19:36:24.277531366Z [inf]  [req_mkspn8fl_vfl1086p] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust
+2026-01-24T19:36:26.765696188Z [inf]  [req_mkspnad0_r3sgxh59] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust
+2026-01-24T19:36:56.810917707Z [inf]  [req_mkspnqed_cnfzphh1] Admin user 0c568eff-9489-4fdc-b776-2248d1c4a462 accessing /api/admin/trust

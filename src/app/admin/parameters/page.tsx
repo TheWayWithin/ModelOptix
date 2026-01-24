@@ -792,8 +792,8 @@ export default function AdminParametersPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={model.isActive ? 'default' : 'secondary'}>
-                        {model.isActive ? 'Active' : 'Inactive'}
+                      <Badge variant={model.isAvailable ? 'default' : 'secondary'}>
+                        {model.isAvailable ? 'Available' : 'Unavailable'}
                       </Badge>
                     </TableCell>
                     <TableCell>

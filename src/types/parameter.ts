@@ -195,7 +195,7 @@ export interface ModelParameterSummary {
   providerName: string;
   providerTrustTier: string;
   parameterCount: number;
-  isActive: boolean;
+  isAvailable: boolean;
 }
 
 /**
