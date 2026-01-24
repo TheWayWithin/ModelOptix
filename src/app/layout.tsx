@@ -23,11 +23,20 @@ export const metadata: Metadata = {
     description: 'The independent AI model advisor. No investors, no agenda.',
     type: 'website',
     url: 'https://modeloptix.com',
+    images: [
+      {
+        url: 'https://modeloptix.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'ModelOptix - Stop Overpaying for AI',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ModelOptix - Stop Overpaying for AI',
     description: 'The independent AI model advisor. No investors, no agenda.',
+    images: ['https://modeloptix.com/og-image.png'],
   },
 };
 
