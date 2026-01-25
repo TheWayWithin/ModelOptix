@@ -47,9 +47,11 @@ export function UseCaseList({ functionId }: UseCaseListProps) {
     }
   }, [functionId, toast]);
 
+  // Mount-only effect to prevent infinite loop from toast dependency
   useEffect(() => {
     fetchUseCases();
-  }, [fetchUseCases]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleCreate = async (data: CreateUseCaseInput) => {
     const response = await fetch(`/api/functions/${functionId}/use-cases`, {

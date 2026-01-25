@@ -49,9 +49,11 @@ export function FunctionList({ productId }: FunctionListProps) {
     }
   }, [productId]);
 
+  // Mount-only effect to prevent infinite loop from toast dependency
   useEffect(() => {
     fetchFunctions();
-  }, [fetchFunctions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAdd = () => {
     setEditingFunction(null);
