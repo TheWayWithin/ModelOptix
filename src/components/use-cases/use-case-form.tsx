@@ -59,9 +59,9 @@ const OUTPUT_TYPE_LABELS: Record<OutputType, string> = {
 export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFormProps) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [currentModelId, setCurrentModelId] = useState<string>('');
+  const [currentModelId, setCurrentModelId] = useState<string>('__none__');
   const [primaryNeed, setPrimaryNeed] = useState<PriorityNeed>('quality');
-  const [secondaryNeed, setSecondaryNeed] = useState<PriorityNeed | ''>('');
+  const [secondaryNeed, setSecondaryNeed] = useState<string>('__none__');
   const [inputType, setInputType] = useState<InputType | ''>('text');
   const [outputType, setOutputType] = useState<OutputType | ''>('text');
   const [requiredContext, setRequiredContext] = useState('4096');
@@ -102,11 +102,11 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
     if (useCase) {
       setName(useCase.name);
       setDescription(useCase.description || '');
-      setCurrentModelId(useCase.current_model_id || '');
+      setCurrentModelId(useCase.current_model_id || '__none__');
       setPrimaryNeed(useCase.primary_need);
-      setSecondaryNeed(useCase.secondary_need || '');
-      setInputType(useCase.input_type || '');
-      setOutputType(useCase.output_type || '');
+      setSecondaryNeed(useCase.secondary_need || '__none__');
+      setInputType(useCase.input_type || 'text');
+      setOutputType(useCase.output_type || 'text');
       setRequiredContext(useCase.required_context?.toString() || '4096');
       setEstimatedMonthlyTokens(useCase.estimated_monthly_tokens?.toString() || '');
       setRequiresVision(useCase.requires_vision);
@@ -115,9 +115,9 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
     } else {
       setName('');
       setDescription('');
-      setCurrentModelId('');
+      setCurrentModelId('__none__');
       setPrimaryNeed('quality');
-      setSecondaryNeed('');
+      setSecondaryNeed('__none__');
       setInputType('text');
       setOutputType('text');
       setRequiredContext('4096');
@@ -137,9 +137,9 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
       await onSubmit({
         name,
         description: description || null,
-        current_model_id: currentModelId || null,
+        current_model_id: currentModelId && currentModelId !== '__none__' ? currentModelId : null,
         primary_need: primaryNeed,
-        secondary_need: secondaryNeed || null,
+        secondary_need: secondaryNeed && secondaryNeed !== '__none__' ? secondaryNeed as PriorityNeed : null,
         input_type: inputType || null,
         output_type: outputType || null,
         required_context: parseInt(requiredContext) || 4096,
@@ -200,7 +200,7 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
                   <SelectValue placeholder={isLoadingModels ? 'Loading models...' : 'Select your current model'} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No model selected</SelectItem>
+                  <SelectItem value="__none__">No model selected</SelectItem>
                   {models.map((model) => (
                     <SelectItem key={model.id} value={model.id}>
                       {model.displayName}
@@ -239,7 +239,7 @@ export function UseCaseForm({ open, onOpenChange, useCase, onSubmit }: UseCaseFo
                   <SelectValue placeholder="Optional - second priority" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="__none__">None</SelectItem>
                   {PRIORITY_NEEDS.filter(n => n !== primaryNeed).map((need) => (
                     <SelectItem key={need} value={need}>
                       {PRIORITY_NEED_LABELS[need]}
