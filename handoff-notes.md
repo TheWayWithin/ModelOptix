@@ -1,17 +1,68 @@
 # ModelOptix Handoff Notes
 
 > Current context for agent-to-agent handoff
-> Last Updated: 2026-01-24 (Task 5.7 Complete)
+> Last Updated: 2026-01-25 (Sprint 01 Complete)
 
 ---
 
 ## Current Phase
 
-**Phase 5: Polish, Admin & Launch** - IN PROGRESS (13/14 tasks complete)
+**Sprint 01: Eliminate Functions Layer** - COMPLETE
 
 ---
 
-## Latest Session - 2026-01-24 (Admin Parameter Support)
+## Latest Session - 2026-01-25 (Sprint 01: Eliminate Functions Layer)
+
+### Sprint Summary
+
+Simplified data model from `Product → Function → Use Case` to `Product → Use Case` directly.
+
+### ✅ Migration Deployed to Staging
+
+The migration `007_eliminate_functions_layer.sql` was successfully deployed to Staging on 2026-01-25.
+
+**Deployment Issues Encountered & Resolved**:
+1. Supabase pooler (port 6543) doesn't allow `DISABLE TRIGGER ALL` - switched to direct connection (port 5432)
+2. RLS policies depended on `function_id` column - added policy drops before column drop
+3. Migration committed successfully, schema verified
+
+**Verified in Staging**:
+- ✅ `use_cases.product_id` column exists with NOT NULL constraint
+- ✅ `use_cases.function_id` column removed
+- ✅ New columns added (priority, latency_requirement_ms, etc.)
+- ✅ RLS policies updated to use product_id
+- ✅ `functions` table renamed to `functions_deprecated`
+
+### Files Created
+
+- `supabase/migrations/007_eliminate_functions_layer.sql` - Database migration
+- `src/app/api/products/[id]/use-cases/route.ts` - New API endpoint
+
+### Files Modified
+
+- `src/types/use-case.ts` - New schema with product_id, priority, etc.
+- `src/app/api/use-cases/[id]/route.ts` - Updated for new schema
+- `src/components/use-cases/use-case-list.tsx` - Changed to use productId
+- `src/components/use-cases/use-case-form.tsx` - Added new fields
+- `src/components/use-cases/use-case-card.tsx` - Enhanced display
+- `src/components/products/product-detail-view.tsx` - Uses UseCaseList directly
+
+### Deprecated (410 Gone)
+
+- `/api/products/[id]/functions`
+- `/api/functions/[id]`
+- `/api/functions/[id]/use-cases`
+
+### Next Steps
+
+1. ~~Deploy `007_eliminate_functions_layer.sql` to Staging~~ ✅ DONE
+2. Test Use Case CRUD on staging environment (staging.modeloptix.com)
+3. If successful, merge `develop` to `main` to deploy to Production
+4. Clean up deprecated files after 90 days (2026-04-25)
+
+---
+
+## Previous Session - 2026-01-24 (Admin Parameter Support)
 
 ### Task 5.7: Admin Parameter Support ✅
 

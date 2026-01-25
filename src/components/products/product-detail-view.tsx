@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Product, getStatusColor, PRODUCT_STATUS_OPTIONS } from '@/types/product';
 import { ProductForm } from './product-form';
-import { FunctionList } from '@/components/functions';
+import { UseCaseList } from '@/components/use-cases';  // CHANGED: was FunctionList
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -155,49 +155,50 @@ export function ProductDetailView({ product: initialProduct }: ProductDetailView
         </DropdownMenu>
       </div>
 
-      {/* Product Details */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Details</CardTitle>
-            <CardDescription>Basic information about this product.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      {/* Product Details Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Details</CardTitle>
+          <CardDescription>Basic information about this product.</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-muted-foreground">Description</label>
+            <p className="mt-1 text-sm">
+              {product.description || 'No description provided.'}
+            </p>
+          </div>
+          <div className="flex gap-6">
             <div>
-              <label className="text-sm font-medium text-muted-foreground">Description</label>
-              <p className="mt-1 text-sm">
-                {product.description || 'No description provided.'}
-              </p>
-            </div>
-            <div className="flex gap-6">
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Created</label>
-                <div className="mt-1 flex items-center gap-2 text-sm">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  {format(new Date(product.created_at), 'MMM d, yyyy')}
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
-                <div className="mt-1 flex items-center gap-2 text-sm">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  {format(new Date(product.updated_at), 'MMM d, yyyy')}
-                </div>
+              <label className="text-sm font-medium text-muted-foreground">Created</label>
+              <div className="mt-1 flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                {format(new Date(product.created_at), 'MMM d, yyyy')}
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
+              <div className="mt-1 flex items-center gap-2 text-sm">
+                <Clock className="h-4 w-4 text-muted-foreground" />
+                {format(new Date(product.updated_at), 'MMM d, yyyy')}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Functions</CardTitle>
-            <CardDescription>AI functions associated with this product.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <FunctionList productId={product.id} />
-          </CardContent>
-        </Card>
-      </div>
+      {/* Use Cases - now directly under product (functions layer eliminated) */}
+      <Card>
+        <CardHeader>
+          <CardTitle>AI Use Cases</CardTitle>
+          <CardDescription>
+            Define how AI is used in this product. Each use case can be optimized independently.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <UseCaseList productId={product.id} />
+        </CardContent>
+      </Card>
 
       {/* Edit Form Sheet */}
       <ProductForm
@@ -214,7 +215,7 @@ export function ProductDetailView({ product: initialProduct }: ProductDetailView
             <AlertDialogTitle>Delete Product</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete &quot;{product.name}&quot;? This action cannot be
-              undone and will also delete all associated functions.
+              undone and will also delete all associated use cases.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

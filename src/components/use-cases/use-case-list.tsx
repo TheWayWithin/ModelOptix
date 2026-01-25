@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { UseCase, CreateUseCaseInput } from '@/types/use-case';
+import { UseCase, CreateUseCaseInput, UseCaseWithModel } from '@/types/use-case';
 import { UseCaseCard } from './use-case-card';
 import { UseCaseForm } from './use-case-form';
 import { Button } from '@/components/ui/button';
@@ -19,11 +19,11 @@ import {
 } from '@/components/ui/alert-dialog';
 
 interface UseCaseListProps {
-  functionId: string;
+  productId: string;  // CHANGED: was functionId - now directly linked to product
 }
 
-export function UseCaseList({ functionId }: UseCaseListProps) {
-  const [useCases, setUseCases] = useState<UseCase[]>([]);
+export function UseCaseList({ productId }: UseCaseListProps) {
+  const [useCases, setUseCases] = useState<UseCaseWithModel[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingUseCase, setEditingUseCase] = useState<UseCase | null>(null);
@@ -32,7 +32,8 @@ export function UseCaseList({ functionId }: UseCaseListProps) {
 
   const fetchUseCases = useCallback(async () => {
     try {
-      const response = await fetch(`/api/functions/${functionId}/use-cases`);
+      // CHANGED: API endpoint from /api/functions/[id]/use-cases to /api/products/[id]/use-cases
+      const response = await fetch(`/api/products/${productId}/use-cases`);
       if (!response.ok) throw new Error('Failed to fetch use cases');
       const data = await response.json();
       setUseCases(data);
@@ -45,7 +46,7 @@ export function UseCaseList({ functionId }: UseCaseListProps) {
     } finally {
       setIsLoading(false);
     }
-  }, [functionId, toast]);
+  }, [productId, toast]);
 
   // Mount-only effect to prevent infinite loop from toast dependency
   useEffect(() => {
@@ -54,7 +55,8 @@ export function UseCaseList({ functionId }: UseCaseListProps) {
   }, []);
 
   const handleCreate = async (data: CreateUseCaseInput) => {
-    const response = await fetch(`/api/functions/${functionId}/use-cases`, {
+    // CHANGED: API endpoint
+    const response = await fetch(`/api/products/${productId}/use-cases`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -134,7 +136,7 @@ export function UseCaseList({ functionId }: UseCaseListProps) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Use Cases</h3>
+        <h3 className="text-lg font-semibold">AI Use Cases</h3>
         <Button onClick={() => setIsFormOpen(true)} size="sm">
           <Plus className="mr-2 h-4 w-4" />
           Add Use Case
@@ -144,7 +146,7 @@ export function UseCaseList({ functionId }: UseCaseListProps) {
       {useCases.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center">
           <p className="text-muted-foreground">
-            No use cases yet. Add your first use case to start optimizing.
+            No use cases yet. Add your first AI capability to start optimizing.
           </p>
         </div>
       ) : (

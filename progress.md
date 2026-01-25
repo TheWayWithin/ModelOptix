@@ -7,6 +7,82 @@
 
 ## Session Log
 
+### 2026-01-25 - Sprint 01: Eliminate Functions Layer (COMPLETE)
+
+**Sprint**: [sprint-01-eliminate-functions-layer.md](./sprints/sprint-01-eliminate-functions-layer.md)
+
+**Summary**: Simplified data model from `Product → Function → Use Case` to `Product → Use Case` directly. This reduces cognitive overhead for users and simplifies the codebase.
+
+#### Database Migration Created
+
+**File**: `supabase/migrations/007_eliminate_functions_layer.sql` (10.8KB)
+
+**Changes**:
+- Added new columns to `use_cases`: `product_id`, `priority`, `latency_requirement_ms`, `quality_requirement`, `monthly_volume`, `avg_input_tokens`, `avg_output_tokens`, `requires_json_mode`
+- Migrated data from `functions` table into `use_cases`
+- Dropped deprecated columns: `function_id`, `input_type`, `output_type`, `requires_streaming`
+- Updated RLS policies to reference `product_id` directly
+- Renamed `functions` table to `functions_deprecated` (safe to drop after 2026-02-25)
+
+**Migration Status**: ✅ DEPLOYED TO STAGING (2026-01-25)
+
+**Deployment Notes**:
+- Initial attempts failed due to Supabase pooler restrictions on disabling triggers
+- Modified migration to drop RLS policies before dropping `function_id` column
+- Successfully deployed via direct database connection (port 5432)
+- Verified schema changes and data migration in staging database
+
+#### Backend Changes
+
+**New Endpoint**: `POST/GET /api/products/[id]/use-cases` (route.ts)
+- List use cases for a product
+- Create use cases directly under a product
+
+**Updated Endpoint**: `GET/PATCH/DELETE /api/use-cases/[id]`
+- Updated queries to reference `product_id` instead of `function_id`
+- Added support for new fields (priority, latency_requirement_ms, etc.)
+
+**Deprecated Endpoints** (return 410 Gone):
+- `GET/POST /api/products/[id]/functions`
+- `GET/PATCH/DELETE /api/functions/[id]`
+- `GET/POST /api/functions/[id]/use-cases`
+
+#### Frontend Changes
+
+**Updated Types** (`src/types/use-case.ts`):
+- Changed `function_id` to `product_id`
+- Added `Priority`, `QualityRequirement` types
+- Added `PRIORITY_COLORS` for badge styling
+- Replaced `input_type`, `output_type`, `requires_streaming` with `requires_json_mode`
+
+**Updated Components**:
+- `UseCaseList` - Changed prop from `functionId` to `productId`, updated API endpoints
+- `UseCaseForm` - Added new fields (priority, quality, latency, usage patterns), removed deprecated fields
+- `UseCaseCard` - Added priority badge with color, usage stats, JSON mode badge
+- `ProductDetailView` - Replaced `FunctionList` with `UseCaseList`
+
+**Deprecated** (safe to delete after 2026-04-25):
+- `src/components/functions/` directory
+- `src/types/function.ts`
+- `src/app/(dashboard)/products/[id]/functions/[functionId]/page.tsx` (now redirects to product page)
+
+#### Verification
+
+- ✅ `npm run build` passes (only lint warnings, no errors)
+- ✅ All files verified on filesystem
+- ✅ Migration script created with rollback instructions
+- ✅ API deprecation headers include sunset date (2026-04-25)
+
+#### Next Steps
+
+1. **Deploy migration to Staging** first and test thoroughly
+2. Test Use Case CRUD on staging
+3. Verify RLS policies work correctly
+4. If successful, deploy to Production
+5. After 90 days (2026-04-25), delete deprecated files
+
+---
+
 ### 2026-01-24 - Task 5.7: Admin Parameter Support
 
 **Action**: Implemented Admin Parameter Support for managing API parameter compatibility matrix
