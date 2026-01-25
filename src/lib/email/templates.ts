@@ -134,7 +134,7 @@ export function welcomeEmail(params: {
 export function opportunityAlertEmail(params: {
   name?: string;
   productName: string;
-  functionName: string;
+  useCaseName: string;
   currentModel: string;
   recommendedModel: string;
   monthlySavings: number;
@@ -164,9 +164,9 @@ export function opportunityAlertEmail(params: {
 
           <table style="width: 100%; font-size: 14px; color: #4B5563;">
             <tr>
-              <td style="padding: 8px 0; border-bottom: 1px solid #E5E7EB;">Function</td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #E5E7EB;">Use Case</td>
               <td style="padding: 8px 0; border-bottom: 1px solid #E5E7EB; text-align: right; font-weight: 500;">
-                ${params.functionName}
+                ${params.useCaseName}
               </td>
             </tr>
             <tr>

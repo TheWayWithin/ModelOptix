@@ -7,7 +7,7 @@ export async function recordSavingsFromOpportunity(
 ): Promise<SavingsRecord | null> {
   const supabase = await createClient();
 
-  // Fetch the opportunity with related use case, function, product, and model details
+  // Fetch the opportunity with related use case, product, and model details
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: opportunity, error: fetchError } = await (supabase as any)
     .from('opportunities')
@@ -20,17 +20,15 @@ export async function recordSavingsFromOpportunity(
       use_cases!inner (
         id,
         current_model_id,
-        functions!inner (
+        product_id,
+        products!inner (
           id,
-          products!inner (
-            id,
-            user_id
-          )
+          user_id
         )
       )
     `)
     .eq('id', opportunityId)
-    .eq('use_cases.functions.products.user_id', userId)
+    .eq('use_cases.products.user_id', userId)
     .single();
 
   if (fetchError || !opportunity) {
@@ -91,8 +89,7 @@ export async function recordSavingsFromOpportunity(
     .insert({
       user_id: userId,
       opportunity_id: opportunity.id,
-      product_id: opportunity.use_cases?.functions?.products?.id || null,
-      function_id: opportunity.use_cases?.functions?.id || null,
+      product_id: opportunity.use_cases?.product_id || opportunity.use_cases?.products?.id || null,
       old_model: oldModel?.name || 'Unknown',
       old_provider: oldModel?.providers?.name || 'Unknown',
       new_model: newModel?.name || 'Unknown',

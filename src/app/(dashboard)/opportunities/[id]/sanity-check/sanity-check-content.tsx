@@ -160,7 +160,7 @@ export function SanityCheckContent({ opportunity, userId: _userId }: SanityCheck
             <div>
               <p className="font-medium">{opportunity.useCase?.name || 'Use Case'}</p>
               <p className="text-sm text-muted-foreground">
-                {opportunity.useCase?.functionName} &bull; {opportunity.useCase?.productName}
+                {opportunity.useCase?.productName}
               </p>
             </div>
             <div className="text-right">

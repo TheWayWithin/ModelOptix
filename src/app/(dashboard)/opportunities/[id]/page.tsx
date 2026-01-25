@@ -45,17 +45,14 @@ async function getOpportunity(id: string): Promise<OpportunityWithDetails | null
         id,
         name,
         current_model_id,
-        functions!inner (
+        products!inner (
           name,
-          products!inner (
-            name,
-            user_id
-          )
+          user_id
         )
       )
     `)
     .eq('id', id)
-    .eq('use_cases.functions.products.user_id', user.id)
+    .eq('use_cases.products.user_id', user.id)
     .single();
 
   if (error || !opportunity) {
@@ -121,8 +118,7 @@ async function getOpportunity(id: string): Promise<OpportunityWithDetails | null
     useCase: {
       id: useCase.id,
       name: useCase.name,
-      functionName: useCase.functions?.name || 'Unknown',
-      productName: useCase.functions?.products?.name || 'Unknown',
+      productName: useCase.products?.name || 'Unknown',
     },
     currentModel: getModelSummary(modelsMap[useCase?.current_model_id]),
     recommendedModel: getModelSummary(modelsMap[opportunity.recommended_model_id]),

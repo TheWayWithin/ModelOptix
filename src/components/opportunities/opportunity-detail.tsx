@@ -174,7 +174,7 @@ export function OpportunityDetail({ opportunity }: OpportunityDetailProps) {
                 </Badge>
               </div>
               <CardDescription className="text-base">
-                {useCase.productName} / {useCase.functionName}
+                {useCase.productName}
               </CardDescription>
             </div>
 

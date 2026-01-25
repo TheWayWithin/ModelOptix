@@ -52,8 +52,6 @@ interface UseCaseWithContext {
   tertiaryNeed: ScoringFactor | null;
   useEqualWeights: boolean;
   requiredContext: number | null;
-  functionId: string;
-  functionName: string;
   productId: string;
   productName: string;
   userId: string;
@@ -251,18 +249,12 @@ async function getActiveUseCases(): Promise<UseCaseWithContext[]> {
       tertiary_need,
       use_equal_weights,
       required_context,
-      function_id,
-      functions!inner (
+      product_id,
+      products!inner (
         id,
         name,
-        status,
-        product_id,
-        products!inner (
-          id,
-          name,
-          user_id,
-          status
-        )
+        user_id,
+        status
       )
     `
     )
@@ -279,16 +271,12 @@ async function getActiveUseCases(): Promise<UseCaseWithContext[]> {
   return data
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .filter((row: any) => {
-      const func = row.functions as { status: string; products: { status: string } };
-      return func?.status === 'active' && func?.products?.status === 'active';
+      const product = row.products as { status: string };
+      return product?.status === 'active';
     })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((row: any) => {
-      const func = row.functions as {
-        id: string;
-        name: string;
-        products: { id: string; name: string; user_id: string };
-      };
+      const product = row.products as { id: string; name: string; user_id: string };
 
       return {
         id: row.id,
@@ -299,11 +287,9 @@ async function getActiveUseCases(): Promise<UseCaseWithContext[]> {
         tertiaryNeed: row.tertiary_need as ScoringFactor | null,
         useEqualWeights: row.use_equal_weights ?? false,
         requiredContext: row.required_context,
-        functionId: func.id,
-        functionName: func.name,
-        productId: func.products.id,
-        productName: func.products.name,
-        userId: func.products.user_id,
+        productId: product.id,
+        productName: product.name,
+        userId: product.user_id,
       };
     });
 }

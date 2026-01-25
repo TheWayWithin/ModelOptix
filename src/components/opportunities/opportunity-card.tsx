@@ -51,7 +51,7 @@ export function OpportunityCard({ opportunity, onDismiss }: OpportunityCardProps
               </Link>
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground truncate">
-              {useCase.productName} / {useCase.functionName}
+              {useCase.productName}
             </CardDescription>
           </div>
           <Badge className={getOpportunityTypeColor(opportunityType)}>

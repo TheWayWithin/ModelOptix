@@ -66,13 +66,11 @@ export default async function OpportunitiesPage() {
     .select(`
       id,
       name,
-      functions!inner (
-        products!inner (
-          user_id
-        )
+      products!inner (
+        user_id
       )
     `)
-    .eq('functions.products.user_id', user.id)
+    .eq('products.user_id', user.id)
     .order('name');
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

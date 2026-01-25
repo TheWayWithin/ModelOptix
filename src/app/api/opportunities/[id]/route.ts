@@ -50,17 +50,14 @@ export async function GET(
           id,
           name,
           current_model_id,
-          functions!inner (
+          products!inner (
             name,
-            products!inner (
-              name,
-              user_id
-            )
+            user_id
           )
         )
       `)
       .eq('id', id)
-      .eq('use_cases.functions.products.user_id', user.id)
+      .eq('use_cases.products.user_id', user.id)
       .single();
 
     if (queryError) {
@@ -151,8 +148,7 @@ export async function GET(
       useCase: {
         id: useCase.id,
         name: useCase.name,
-        functionName: useCase.functions?.name || 'Unknown',
-        productName: useCase.functions?.products?.name || 'Unknown',
+        productName: useCase.products?.name || 'Unknown',
       },
       currentModel: getModelSummary(currentModelData),
       recommendedModel: getModelSummary(recommendedModelData),
@@ -231,15 +227,13 @@ export async function PATCH(
         use_cases!inner (
           id,
           current_model_id,
-          functions!inner (
-            products!inner (
-              user_id
-            )
+          products!inner (
+            user_id
           )
         )
       `)
       .eq('id', id)
-      .eq('use_cases.functions.products.user_id', user.id)
+      .eq('use_cases.products.user_id', user.id)
       .single();
 
     if (checkError || !existing) {

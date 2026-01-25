@@ -57,7 +57,6 @@ export interface OpportunityModelSummary {
 export interface OpportunityUseCaseSummary {
   id: string;
   name: string;
-  functionName: string;
   productName: string;
 }
 

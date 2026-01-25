@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('page_size') || '20', 10)));
 
     // Build query - opportunities for user's use cases
-    // Join through: opportunities -> use_cases -> functions -> products -> user_id
+    // Join through: opportunities -> use_cases -> products -> user_id
     let query = supabase
       .from('opportunities')
       .select(`
@@ -73,16 +73,13 @@ export async function GET(request: NextRequest) {
           id,
           name,
           current_model_id,
-          functions!inner (
+          products!inner (
             name,
-            products!inner (
-              name,
-              user_id
-            )
+            user_id
           )
         )
       `, { count: 'exact' })
-      .eq('use_cases.functions.products.user_id', user.id);
+      .eq('use_cases.products.user_id', user.id);
 
     // Apply filters
     if (status !== 'all') {
@@ -193,8 +190,7 @@ export async function GET(request: NextRequest) {
         useCase: {
           id: useCase.id,
           name: useCase.name,
-          functionName: useCase.functions?.name || 'Unknown',
-          productName: useCase.functions?.products?.name || 'Unknown',
+          productName: useCase.products?.name || 'Unknown',
         },
         currentModel: getModelSummary(currentModelData),
         recommendedModel: getModelSummary(recommendedModelData),

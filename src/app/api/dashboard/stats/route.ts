@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 interface RecentItem {
   id: string
   name: string
-  type: 'product' | 'function' | 'use_case'
+  type: 'product' | 'use_case'
   createdAt: string
   parentName?: string
 }
@@ -37,21 +37,11 @@ export async function GET() {
       )
     }
 
-    // Get function count
-    const { count: functionCount, error: functionError } = await supabase
-      .from('functions')
-      .select('*, products!inner(user_id)', { count: 'exact', head: true })
-      .eq('products.user_id', user.id)
-
-    if (functionError) {
-      console.error('Error fetching function count:', functionError)
-    }
-
-    // Get use case count
+    // Get use case count (functions layer was eliminated)
     const { count: useCaseCount, error: useCaseError } = await supabase
       .from('use_cases')
-      .select('*, functions!inner(products!inner(user_id))', { count: 'exact', head: true })
-      .eq('functions.products.user_id', user.id)
+      .select('*, products!inner(user_id)', { count: 'exact', head: true })
+      .eq('products.user_id', user.id)
 
     if (useCaseError) {
       console.error('Error fetching use case count:', useCaseError)
@@ -72,10 +62,10 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(3)
 
-    // Get recent functions with product names (last 5)
+    // Get recent use cases with product names (functions layer was eliminated)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: recentFunctions } = await (supabase as any)
-      .from('functions')
+    const { data: recentUseCases } = await (supabase as any)
+      .from('use_cases')
       .select('id, name, created_at, products!inner(name, user_id)')
       .eq('products.user_id', user.id)
       .order('created_at', { ascending: false })
@@ -96,15 +86,15 @@ export async function GET() {
       })
     }
 
-    if (recentFunctions) {
+    if (recentUseCases) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      recentFunctions.forEach((f: any) => {
+      recentUseCases.forEach((uc: any) => {
         recentActivity.push({
-          id: f.id,
-          name: f.name,
-          type: 'function',
-          createdAt: f.created_at,
-          parentName: f.products?.name,
+          id: uc.id,
+          name: uc.name,
+          type: 'use_case',
+          createdAt: uc.created_at,
+          parentName: uc.products?.name,
         })
       })
     }
@@ -119,7 +109,6 @@ export async function GET() {
     // These will be calculated by the recommendation engine in future sprints
     const stats = {
       products: productCount || 0,
-      functions: functionCount || 0,
       useCases: useCaseCount || 0,
       activeOpportunities: 0, // Placeholder - will come from recommendations engine
       potentialSavings: 0, // Placeholder - will come from cost analysis
