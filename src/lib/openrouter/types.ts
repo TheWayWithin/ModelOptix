@@ -174,6 +174,19 @@ export interface DetectedUsagePattern {
   lastUsed: string;
 }
 
+/**
+ * Catalog model for selection UI (when no generation history available)
+ */
+export interface CatalogModel {
+  id: string;
+  name: string;
+  provider: string;
+  openrouter_id: string | null;
+  context_length: number | null;
+  input_cost_per_token: number | null;
+  output_cost_per_token: number | null;
+}
+
 export interface ImportPreview {
   keyValid: boolean;
   keyLabel?: string;
@@ -191,6 +204,9 @@ export interface ImportPreview {
       monthlyVolume: number;
     }>;
   };
+  // Added for model selection flow (when no generation history)
+  catalogModels?: CatalogModel[];
+  requiresSelection?: boolean;
 }
 
 export interface ImportResult {

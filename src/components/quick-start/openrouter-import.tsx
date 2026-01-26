@@ -28,14 +28,14 @@ import {
   DollarSign,
   Zap,
 } from 'lucide-react';
-import type { ImportPreview, DetectedUsagePattern } from '@/lib/openrouter/types';
+import type { ImportPreview, DetectedUsagePattern, CatalogModel } from '@/lib/openrouter/types';
 
 interface OpenRouterImportProps {
   onComplete?: () => void;
   onCancel?: () => void;
 }
 
-type Step = 'key' | 'preview' | 'importing' | 'success';
+type Step = 'key' | 'preview' | 'select' | 'importing' | 'success';
 
 export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps) {
   const router = useRouter();
@@ -46,6 +46,8 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
   const [isImporting, setIsImporting] = useState(false);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [productName, setProductName] = useState('');
+  const [selectedModels, setSelectedModels] = useState<string[]>([]);
+  const [modelSearch, setModelSearch] = useState('');
   const [importResult, setImportResult] = useState<{
     productId: string;
     useCasesCreated: number;
@@ -87,8 +89,14 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
       }
 
       setPreview(data.preview);
-      setProductName(data.preview.suggestedProduct.name);
-      setStep('preview');
+      setProductName(data.preview.suggestedProduct?.name || 'My AI Portfolio');
+
+      // If no generation history, show model selection step
+      if (data.preview.requiresSelection) {
+        setStep('select');
+      } else {
+        setStep('preview');
+      }
     } catch (error) {
       toast({
         title: 'Validation failed',
@@ -102,6 +110,16 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
 
   // Import the portfolio
   const handleImport = async () => {
+    // Validate selection if in selection mode
+    if (preview?.requiresSelection && selectedModels.length === 0) {
+      toast({
+        title: 'No models selected',
+        description: 'Please select at least one model to import.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setIsImporting(true);
     setStep('importing');
 
@@ -109,7 +127,11 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
       const res = await fetch('/api/portfolio/import?mode=import', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ apiKey, productName }),
+        body: JSON.stringify({
+          apiKey,
+          productName,
+          selectedModels: preview?.requiresSelection ? selectedModels : undefined,
+        }),
       });
 
       const data = await res.json();
@@ -188,7 +210,7 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
         <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
           <div className="flex items-start gap-2">
             <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-            <span>We only read your usage history (models used, token counts)</span>
+            <span>Verifies your OpenRouter account is active</span>
           </div>
           <div className="flex items-start gap-2">
             <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
@@ -196,7 +218,7 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
           </div>
           <div className="flex items-start gap-2">
             <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-            <span>Get model recommendations in under 5 minutes</span>
+            <span>Select models you use from our 300+ model catalog</span>
           </div>
         </div>
       </CardContent>
@@ -225,7 +247,146 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
     </>
   );
 
-  // Step 2: Preview
+  // Toggle model selection
+  const toggleModel = (modelId: string) => {
+    setSelectedModels((prev) =>
+      prev.includes(modelId)
+        ? prev.filter((id) => id !== modelId)
+        : [...prev, modelId]
+    );
+  };
+
+  // Group models by provider for display
+  const groupedModels = preview?.catalogModels?.reduce(
+    (acc, model) => {
+      const provider = model.provider || 'Other';
+      if (!acc[provider]) acc[provider] = [];
+      acc[provider].push(model);
+      return acc;
+    },
+    {} as Record<string, CatalogModel[]>
+  ) || {};
+
+  // Filter models by search
+  const filterModels = (models: CatalogModel[]) => {
+    if (!modelSearch.trim()) return models;
+    const search = modelSearch.toLowerCase();
+    return models.filter(
+      (m) =>
+        m.name.toLowerCase().includes(search) ||
+        m.provider.toLowerCase().includes(search)
+    );
+  };
+
+  // Step 2a: Model Selection (when no generation history)
+  const SelectStep = () => {
+    if (!preview) return null;
+
+    return (
+      <>
+        <CardHeader className="text-center">
+          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+            <CheckCircle2 className="w-6 h-6 text-primary" />
+          </div>
+          <CardTitle>API Key Verified!</CardTitle>
+          <CardDescription>
+            Select the models you commonly use. We&apos;ll create use cases for each.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Search */}
+          <Input
+            placeholder="Search models..."
+            value={modelSearch}
+            onChange={(e) => setModelSearch(e.target.value)}
+          />
+
+          {/* Selected count */}
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-muted-foreground">
+              {selectedModels.length} model{selectedModels.length !== 1 ? 's' : ''} selected
+            </span>
+            {selectedModels.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedModels([])}
+              >
+                Clear all
+              </Button>
+            )}
+          </div>
+
+          {/* Models grouped by provider */}
+          <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+            {Object.entries(groupedModels).map(([provider, models]) => {
+              const filteredModels = filterModels(models);
+              if (filteredModels.length === 0) return null;
+
+              return (
+                <div key={provider}>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                    {provider}
+                  </div>
+                  <div className="space-y-1">
+                    {filteredModels.map((model) => (
+                      <label
+                        key={model.id}
+                        className={`flex items-center gap-3 p-2 rounded border cursor-pointer transition-colors ${
+                          selectedModels.includes(model.id)
+                            ? 'border-primary bg-primary/5'
+                            : 'border-transparent hover:bg-muted/50'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedModels.includes(model.id)}
+                          onChange={() => toggleModel(model.id)}
+                          className="rounded border-muted-foreground"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium truncate">
+                            {model.name}
+                          </div>
+                          {model.context_length && (
+                            <div className="text-xs text-muted-foreground">
+                              {(model.context_length / 1000).toFixed(0)}K context
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Product name */}
+          <div className="space-y-2 pt-2 border-t">
+            <Label htmlFor="product-name">Portfolio Name</Label>
+            <Input
+              id="product-name"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              placeholder="My AI Portfolio"
+            />
+          </div>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <Button variant="ghost" onClick={() => setStep('key')}>
+            Back
+          </Button>
+          <Button onClick={handleImport} disabled={selectedModels.length === 0}>
+            <Zap className="w-4 h-4 mr-2" />
+            Create {selectedModels.length} Use Case{selectedModels.length !== 1 ? 's' : ''}
+          </Button>
+        </CardFooter>
+      </>
+    );
+  };
+
+  // Step 2b: Preview (when generation history is available)
   const PreviewStep = () => {
     if (!preview) return null;
 
@@ -370,6 +531,7 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
   return (
     <Card className="w-full max-w-lg mx-auto">
       {step === 'key' && <KeyStep />}
+      {step === 'select' && <SelectStep />}
       {step === 'preview' && <PreviewStep />}
       {step === 'importing' && <ImportingStep />}
       {step === 'success' && <SuccessStep />}

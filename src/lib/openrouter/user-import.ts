@@ -7,7 +7,6 @@
 
 import {
   OpenRouterKeyInfo,
-  OpenRouterGenerationResponse,
   OpenRouterGeneration,
   DetectedUsagePattern,
   ImportPreview,
@@ -52,54 +51,25 @@ export async function validateOpenRouterKey(
 }
 
 /**
- * Fetch user's generation history from OpenRouter
+ * NOTE: OpenRouter's generation history endpoint requires a "provisioning key",
+ * which regular users don't have. Regular API keys only support:
+ * - /auth/key (validate key, get account info)
+ * - /models (list available models)
+ * - /generation?id=X (get single generation by ID)
+ *
+ * The /activity endpoint (which has aggregated usage) also requires provisioning keys.
+ *
+ * Therefore, we skip fetching generation history and instead let users
+ * select models from our catalog.
  */
 export async function fetchUserGenerations(
-  apiKey: string,
-  limit: number = 100
+  _apiKey: string,
+  _limit: number = 100
 ): Promise<OpenRouterGeneration[]> {
-  const allGenerations: OpenRouterGeneration[] = [];
-  let offset = 0;
-  const pageSize = 50; // OpenRouter's max page size
-
-  try {
-    while (allGenerations.length < limit) {
-      const response = await fetch(
-        `${OPENROUTER_API_BASE}/generation?offset=${offset}&limit=${pageSize}`,
-        {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response.ok) {
-        console.error(`[OpenRouter] Generation fetch error: ${response.status}`);
-        break;
-      }
-
-      const data: OpenRouterGenerationResponse = await response.json();
-
-      if (!data.data || data.data.length === 0) {
-        break;
-      }
-
-      allGenerations.push(...data.data);
-      offset += pageSize;
-
-      // If we got less than a full page, we've reached the end
-      if (data.data.length < pageSize) {
-        break;
-      }
-    }
-
-    return allGenerations.slice(0, limit);
-  } catch (error) {
-    console.error('[OpenRouter] Error fetching generations:', error);
-    return allGenerations;
-  }
+  // Cannot fetch generation history without a provisioning key
+  // Return empty array - the UI will show model selection instead
+  console.log('[OpenRouter] Generation history requires provisioning key - skipping');
+  return [];
 }
 
 /**
