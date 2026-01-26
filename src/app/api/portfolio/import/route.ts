@@ -139,25 +139,45 @@ export async function POST(request: NextRequest) {
     // If no generation history found, fetch popular models from our catalog
     // NOTE: OpenRouter's generation history API requires a "provisioning key"
     // which regular users don't have. We provide model selection instead.
+    console.log('[PortfolioImport] modelsDetected count:', preview.modelsDetected.length);
+
     if (preview.modelsDetected.length === 0) {
-      const serviceSupabase = createServiceClient();
+      console.log('[PortfolioImport] No generation history, fetching catalog models');
 
-      // Fetch popular models from our catalog (grouped by provider)
-      const { data: popularModels } = await serviceSupabase
-        .from('models')
-        .select(POPULAR_MODELS_QUERY)
-        .not('openrouter_id', 'is', null)
-        .order('provider', { ascending: true })
-        .order('name', { ascending: true })
-        .limit(50);
+      try {
+        const serviceSupabase = createServiceClient();
 
-      if (popularModels && popularModels.length > 0) {
-        // Add popular models as "catalog models" for selection
-        preview = {
-          ...preview,
-          catalogModels: popularModels as CatalogModel[],
-          requiresSelection: true, // Flag indicating user needs to select models
-        };
+        // Fetch popular models from our catalog (grouped by provider)
+        const { data: popularModels, error: modelsError } = await serviceSupabase
+          .from('models')
+          .select(POPULAR_MODELS_QUERY)
+          .not('openrouter_id', 'is', null)
+          .order('provider', { ascending: true })
+          .order('name', { ascending: true })
+          .limit(50);
+
+        console.log('[PortfolioImport] Catalog query result:', {
+          count: popularModels?.length || 0,
+          error: modelsError?.message || null,
+        });
+
+        if (modelsError) {
+          console.error('[PortfolioImport] Error fetching catalog models:', modelsError);
+        }
+
+        if (popularModels && popularModels.length > 0) {
+          // Add popular models as "catalog models" for selection
+          preview = {
+            ...preview,
+            catalogModels: popularModels as CatalogModel[],
+            requiresSelection: true, // Flag indicating user needs to select models
+          };
+          console.log('[PortfolioImport] Set requiresSelection=true with', popularModels.length, 'models');
+        } else {
+          console.log('[PortfolioImport] No catalog models found with openrouter_id');
+        }
+      } catch (err) {
+        console.error('[PortfolioImport] Service client error:', err);
       }
     }
 
