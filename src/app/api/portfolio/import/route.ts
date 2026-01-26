@@ -249,10 +249,12 @@ export async function POST(request: NextRequest) {
         .select('id, name, openrouter_id, context_length, providers(name)')
         .in('id', body.selectedModels!);
 
+      // Type assertion for logging
+      const modelDataForLog = selectedModelData as Array<{ id: string; name: string }> | null;
       console.log('[PortfolioImport] Models query result:', {
-        count: selectedModelData?.length || 0,
+        count: modelDataForLog?.length || 0,
         error: selectError?.message || null,
-        models: selectedModelData?.map((m) => ({ id: m.id, name: m.name })),
+        models: modelDataForLog?.map((m) => ({ id: m.id, name: m.name })),
       });
 
       if (selectError) {
