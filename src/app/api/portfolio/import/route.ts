@@ -43,25 +43,25 @@ interface ImportRequestBody {
   selectedModels?: string[]; // Model IDs selected by user (when no generation history)
 }
 
-// Popular model providers for the selection UI
+// Popular model providers for the selection UI - join with providers table
 const POPULAR_MODELS_QUERY = `
   id,
   name,
-  provider,
   openrouter_id,
   context_length,
   input_cost_per_token,
-  output_cost_per_token
+  output_cost_per_token,
+  providers!inner(name)
 `;
 
 interface CatalogModel {
   id: string;
   name: string;
-  provider: string;
   openrouter_id: string | null;
   context_length: number | null;
   input_cost_per_token: number | null;
   output_cost_per_token: number | null;
+  providers: { name: string };
 }
 
 /**
@@ -152,9 +152,8 @@ export async function POST(request: NextRequest) {
           .from('models')
           .select(POPULAR_MODELS_QUERY)
           .not('openrouter_id', 'is', null)
-          .order('provider', { ascending: true })
           .order('name', { ascending: true })
-          .limit(50);
+          .limit(100);
 
         console.log('[PortfolioImport] Catalog query result:', {
           count: popularModels?.length || 0,

@@ -259,7 +259,7 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
   // Group models by provider for display
   const groupedModels = preview?.catalogModels?.reduce(
     (acc, model) => {
-      const provider = model.provider || 'Other';
+      const provider = model.providers?.name || 'Other';
       if (!acc[provider]) acc[provider] = [];
       acc[provider].push(model);
       return acc;
@@ -274,7 +274,7 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
     return models.filter(
       (m) =>
         m.name.toLowerCase().includes(search) ||
-        m.provider.toLowerCase().includes(search)
+        (m.providers?.name || '').toLowerCase().includes(search)
     );
   };
 
