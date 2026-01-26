@@ -241,11 +241,19 @@ export async function POST(request: NextRequest) {
 
     if (hasSelectedModels) {
       // User-selected models import - fetch model details and create use cases
+      console.log('[PortfolioImport] Selected model IDs:', body.selectedModels);
+
       const serviceSupabase = createServiceClient();
       const { data: selectedModelData, error: selectError } = await serviceSupabase
         .from('models')
-        .select('id, name, openrouter_id, context_length, providers!inner(name)')
+        .select('id, name, openrouter_id, context_length, providers(name)')
         .in('id', body.selectedModels!);
+
+      console.log('[PortfolioImport] Models query result:', {
+        count: selectedModelData?.length || 0,
+        error: selectError?.message || null,
+        models: selectedModelData?.map((m) => ({ id: m.id, name: m.name })),
+      });
 
       if (selectError) {
         console.error('[PortfolioImport] Error fetching selected models:', selectError);
@@ -257,10 +265,12 @@ export async function POST(request: NextRequest) {
         name: string;
         openrouter_id: string | null;
         context_length: number | null;
-        providers: { name: string };
+        providers: { name: string } | null;
       };
 
-      if (selectedModelData) {
+      if (selectedModelData && selectedModelData.length > 0) {
+        console.log('[PortfolioImport] Creating use cases for', selectedModelData.length, 'models');
+
         for (const model of selectedModelData as SelectedModelRow[]) {
           const providerName = model.providers?.name || 'Unknown';
           const useCaseData = {
@@ -297,16 +307,33 @@ export async function POST(request: NextRequest) {
             },
           };
 
-          const { error: useCaseError } = await supabase
+          console.log('[PortfolioImport] Inserting use case:', {
+            name: useCaseData.name,
+            product_id: useCaseData.product_id,
+            current_model_id: useCaseData.current_model_id,
+          });
+
+          const { data: insertedUseCase, error: useCaseError } = await supabase
             .from('use_cases')
-            .insert(useCaseData);
+            .insert(useCaseData)
+            .select('id')
+            .single();
 
           if (useCaseError) {
-            console.error('[PortfolioImport] Use case creation error:', useCaseError);
+            console.error('[PortfolioImport] Use case creation error:', {
+              error: useCaseError,
+              code: useCaseError.code,
+              message: useCaseError.message,
+              details: useCaseError.details,
+              hint: useCaseError.hint,
+            });
           } else {
+            console.log('[PortfolioImport] Use case created:', insertedUseCase?.id);
             useCasesCreated++;
           }
         }
+      } else {
+        console.log('[PortfolioImport] No model data returned from query');
       }
     } else {
       // Generation history import (original flow)
