@@ -55,7 +55,13 @@ interface AdminModel {
   capabilities: string[] | null;
   latencyP50: number | null;
   latencyP95: number | null;
-  benchmarks: Record<string, number> | null;
+  benchmarks: {
+    intelligence_index?: number;
+    coding_index?: number;
+    tokens_per_second?: number;
+    mmlu_pro?: number;
+    gpqa?: number;
+  } | null;
   isActive: boolean;
   avgTrustScore: number | null;
   pricing: {
@@ -214,6 +220,11 @@ export default function AdminModelsPage() {
     return num.toLocaleString();
   };
 
+  const formatBenchmark = (value: number | undefined) => {
+    if (value === undefined || value === null || value === 0) return null;
+    return value.toFixed(1);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -293,6 +304,7 @@ export default function AdminModelsPage() {
                 <TableHead>Provider</TableHead>
                 <TableHead>Context</TableHead>
                 <TableHead>Pricing/1K (in/out)</TableHead>
+                <TableHead>Benchmarks</TableHead>
                 <TableHead>Trust Score</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>
@@ -301,7 +313,7 @@ export default function AdminModelsPage() {
             <TableBody>
               {models.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     <p className="text-muted-foreground">No models found</p>
                   </TableCell>
                 </TableRow>
@@ -331,6 +343,37 @@ export default function AdminModelsPage() {
                           {formatPrice(model.pricing.input_price)} /{' '}
                           {formatPrice(model.pricing.output_price)}
                         </span>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {model.benchmarks ? (
+                        <div className="text-xs space-y-0.5">
+                          {formatBenchmark(model.benchmarks.intelligence_index) && (
+                            <div className="flex items-center gap-1">
+                              <span className="text-muted-foreground">IQ:</span>
+                              <span className="font-medium">{formatBenchmark(model.benchmarks.intelligence_index)}</span>
+                            </div>
+                          )}
+                          {formatBenchmark(model.benchmarks.coding_index) && (
+                            <div className="flex items-center gap-1">
+                              <span className="text-muted-foreground">Code:</span>
+                              <span className="font-medium">{formatBenchmark(model.benchmarks.coding_index)}</span>
+                            </div>
+                          )}
+                          {formatBenchmark(model.benchmarks.tokens_per_second) && (
+                            <div className="flex items-center gap-1">
+                              <span className="text-muted-foreground">Speed:</span>
+                              <span className="font-medium">{formatBenchmark(model.benchmarks.tokens_per_second)} t/s</span>
+                            </div>
+                          )}
+                          {!formatBenchmark(model.benchmarks.intelligence_index) &&
+                           !formatBenchmark(model.benchmarks.coding_index) &&
+                           !formatBenchmark(model.benchmarks.tokens_per_second) && (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </div>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}
