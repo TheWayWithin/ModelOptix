@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -247,36 +247,45 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
     </>
   );
 
-  // Toggle model selection
-  const toggleModel = (modelId: string) => {
+  // Toggle model selection - memoized to prevent re-renders
+  const toggleModel = useCallback((modelId: string) => {
     setSelectedModels((prev) =>
       prev.includes(modelId)
         ? prev.filter((id) => id !== modelId)
         : [...prev, modelId]
     );
-  };
+  }, []);
 
-  // Group models by provider for display
-  const groupedModels = preview?.catalogModels?.reduce(
-    (acc, model) => {
-      const provider = model.providers?.name || 'Other';
-      if (!acc[provider]) acc[provider] = [];
-      acc[provider].push(model);
-      return acc;
-    },
-    {} as Record<string, CatalogModel[]>
-  ) || {};
+  // Group models by provider for display - memoized to prevent re-renders
+  const groupedModels = useMemo(() => {
+    return preview?.catalogModels?.reduce(
+      (acc, model) => {
+        const provider = model.providers?.name || 'Other';
+        if (!acc[provider]) acc[provider] = [];
+        acc[provider].push(model);
+        return acc;
+      },
+      {} as Record<string, CatalogModel[]>
+    ) || {};
+  }, [preview?.catalogModels]);
 
-  // Filter models by search
-  const filterModels = (models: CatalogModel[]) => {
-    if (!modelSearch.trim()) return models;
+  // Filtered models - memoized based on search and grouped models
+  const filteredGroupedModels = useMemo(() => {
+    if (!modelSearch.trim()) return groupedModels;
     const search = modelSearch.toLowerCase();
-    return models.filter(
-      (m) =>
-        m.name.toLowerCase().includes(search) ||
-        (m.providers?.name || '').toLowerCase().includes(search)
-    );
-  };
+    const result: Record<string, CatalogModel[]> = {};
+    for (const [provider, models] of Object.entries(groupedModels)) {
+      const filtered = models.filter(
+        (m) =>
+          m.name.toLowerCase().includes(search) ||
+          provider.toLowerCase().includes(search)
+      );
+      if (filtered.length > 0) {
+        result[provider] = filtered;
+      }
+    }
+    return result;
+  }, [groupedModels, modelSearch]);
 
   // Step 2a: Model Selection (when no generation history)
   const SelectStep = () => {
@@ -319,47 +328,42 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
 
           {/* Models grouped by provider */}
           <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
-            {Object.entries(groupedModels).map(([provider, models]) => {
-              const filteredModels = filterModels(models);
-              if (filteredModels.length === 0) return null;
-
-              return (
-                <div key={provider}>
-                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                    {provider}
-                  </div>
-                  <div className="space-y-1">
-                    {filteredModels.map((model) => (
-                      <label
-                        key={model.id}
-                        className={`flex items-center gap-3 p-2 rounded border cursor-pointer transition-colors ${
-                          selectedModels.includes(model.id)
-                            ? 'border-primary bg-primary/5'
-                            : 'border-transparent hover:bg-muted/50'
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedModels.includes(model.id)}
-                          onChange={() => toggleModel(model.id)}
-                          className="rounded border-muted-foreground"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium truncate">
-                            {model.name}
-                          </div>
-                          {model.context_length && (
-                            <div className="text-xs text-muted-foreground">
-                              {(model.context_length / 1000).toFixed(0)}K context
-                            </div>
-                          )}
-                        </div>
-                      </label>
-                    ))}
-                  </div>
+            {Object.entries(filteredGroupedModels).map(([provider, models]) => (
+              <div key={provider}>
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                  {provider}
                 </div>
-              );
-            })}
+                <div className="space-y-1">
+                  {models.map((model) => (
+                    <label
+                      key={model.id}
+                      className={`flex items-center gap-3 p-2 rounded border cursor-pointer transition-colors ${
+                        selectedModels.includes(model.id)
+                          ? 'border-primary bg-primary/5'
+                          : 'border-transparent hover:bg-muted/50'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedModels.includes(model.id)}
+                        onChange={() => toggleModel(model.id)}
+                        className="rounded border-muted-foreground"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate">
+                          {model.name}
+                        </div>
+                        {model.context_length && (
+                          <div className="text-xs text-muted-foreground">
+                            {(model.context_length / 1000).toFixed(0)}K context
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
 
           {/* Product name */}

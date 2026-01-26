@@ -242,26 +242,31 @@ export async function POST(request: NextRequest) {
     if (hasSelectedModels) {
       // User-selected models import - fetch model details and create use cases
       const serviceSupabase = createServiceClient();
-      const { data: selectedModelData } = await serviceSupabase
+      const { data: selectedModelData, error: selectError } = await serviceSupabase
         .from('models')
-        .select('id, name, provider, openrouter_id, context_length')
+        .select('id, name, openrouter_id, context_length, providers!inner(name)')
         .in('id', body.selectedModels!);
+
+      if (selectError) {
+        console.error('[PortfolioImport] Error fetching selected models:', selectError);
+      }
 
       // Type assertion for the model data
       type SelectedModelRow = {
         id: string;
         name: string;
-        provider: string;
         openrouter_id: string | null;
         context_length: number | null;
+        providers: { name: string };
       };
 
       if (selectedModelData) {
         for (const model of selectedModelData as SelectedModelRow[]) {
+          const providerName = model.providers?.name || 'Unknown';
           const useCaseData = {
             product_id: product.id,
             name: `${model.name} Usage`,
-            description: `Use case for ${model.name} from ${model.provider}`,
+            description: `Use case for ${model.name} from ${providerName}`,
             current_model_id: model.id,
 
             // Default priority
