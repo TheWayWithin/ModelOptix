@@ -103,12 +103,10 @@ export class ArtificialAnalysisClient {
     console.log('[ArtificialAnalysis] Fetching models from API...');
 
     const url = `${this.baseUrl}/data/llms/models`;
-    const response = await this.fetchWithRetry<
-      AAApiResponse | AAModelResponse[]
-    >(url);
+    const response = await this.fetchWithRetry<AAApiResponse>(url);
 
-    // Handle both array and wrapped response formats
-    const models = Array.isArray(response) ? response : response.models;
+    // v2 API returns { status, data: [...] }
+    const models = response.data || response.models || [];
 
     console.log(`[ArtificialAnalysis] Fetched ${models.length} models`);
     return models;

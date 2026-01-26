@@ -29,32 +29,38 @@ export interface SyncBenchmarksResult {
 }
 
 /**
- * Normalize benchmark data from AA API to our schema
+ * Normalize benchmark data from AA API v2 to our schema
  */
 function normalizeBenchmarks(aaModel: AAModelResponse): NormalizedBenchmarks {
   return {
     source: 'artificial_analysis',
     fetched_at: new Date().toISOString(),
 
-    // Quality scores
-    quality_index: aaModel.quality_index,
-    quality_elo: aaModel.quality_elo,
+    // Intelligence scores from evaluations
+    intelligence_index: aaModel.evaluations?.artificial_analysis_intelligence_index,
+    coding_index: aaModel.evaluations?.artificial_analysis_coding_index,
+    math_index: aaModel.evaluations?.artificial_analysis_math_index,
+
+    // Individual benchmark scores
+    mmlu_pro: aaModel.evaluations?.mmlu_pro,
+    gpqa: aaModel.evaluations?.gpqa,
+    livecodebench: aaModel.evaluations?.livecodebench,
 
     // Speed metrics
-    speed_index: aaModel.speed_index,
-    tokens_per_second: aaModel.tokens_per_second,
-    time_to_first_token_ms: aaModel.time_to_first_token_ms,
-    latency_ms: aaModel.latency_ms,
+    tokens_per_second: aaModel.median_output_tokens_per_second,
+    time_to_first_token_seconds: aaModel.median_time_to_first_token_seconds,
 
-    // Capabilities
-    context_length: aaModel.context_length,
-    max_output_tokens: aaModel.max_output_tokens,
-    supports_vision: aaModel.supports_vision,
-    supports_function_calling: aaModel.supports_function_calling,
-    supports_streaming: aaModel.supports_streaming,
+    // Pricing (per million tokens)
+    input_price_per_million: aaModel.pricing?.price_1m_input_tokens,
+    output_price_per_million: aaModel.pricing?.price_1m_output_tokens,
+
+    // Provider info
+    provider_name: aaModel.model_creator?.name,
+    provider_slug: aaModel.model_creator?.slug,
 
     // Raw reference
     raw_id: aaModel.id,
+    raw_slug: aaModel.slug,
   };
 }
 
@@ -73,26 +79,30 @@ function normalizeModelName(name: string): string {
 
 /**
  * Try to match AA model to our database model
- * First by model_id (if matches openrouter format), then by fuzzy name matching
+ * Uses provider slug and model slug/name for matching against openrouter_id
  */
 function findMatchingModel(
   aaModel: AAModelResponse,
   dbModels: Array<{ id: string; openrouter_id: string | null; name: string }>
 ): { id: string; name: string } | null {
-  // Try exact match by model_id (if AA provides it and it matches openrouter format)
-  if (aaModel.model_id) {
-    const exactMatch = dbModels.find((m) => m.openrouter_id === aaModel.model_id);
-    if (exactMatch) return { id: exactMatch.id, name: exactMatch.name };
-  }
-
-  // Try matching by provider/name combination
-  const aaProvider = aaModel.provider?.toLowerCase();
+  // Get provider slug from model_creator (v2 API format)
+  const aaProvider = aaModel.model_creator?.slug?.toLowerCase() || '';
+  const aaSlug = aaModel.slug?.toLowerCase() || '';
   const aaName = normalizeModelName(aaModel.name);
 
   for (const dbModel of dbModels) {
-    // Check if openrouter_id contains the provider and name pattern
     if (dbModel.openrouter_id) {
       const orId = dbModel.openrouter_id.toLowerCase();
+
+      // Try direct slug match: openai/gpt-4o matches AA slug "gpt-4o" with provider "openai"
+      if (aaProvider && aaSlug) {
+        const expectedOrId = `${aaProvider}/${aaSlug}`;
+        if (orId === expectedOrId || orId.includes(aaSlug)) {
+          return { id: dbModel.id, name: dbModel.name };
+        }
+      }
+
+      // Try matching by provider prefix and name similarity
       if (aaProvider && orId.startsWith(aaProvider + '/')) {
         const orModelPart = orId.split('/').slice(1).join('/');
         const normalizedOrModel = normalizeModelName(orModelPart);
@@ -100,6 +110,9 @@ function findMatchingModel(
         // Check for significant overlap
         if (
           normalizedOrModel === aaName ||
+          normalizedOrModel === aaSlug ||
+          normalizedOrModel.includes(aaSlug) ||
+          aaSlug.includes(normalizedOrModel) ||
           normalizedOrModel.includes(aaName) ||
           aaName.includes(normalizedOrModel)
         ) {
@@ -110,7 +123,7 @@ function findMatchingModel(
 
     // Fallback: fuzzy name matching
     const normalizedDBName = normalizeModelName(dbModel.name);
-    if (normalizedDBName === aaName) {
+    if (normalizedDBName === aaName || normalizedDBName === aaSlug) {
       return { id: dbModel.id, name: dbModel.name };
     }
   }
@@ -182,8 +195,10 @@ export async function syncBenchmarks(): Promise<SyncBenchmarksResult> {
           .from('models')
           .update({
             benchmarks,
-            // Also update latency fields if we have them
-            ...(aaModel.latency_ms && { latency_p50: Math.round(aaModel.latency_ms) }),
+            // Also update latency fields if we have them (convert seconds to ms)
+            ...(aaModel.median_time_to_first_token_seconds && {
+              latency_p50: Math.round(aaModel.median_time_to_first_token_seconds * 1000),
+            }),
           })
           .eq('id', dbModel.id);
 
