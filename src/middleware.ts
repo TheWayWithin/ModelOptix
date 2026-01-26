@@ -166,13 +166,6 @@ function isApiRoute(pathname: string): boolean {
 }
 
 /**
- * Check if route is a dashboard route
- */
-function isDashboardRoute(pathname: string): boolean {
-  return pathname.startsWith('/dashboard');
-}
-
-/**
  * Check if route is a sanity check endpoint (stricter rate limiting)
  */
 function isSanityCheckRoute(pathname: string): boolean {
@@ -314,19 +307,23 @@ export async function middleware(request: NextRequest) {
     }
 
     // Dashboard and other protected routes redirect to login
-    if (isDashboardRoute(pathname)) {
-      const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      console.info(
-        `[${requestId}] Redirecting unauthenticated user to login from ${pathname}`
-      );
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Other protected routes also redirect
+    // IMPORTANT: Copy cookies from Supabase response to preserve any session refresh attempts
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
+    console.info(
+      `[${requestId}] Redirecting unauthenticated user to login from ${pathname}`
+    );
+    const redirectResponse = NextResponse.redirect(loginUrl);
+
+    // Copy cookies from Supabase response (preserves session refresh tokens)
+    response.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie.name, cookie.value, {
+        ...cookie,
+      });
+    });
+    redirectResponse.headers.set('X-Request-Id', requestId);
+
+    return redirectResponse;
   }
 
   // ---------------------------------------------------------------------------
