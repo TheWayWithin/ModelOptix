@@ -200,8 +200,9 @@ export default function AdminModelsPage() {
 
   const formatPrice = (price: number | null) => {
     if (price === null || price === 0) return '-';
+    // Handle negative or invalid prices (some special models like "auto")
+    if (price < 0) return '-';
     // Prices are stored per 1K tokens
-    // Display with enough precision for small values
     if (price < 0.0001) {
       return `$${price.toFixed(6)}`;
     }
@@ -291,7 +292,7 @@ export default function AdminModelsPage() {
                 <TableHead>Model</TableHead>
                 <TableHead>Provider</TableHead>
                 <TableHead>Context</TableHead>
-                <TableHead>Pricing (in/out)</TableHead>
+                <TableHead>Pricing/1K (in/out)</TableHead>
                 <TableHead>Trust Score</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="w-[100px]">Actions</TableHead>

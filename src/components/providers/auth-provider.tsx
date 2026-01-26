@@ -109,6 +109,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
    * getUser() validates the session with the server.
    */
   React.useEffect(() => {
+    let mounted = true;
+
     // Get and validate current user (not just cached session)
     const initAuth = async () => {
       try {
@@ -117,6 +119,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Then validate the user with the server
         const { data: { user: validatedUser }, error } = await supabase.auth.getUser();
+
+        if (!mounted) return;
 
         if (error || !validatedUser) {
           // Session is invalid or expired - clear state
@@ -131,18 +135,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(initialSession);
         setUser(validatedUser);
 
-        // Fetch profile for authenticated user
-        const userProfile = await fetchProfile(validatedUser.id);
-        if (userProfile) {
-          setProfile(userProfile);
-        }
+        // Fetch profile for authenticated user (don't block on this)
+        fetchProfile(validatedUser.id).then((userProfile) => {
+          if (mounted && userProfile) {
+            setProfile(userProfile);
+          }
+        });
       } catch (err) {
         console.error('Auth initialization error:', err);
-        setSession(null);
-        setUser(null);
-        setProfile(null);
+        if (mounted) {
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -152,15 +161,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
+      if (!mounted) return;
+
       setSession(newSession);
       setUser(newSession?.user ?? null);
 
       if (newSession?.user) {
         // Fetch profile on sign in
-        const userProfile = await fetchProfile(newSession.user.id);
-        if (userProfile) {
-          setProfile(userProfile);
-        }
+        fetchProfile(newSession.user.id).then((userProfile) => {
+          if (mounted && userProfile) {
+            setProfile(userProfile);
+          }
+        });
       } else {
         // Clear profile on sign out
         setProfile(null);
@@ -173,6 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, [supabase, fetchProfile]);
