@@ -832,6 +832,18 @@ Audit on 2026-01-25 revealed that while sync job code exists with real API integ
 
 Features deferred from MVP for future implementation:
 
+### LLM Router Integrations (Phase 7 Candidates)
+
+| ID | Feature | Priority | Notes |
+|----|---------|----------|-------|
+| F-037 | OpenRouter Broadcast Webhooks | High | Real-time usage tracking via OpenRouter's broadcast feature. User configures OpenRouter to send traces to ModelOptix webhook. Auto-updates portfolio with actual usage data (models, tokens, costs, latency). Eliminates manual import. [Docs](https://openrouter.ai/docs/guides/features/broadcast/overview) |
+| F-038 | Multi-Router Support | High | Support LLM API routers beyond OpenRouter: LiteLLM, Portkey, Martian, BricksLLM, etc. Unified import flow with provider-specific adapters. |
+| F-039 | LiteLLM Integration | Medium | Import from LiteLLM proxy logs/metrics. Popular self-hosted option. |
+| F-040 | Portkey Integration | Medium | Import from Portkey observability data. Enterprise-focused router. |
+| F-041 | Direct Provider APIs | Low | Import directly from OpenAI/Anthropic/Google usage dashboards (if APIs available). |
+
+### Existing Backlog
+
 | ID | Feature | Notes |
 |----|---------|-------|
 | F-036 | Parameter Support Auto-Sync | Sync parameter compatibility data from OpenRouter API to populate parameter_support table |
