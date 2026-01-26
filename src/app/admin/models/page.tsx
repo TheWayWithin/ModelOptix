@@ -199,7 +199,12 @@ export default function AdminModelsPage() {
   };
 
   const formatPrice = (price: number | null) => {
-    if (price === null) return '-';
+    if (price === null || price === 0) return '-';
+    // Prices are stored per 1K tokens
+    // Display with enough precision for small values
+    if (price < 0.0001) {
+      return `$${price.toFixed(6)}`;
+    }
     return `$${price.toFixed(4)}`;
   };
 

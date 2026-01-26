@@ -103,26 +103,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /**
    * Initialize auth state and subscribe to changes
+   *
+   * IMPORTANT: We use getUser() instead of getSession() because getSession()
+   * returns cached data from localStorage which can be stale after hard refresh.
+   * getUser() validates the session with the server.
    */
   React.useEffect(() => {
-    // Get initial session
+    // Get and validate current user (not just cached session)
     const initAuth = async () => {
-      const {
-        data: { session: initialSession },
-      } = await supabase.auth.getSession();
+      try {
+        // First get the session (needed for the session object)
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
 
-      if (initialSession) {
+        // Then validate the user with the server
+        const { data: { user: validatedUser }, error } = await supabase.auth.getUser();
+
+        if (error || !validatedUser) {
+          // Session is invalid or expired - clear state
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Session is valid
         setSession(initialSession);
-        setUser(initialSession.user);
+        setUser(validatedUser);
 
         // Fetch profile for authenticated user
-        const userProfile = await fetchProfile(initialSession.user.id);
+        const userProfile = await fetchProfile(validatedUser.id);
         if (userProfile) {
           setProfile(userProfile);
         }
+      } catch (err) {
+        console.error('Auth initialization error:', err);
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+      } finally {
+        setIsLoading(false);
       }
-
-      setIsLoading(false);
     };
 
     initAuth();

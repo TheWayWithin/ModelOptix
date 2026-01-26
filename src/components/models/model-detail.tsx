@@ -51,37 +51,51 @@ export function ModelDetail({ modelId }: ModelDetailProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+
     async function fetchModel() {
       setIsLoading(true);
       try {
         const response = await fetch(`/api/models/${modelId}`);
         if (!response.ok) {
           if (response.status === 404) {
-            toast({
-              title: 'Model not found',
-              description: 'The requested model does not exist.',
-              variant: 'destructive',
-            });
-            router.push('/models');
+            if (mounted) {
+              toast({
+                title: 'Model not found',
+                description: 'The requested model does not exist.',
+                variant: 'destructive',
+              });
+              router.push('/models');
+            }
             return;
           }
           throw new Error('Failed to fetch model');
         }
         const data = await response.json();
-        setModel(data.model);
+        if (mounted) {
+          setModel(data.model);
+        }
       } catch (error) {
         console.error('Error fetching model:', error);
-        toast({
-          title: 'Error',
-          description: 'Failed to load model details.',
-          variant: 'destructive',
-        });
+        if (mounted) {
+          toast({
+            title: 'Error',
+            description: 'Failed to load model details.',
+            variant: 'destructive',
+          });
+        }
       } finally {
-        setIsLoading(false);
+        if (mounted) {
+          setIsLoading(false);
+        }
       }
     }
 
     fetchModel();
+
+    return () => {
+      mounted = false;
+    };
   }, [modelId, router, toast]);
 
   if (isLoading) {

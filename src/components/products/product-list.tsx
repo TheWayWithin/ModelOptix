@@ -50,21 +50,32 @@ export function ProductList() {
       }
       const data = await response.json();
       setProducts(data.products || []);
+      return { success: true };
     } catch (error) {
       console.error('Error fetching products:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load products. Please try again.',
-        variant: 'destructive',
-      });
+      return { success: false, error };
     } finally {
       setIsLoading(false);
     }
-  }, [statusFilter, toast]);
+  }, [statusFilter]);
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    let mounted = true;
+
+    fetchProducts().then((result) => {
+      if (mounted && !result.success) {
+        toast({
+          title: 'Error',
+          description: 'Failed to load products. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [fetchProducts, toast]);
 
   const handleCreate = async (data: CreateProductInput | UpdateProductInput) => {
     const response = await fetch('/api/products', {

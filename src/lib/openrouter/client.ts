@@ -128,9 +128,10 @@ export function parseOpenRouterModel(model: OpenRouterModel): ParsedModelData {
   const supportsVision = modality.includes('image');
   const supportsText = modality.includes('text');
 
-  // Parse pricing (convert string to number, prices are per-token)
-  const inputPrice = parseFloat(model.pricing?.prompt || '0');
-  const outputPrice = parseFloat(model.pricing?.completion || '0');
+  // Parse pricing - OpenRouter returns per-token, we store per-1K tokens
+  // Multiply by 1000 to convert from per-token to per-1K tokens
+  const inputPrice = parseFloat(model.pricing?.prompt || '0') * 1000;
+  const outputPrice = parseFloat(model.pricing?.completion || '0') * 1000;
 
   // Extract max output tokens
   const maxOutputTokens = model.top_provider?.max_completion_tokens || null;

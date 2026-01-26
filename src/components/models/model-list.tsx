@@ -115,22 +115,33 @@ export function ModelList() {
       setModels(data.models);
       setTotal(data.total);
       setProviders(data.providers);
+      return { success: true };
     } catch (error) {
       console.error('Error fetching models:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load models. Please try again.',
-        variant: 'destructive',
-      });
+      return { success: false, error };
     } finally {
       setIsLoading(false);
     }
-  }, [filters, page, pageSize, sortBy, sortOrder, toast]);
+  }, [filters, page, pageSize, sortBy, sortOrder]);
 
   // Fetch on mount and when dependencies change
   useEffect(() => {
-    fetchModels();
-  }, [fetchModels]);
+    let mounted = true;
+
+    fetchModels().then((result) => {
+      if (mounted && !result.success) {
+        toast({
+          title: 'Error',
+          description: 'Failed to load models. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [fetchModels, toast]);
 
   // Handle filter changes
   const handleFiltersChange = (newFilters: ModelFilters) => {

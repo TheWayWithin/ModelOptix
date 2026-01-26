@@ -100,7 +100,7 @@ export function ModelComparison() {
   const fetchModels = useCallback(async () => {
     if (modelIds.length < 2) {
       setIsLoading(false);
-      return;
+      return { success: true, skipped: true };
     }
 
     setIsLoading(true);
@@ -111,22 +111,32 @@ export function ModelComparison() {
       }
       const data = await response.json();
       setModels(data.models);
+      return { success: true };
     } catch (error) {
       console.error('Error fetching models:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to load models for comparison.',
-        variant: 'destructive',
-      });
+      return { success: false, error };
     } finally {
       setIsLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [modelIdsStr, toast]);
+  }, [modelIds.length, modelIdsStr]);
 
   useEffect(() => {
-    fetchModels();
-  }, [fetchModels]);
+    let mounted = true;
+
+    fetchModels().then((result) => {
+      if (mounted && !result.success) {
+        toast({
+          title: 'Error',
+          description: 'Failed to load models for comparison.',
+          variant: 'destructive',
+        });
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [fetchModels, toast]);
 
   const removeModel = (modelId: string) => {
     const newIds = modelIds.filter(id => id !== modelId);

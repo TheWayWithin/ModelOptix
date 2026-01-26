@@ -37,22 +37,32 @@ export function UseCaseList({ productId }: UseCaseListProps) {
       if (!response.ok) throw new Error('Failed to fetch use cases');
       const data = await response.json();
       setUseCases(data);
-    } catch {
-      toast({
-        title: 'Error',
-        description: 'Failed to load use cases',
-        variant: 'destructive',
-      });
+      return { success: true };
+    } catch (error) {
+      console.error('Error fetching use cases:', error);
+      return { success: false, error };
     } finally {
       setIsLoading(false);
     }
-  }, [productId, toast]);
+  }, [productId]);
 
-  // Mount-only effect to prevent infinite loop from toast dependency
   useEffect(() => {
-    fetchUseCases();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    let mounted = true;
+
+    fetchUseCases().then((result) => {
+      if (mounted && !result.success) {
+        toast({
+          title: 'Error',
+          description: 'Failed to load use cases',
+          variant: 'destructive',
+        });
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [fetchUseCases, toast]);
 
   const handleCreate = async (data: CreateUseCaseInput) => {
     // CHANGED: API endpoint
