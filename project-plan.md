@@ -798,15 +798,15 @@ Audit on 2026-01-25 revealed that while sync job code exists with real API integ
 
 | ID | Task | Agent | Priority | Status |
 |----|------|-------|----------|--------|
-| 6.0.1 | Verify OPENROUTER_API_KEY configured in Railway | operator | p0 | pending |
-| 6.0.2 | Manually trigger model catalog sync, verify data | developer | p0 | pending |
+| 6.0.1 | Verify OPENROUTER_API_KEY configured in Railway | operator | p0 | ✅ done (2026-01-26) |
+| 6.0.2 | Manually trigger model catalog sync, verify data | developer | p0 | in_progress |
 | 6.0.3 | Verify database has 200+ models after sync | developer | p0 | pending |
-| 6.1.1 | Create Admin Sync API endpoint (POST /api/admin/sync) | developer | p0 | pending |
-| 6.1.2 | Add sync status + manual trigger to Admin Dashboard | developer | p0 | pending |
-| 6.2.1 | Create OpenRouter user import service | developer | p0 | pending |
-| 6.2.2 | Create portfolio import API endpoint | developer | p0 | pending |
-| 6.2.3 | Create OpenRouter import UI flow | developer | p0 | pending |
-| 6.2.4 | Integrate import into onboarding wizard | developer | p0 | pending |
+| 6.1.1 | Create Admin Sync API endpoint (POST /api/admin/sync) | developer | p0 | ✅ done (2026-01-26) |
+| 6.1.2 | Add sync status + manual trigger to Admin Dashboard | developer | p0 | ✅ done (2026-01-26) |
+| 6.2.1 | Create OpenRouter user import service | developer | p0 | ✅ done (2026-01-26) |
+| 6.2.2 | Create portfolio import API endpoint | developer | p0 | ✅ done (2026-01-26) |
+| 6.2.3 | Create OpenRouter import UI flow | developer | p0 | ✅ done (2026-01-26) |
+| 6.2.4 | Integrate import into onboarding wizard | developer | p0 | ✅ done (2026-01-26) |
 | 6.3.1 | Test complete user journey end-to-end | tester | p0 | pending |
 | 6.3.2 | Verify error handling for all failure cases | tester | p0 | pending |
 

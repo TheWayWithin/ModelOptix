@@ -1,17 +1,79 @@
 # ModelOptix Handoff Notes
 
 > Current context for agent-to-agent handoff
-> Last Updated: 2026-01-25 (Sprint 01 Complete)
+> Last Updated: 2026-01-26 (Phase 6: OpenRouter Integration)
 
 ---
 
 ## Current Phase
 
-**Sprint 01: Eliminate Functions Layer** - COMPLETE
+**Phase 6: OpenRouter Integration & Live Data** - IN PROGRESS (8/11 tasks complete)
 
 ---
 
-## Latest Session - 2026-01-25 (Sprint 01: Eliminate Functions Layer)
+## Latest Session - 2026-01-26 (Phase 6: OpenRouter Integration)
+
+### Sprint Summary
+
+Implemented OpenRouter integration for live data sync and user portfolio import.
+
+### ✅ Tasks Completed
+
+**Pre-Flight:**
+- Task 6.0.1: OPENROUTER_API_KEY configured in Railway (staging + production)
+
+**Admin Sync Controls:**
+- Task 6.1.1: Created POST /api/admin/sync endpoint (triggers model-catalog, pricing, benchmarks jobs)
+- Task 6.1.2: Added Data Sync section to admin dashboard with manual trigger buttons
+
+**OpenRouter User Import:**
+- Task 6.2.1: Created user-import.ts service (validates key, fetches generations, analyzes patterns)
+- Task 6.2.2: Created POST /api/portfolio/import endpoint (preview + import modes)
+- Task 6.2.3: Created OpenRouterImport component (4-step wizard UI)
+- Task 6.2.4: Created OnboardingChoice component, updated dashboard empty state
+
+### Files Created
+
+- `src/app/api/admin/sync/route.ts` - Admin sync API (GET status, POST trigger)
+- `src/lib/openrouter/user-import.ts` - User import service
+- `src/app/api/portfolio/import/route.ts` - Portfolio import API
+- `src/components/quick-start/openrouter-import.tsx` - Import wizard UI
+- `src/components/quick-start/onboarding-choice.tsx` - Onboarding method selector
+
+### Files Modified
+
+- `src/app/admin/page.tsx` - Added Data Sync section
+- `src/lib/openrouter/types.ts` - Added import-related types
+- `src/lib/openrouter/index.ts` - Export user-import functions
+- `src/components/quick-start/index.ts` - Export new components
+- `src/components/dashboard/empty-state.tsx` - Use OnboardingChoice
+
+### Commits Pushed
+
+1. `d61de22` - feat: Add admin data sync controls for OpenRouter integration
+2. `75b7e9c` - feat: Add OpenRouter user import flow for portfolio creation
+
+### Next Steps (For E2E Testing)
+
+1. **Task 6.0.2-6.0.3**: Trigger model catalog sync via admin dashboard, verify 200+ models
+2. **Task 6.3.1**: Test full user journey (signup → connect OpenRouter → import → recommendations)
+3. **Task 6.3.2**: Test error scenarios (invalid key, rate limit, no usage data)
+
+### How to Test
+
+1. Go to staging admin dashboard: https://staging.modeloptix.com/admin
+2. Scroll to "Data Sync" section
+3. Click "Sync All Data Sources" (or individual sync buttons)
+4. Verify models count increases in "Model Catalog" card
+
+For user import:
+1. Create new account or use test account
+2. Should see onboarding choice (OpenRouter vs Manual)
+3. Enter OpenRouter API key, preview, import
+
+---
+
+## Previous Session - 2026-01-25 (Sprint 01: Eliminate Functions Layer)
 
 ### Sprint Summary
 
