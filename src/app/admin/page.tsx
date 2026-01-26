@@ -104,6 +104,7 @@ export default function AdminPage() {
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [syncingJob, setSyncingJob] = useState<string | null>(null);
+  const [isGeneratingOpportunities, setIsGeneratingOpportunities] = useState(false);
   const { toast } = useToast();
 
   const fetchStats = async (showRefresh = false) => {
@@ -178,6 +179,38 @@ export default function AdminPage() {
       });
     } finally {
       setSyncingJob(null);
+    }
+  };
+
+  const triggerOpportunityGeneration = async () => {
+    setIsGeneratingOpportunities(true);
+    try {
+      const res = await fetch('/api/admin/opportunities/generate', {
+        method: 'POST',
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Opportunity generation failed');
+      }
+
+      toast({
+        title: data.success ? 'Opportunities Generated' : 'Generation Completed with Errors',
+        description: `Processed ${data.result.processed} use cases, created ${data.result.opportunitiesCreated} opportunities in ${(data.result.duration / 1000).toFixed(1)}s`,
+        variant: data.success ? 'default' : 'destructive',
+      });
+
+      // Refresh stats to show new opportunity counts
+      await fetchStats(true);
+    } catch (err) {
+      toast({
+        title: 'Generation Failed',
+        description: err instanceof Error ? err.message : 'Unknown error',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsGeneratingOpportunities(false);
     }
   };
 
@@ -409,6 +442,25 @@ export default function AdminPage() {
                 </div>
                 <p className="text-xs text-muted-foreground">Dismissed</p>
               </div>
+            </div>
+            <div className="mt-4 pt-4 border-t border-green-200 dark:border-green-800">
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full border-green-300 dark:border-green-700 hover:bg-green-100 dark:hover:bg-green-900"
+                onClick={triggerOpportunityGeneration}
+                disabled={isGeneratingOpportunities}
+              >
+                {isGeneratingOpportunities ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4 mr-2" />
+                )}
+                Generate Opportunities Now
+              </Button>
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Auto-runs daily at 5am UTC
+              </p>
             </div>
           </CardContent>
         </Card>
