@@ -73,10 +73,11 @@ export async function GET() {
         .limit(1)
         .maybeSingle(),
 
-      // Last pricing sync time
+      // Last pricing sync time (exclude NULLs - they sort first in DESC)
       serviceClient
         .from('model_provider_pricing')
         .select('last_synced_at')
+        .not('last_synced_at', 'is', null)
         .order('last_synced_at', { ascending: false })
         .limit(1)
         .maybeSingle(),
