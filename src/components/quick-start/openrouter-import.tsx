@@ -171,82 +171,6 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
     }
   };
 
-  // Step 1: API Key Input
-  const KeyStep = () => (
-    <>
-      <CardHeader className="text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-          <Key className="w-6 h-6 text-primary" />
-        </div>
-        <CardTitle>Connect OpenRouter</CardTitle>
-        <CardDescription>
-          Import your AI usage data to get personalized recommendations instantly.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="api-key">OpenRouter API Key</Label>
-          <Input
-            id="api-key"
-            type="password"
-            placeholder="sk-or-v1-..."
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            autoFocus
-          />
-          <p className="text-xs text-muted-foreground">
-            Get your key at{' '}
-            <a
-              href="https://openrouter.ai/keys"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
-              openrouter.ai/keys
-            </a>
-          </p>
-        </div>
-
-        <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
-          <div className="flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-            <span>Verifies your OpenRouter account is active</span>
-          </div>
-          <div className="flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-            <span>Your API key is never stored</span>
-          </div>
-          <div className="flex items-start gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
-            <span>Select models you use from our 300+ model catalog</span>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        {onCancel ? (
-          <Button variant="ghost" onClick={onCancel}>
-            Set up manually
-          </Button>
-        ) : (
-          <div />
-        )}
-        <Button onClick={handleValidate} disabled={isValidating || !apiKey.trim()}>
-          {isValidating ? (
-            <>
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Validating...
-            </>
-          ) : (
-            <>
-              Connect
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </>
-          )}
-        </Button>
-      </CardFooter>
-    </>
-  );
-
   // Toggle model selection - memoized to prevent re-renders
   const toggleModel = useCallback((modelId: string) => {
     setSelectedModels((prev) =>
@@ -287,263 +211,326 @@ export function OpenRouterImport({ onComplete, onCancel }: OpenRouterImportProps
     return result;
   }, [groupedModels, modelSearch]);
 
-  // Step 2a: Model Selection (when no generation history)
-  const SelectStep = () => {
-    if (!preview) return null;
-
-    return (
-      <>
-        <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <CheckCircle2 className="w-6 h-6 text-primary" />
-          </div>
-          <CardTitle>API Key Verified!</CardTitle>
-          <CardDescription>
-            Select the models you commonly use. We&apos;ll create use cases for each.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Search */}
-          <Input
-            placeholder="Search models..."
-            value={modelSearch}
-            onChange={(e) => setModelSearch(e.target.value)}
-          />
-
-          {/* Selected count */}
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">
-              {selectedModels.length} model{selectedModels.length !== 1 ? 's' : ''} selected
-            </span>
-            {selectedModels.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setSelectedModels([])}
-              >
-                Clear all
-              </Button>
-            )}
-          </div>
-
-          {/* Models grouped by provider */}
-          <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
-            {Object.entries(filteredGroupedModels).map(([provider, models]) => (
-              <div key={provider}>
-                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-                  {provider}
-                </div>
-                <div className="space-y-1">
-                  {models.map((model) => (
-                    <label
-                      key={model.id}
-                      className={`flex items-center gap-3 p-2 rounded border cursor-pointer transition-colors ${
-                        selectedModels.includes(model.id)
-                          ? 'border-primary bg-primary/5'
-                          : 'border-transparent hover:bg-muted/50'
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedModels.includes(model.id)}
-                        onChange={() => toggleModel(model.id)}
-                        className="rounded border-muted-foreground"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">
-                          {model.name}
-                        </div>
-                        {model.context_length && (
-                          <div className="text-xs text-muted-foreground">
-                            {(model.context_length / 1000).toFixed(0)}K context
-                          </div>
-                        )}
-                      </div>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Product name */}
-          <div className="space-y-2 pt-2 border-t">
-            <Label htmlFor="product-name">Portfolio Name</Label>
-            <Input
-              id="product-name"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              placeholder="My AI Portfolio"
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="ghost" onClick={() => setStep('key')}>
-            Back
-          </Button>
-          <Button onClick={handleImport} disabled={selectedModels.length === 0}>
-            <Zap className="w-4 h-4 mr-2" />
-            Create {selectedModels.length} Use Case{selectedModels.length !== 1 ? 's' : ''}
-          </Button>
-        </CardFooter>
-      </>
-    );
-  };
-
-  // Step 2b: Preview (when generation history is available)
-  const PreviewStep = () => {
-    if (!preview) return null;
-
-    const topModels = preview.modelsDetected.slice(0, 5);
-    const hasMoreModels = preview.modelsDetected.length > 5;
-
-    return (
-      <>
-        <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <Eye className="w-6 h-6 text-primary" />
-          </div>
-          <CardTitle>Review Your AI Usage</CardTitle>
-          <CardDescription>
-            We detected {preview.modelsDetected.length} model{preview.modelsDetected.length !== 1 ? 's' : ''} in your OpenRouter history.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Account summary */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-muted/50 rounded-lg p-3 text-center">
-              <div className="text-2xl font-bold">{preview.modelsDetected.length}</div>
-              <div className="text-xs text-muted-foreground">Models Used</div>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-3 text-center">
-              <div className="text-2xl font-bold">
-                {preview.modelsDetected.reduce((sum, m) => sum + m.totalCalls, 0).toLocaleString()}
-              </div>
-              <div className="text-xs text-muted-foreground">Total Requests</div>
-            </div>
-          </div>
-
-          {/* Top models */}
-          {topModels.length > 0 ? (
-            <div className="space-y-2">
-              <Label>Top Models</Label>
-              <div className="space-y-2 max-h-48 overflow-y-auto">
-                {topModels.map((model, idx) => (
-                  <ModelUsageCard key={model.modelId} model={model} rank={idx + 1} />
-                ))}
-                {hasMoreModels && (
-                  <p className="text-xs text-muted-foreground text-center py-2">
-                    +{preview.modelsDetected.length - 5} more models
-                  </p>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="text-center py-4 text-muted-foreground">
-              <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
-              <p>No usage data found. You can still create a portfolio manually.</p>
-            </div>
-          )}
-
-          {/* Product name */}
-          <div className="space-y-2">
-            <Label htmlFor="product-name">Portfolio Name</Label>
-            <Input
-              id="product-name"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              placeholder="My AI Portfolio"
-            />
-          </div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="ghost" onClick={() => setStep('key')}>
-            Back
-          </Button>
-          <Button onClick={handleImport} disabled={preview.modelsDetected.length === 0}>
-            <Zap className="w-4 h-4 mr-2" />
-            Import {preview.modelsDetected.length > 0 ? preview.modelsDetected.slice(0, 10).length : 0} Use Cases
-          </Button>
-        </CardFooter>
-      </>
-    );
-  };
-
-  // Step 3: Importing
-  const ImportingStep = () => (
-    <>
-      <CardHeader className="text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-          <Loader2 className="w-6 h-6 text-primary animate-spin" />
-        </div>
-        <CardTitle>Importing Your Data</CardTitle>
-        <CardDescription>
-          Creating your portfolio from OpenRouter usage data...
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
-          <ImportStep label="Analyzing usage patterns" done />
-          <ImportStep label="Matching models to our catalog" done={isImporting} />
-          <ImportStep label="Creating use cases" done={false} active={isImporting} />
-          <ImportStep label="Generating recommendations" done={false} />
-        </div>
-      </CardContent>
-      <CardFooter />
-    </>
-  );
-
-  // Step 4: Success
-  const SuccessStep = () => (
-    <>
-      <CardHeader className="text-center">
-        <div className="mx-auto w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
-          <Sparkles className="w-6 h-6 text-green-600 dark:text-green-400" />
-        </div>
-        <CardTitle>Import Complete!</CardTitle>
-        <CardDescription>
-          Your AI portfolio is ready. We&apos;re analyzing your usage to find optimization opportunities.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
-            <span className="text-sm">Portfolio: {productName}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-green-600" />
-            <span className="text-sm">
-              {importResult?.useCasesCreated} use cases imported
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-blue-600" />
-            <span className="text-sm">Recommendations generating...</span>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-end">
-        <Button onClick={handleFinish}>
-          View Portfolio
-          <ArrowRight className="w-4 h-4 ml-2" />
-        </Button>
-      </CardFooter>
-    </>
-  );
+  // Get preview data for preview step
+  const topModels = preview?.modelsDetected.slice(0, 5) || [];
+  const hasMoreModels = (preview?.modelsDetected.length || 0) > 5;
 
   return (
     <Card className="w-full max-w-lg mx-auto">
-      {step === 'key' && <KeyStep />}
-      {step === 'select' && <SelectStep />}
-      {step === 'preview' && <PreviewStep />}
-      {step === 'importing' && <ImportingStep />}
-      {step === 'success' && <SuccessStep />}
+      {/* Step 1: API Key Input */}
+      {step === 'key' && (
+        <>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Key className="w-6 h-6 text-primary" />
+            </div>
+            <CardTitle>Connect OpenRouter</CardTitle>
+            <CardDescription>
+              Import your AI usage data to get personalized recommendations instantly.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="api-key">OpenRouter API Key</Label>
+              <Input
+                id="api-key"
+                type="password"
+                placeholder="sk-or-v1-..."
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                Get your key at{' '}
+                <a
+                  href="https://openrouter.ai/keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  openrouter.ai/keys
+                </a>
+              </p>
+            </div>
+
+            <div className="bg-muted/50 rounded-lg p-4 space-y-2 text-sm">
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                <span>Verifies your OpenRouter account is active</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                <span>Your API key is never stored</span>
+              </div>
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-600 mt-0.5 shrink-0" />
+                <span>Select models you use from our 300+ model catalog</span>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            {onCancel ? (
+              <Button variant="ghost" onClick={onCancel}>
+                Set up manually
+              </Button>
+            ) : (
+              <div />
+            )}
+            <Button onClick={handleValidate} disabled={isValidating || !apiKey.trim()}>
+              {isValidating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Validating...
+                </>
+              ) : (
+                <>
+                  Connect
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </>
+              )}
+            </Button>
+          </CardFooter>
+        </>
+      )}
+
+      {/* Step 2a: Model Selection (when no generation history) */}
+      {step === 'select' && preview && (
+        <>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-6 h-6 text-primary" />
+            </div>
+            <CardTitle>API Key Verified!</CardTitle>
+            <CardDescription>
+              Select the models you commonly use. We&apos;ll create use cases for each.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Search */}
+            <Input
+              placeholder="Search models..."
+              value={modelSearch}
+              onChange={(e) => setModelSearch(e.target.value)}
+            />
+
+            {/* Selected count */}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                {selectedModels.length} model{selectedModels.length !== 1 ? 's' : ''} selected
+              </span>
+              {selectedModels.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedModels([])}
+                >
+                  Clear all
+                </Button>
+              )}
+            </div>
+
+            {/* Models grouped by provider */}
+            <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+              {Object.entries(filteredGroupedModels).map(([provider, models]) => (
+                <div key={provider}>
+                  <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                    {provider}
+                  </div>
+                  <div className="space-y-1">
+                    {models.map((model) => (
+                      <label
+                        key={model.id}
+                        className={`flex items-center gap-3 p-2 rounded border cursor-pointer transition-colors ${
+                          selectedModels.includes(model.id)
+                            ? 'border-primary bg-primary/5'
+                            : 'border-transparent hover:bg-muted/50'
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedModels.includes(model.id)}
+                          onChange={() => toggleModel(model.id)}
+                          className="rounded border-muted-foreground"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium truncate">
+                            {model.name}
+                          </div>
+                          {model.context_length && (
+                            <div className="text-xs text-muted-foreground">
+                              {(model.context_length / 1000).toFixed(0)}K context
+                            </div>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Product name */}
+            <div className="space-y-2 pt-2 border-t">
+              <Label htmlFor="product-name-select">Portfolio Name</Label>
+              <Input
+                id="product-name-select"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                placeholder="My AI Portfolio"
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="ghost" onClick={() => setStep('key')}>
+              Back
+            </Button>
+            <Button onClick={handleImport} disabled={selectedModels.length === 0}>
+              <Zap className="w-4 h-4 mr-2" />
+              Create {selectedModels.length} Use Case{selectedModels.length !== 1 ? 's' : ''}
+            </Button>
+          </CardFooter>
+        </>
+      )}
+
+      {/* Step 2b: Preview (when generation history is available) */}
+      {step === 'preview' && preview && (
+        <>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Eye className="w-6 h-6 text-primary" />
+            </div>
+            <CardTitle>Review Your AI Usage</CardTitle>
+            <CardDescription>
+              We detected {preview.modelsDetected.length} model{preview.modelsDetected.length !== 1 ? 's' : ''} in your OpenRouter history.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Account summary */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-muted/50 rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold">{preview.modelsDetected.length}</div>
+                <div className="text-xs text-muted-foreground">Models Used</div>
+              </div>
+              <div className="bg-muted/50 rounded-lg p-3 text-center">
+                <div className="text-2xl font-bold">
+                  {preview.modelsDetected.reduce((sum, m) => sum + m.totalCalls, 0).toLocaleString()}
+                </div>
+                <div className="text-xs text-muted-foreground">Total Requests</div>
+              </div>
+            </div>
+
+            {/* Top models */}
+            {topModels.length > 0 ? (
+              <div className="space-y-2">
+                <Label>Top Models</Label>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {topModels.map((model, idx) => (
+                    <ModelUsageCard key={model.modelId} model={model} rank={idx + 1} />
+                  ))}
+                  {hasMoreModels && (
+                    <p className="text-xs text-muted-foreground text-center py-2">
+                      +{preview.modelsDetected.length - 5} more models
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-4 text-muted-foreground">
+                <AlertCircle className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                <p>No usage data found. You can still create a portfolio manually.</p>
+              </div>
+            )}
+
+            {/* Product name */}
+            <div className="space-y-2">
+              <Label htmlFor="product-name-preview">Portfolio Name</Label>
+              <Input
+                id="product-name-preview"
+                value={productName}
+                onChange={(e) => setProductName(e.target.value)}
+                placeholder="My AI Portfolio"
+              />
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="ghost" onClick={() => setStep('key')}>
+              Back
+            </Button>
+            <Button onClick={handleImport} disabled={preview.modelsDetected.length === 0}>
+              <Zap className="w-4 h-4 mr-2" />
+              Import {preview.modelsDetected.length > 0 ? preview.modelsDetected.slice(0, 10).length : 0} Use Cases
+            </Button>
+          </CardFooter>
+        </>
+      )}
+
+      {/* Step 3: Importing */}
+      {step === 'importing' && (
+        <>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              <Loader2 className="w-6 h-6 text-primary animate-spin" />
+            </div>
+            <CardTitle>Importing Your Data</CardTitle>
+            <CardDescription>
+              Creating your portfolio from OpenRouter usage data...
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <ImportStepItem label="Analyzing usage patterns" done />
+              <ImportStepItem label="Matching models to our catalog" done={isImporting} />
+              <ImportStepItem label="Creating use cases" done={false} active={isImporting} />
+              <ImportStepItem label="Generating recommendations" done={false} />
+            </div>
+          </CardContent>
+          <CardFooter />
+        </>
+      )}
+
+      {/* Step 4: Success */}
+      {step === 'success' && (
+        <>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
+              <Sparkles className="w-6 h-6 text-green-600 dark:text-green-400" />
+            </div>
+            <CardTitle>Import Complete!</CardTitle>
+            <CardDescription>
+              Your AI portfolio is ready. We&apos;re analyzing your usage to find optimization opportunities.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                <span className="text-sm">Portfolio: {productName}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-600" />
+                <span className="text-sm">
+                  {importResult?.useCasesCreated} use cases imported
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
+                <span className="text-sm">Recommendations generating...</span>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button onClick={handleFinish}>
+              View Portfolio
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </CardFooter>
+        </>
+      )}
     </Card>
   );
 }
 
-// Helper component for model usage display
+// Helper component for model usage display (defined OUTSIDE the main component)
 function ModelUsageCard({ model, rank }: { model: DetectedUsagePattern; rank: number }) {
   const formatCost = (cost: number) => {
     if (cost < 0.01) return '<$0.01';
@@ -575,8 +562,8 @@ function ModelUsageCard({ model, rank }: { model: DetectedUsagePattern; rank: nu
   );
 }
 
-// Helper component for import progress
-function ImportStep({
+// Helper component for import progress (defined OUTSIDE the main component)
+function ImportStepItem({
   label,
   done,
   active,
