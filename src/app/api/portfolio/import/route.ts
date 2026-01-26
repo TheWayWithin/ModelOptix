@@ -49,8 +49,6 @@ const POPULAR_MODELS_QUERY = `
   name,
   openrouter_id,
   context_length,
-  input_cost_per_token,
-  output_cost_per_token,
   providers!inner(name)
 `;
 
@@ -59,8 +57,6 @@ interface CatalogModel {
   name: string;
   openrouter_id: string | null;
   context_length: number | null;
-  input_cost_per_token: number | null;
-  output_cost_per_token: number | null;
   providers: { name: string };
 }
 
