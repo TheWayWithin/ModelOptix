@@ -39,6 +39,7 @@ import {
   Edit,
   Database,
   RefreshCw,
+  BarChart3,
 } from 'lucide-react';
 
 interface AdminModel {
@@ -56,11 +57,21 @@ interface AdminModel {
   latencyP50: number | null;
   latencyP95: number | null;
   benchmarks: {
+    source?: string;
+    fetched_at?: string;
     intelligence_index?: number;
     coding_index?: number;
+    math_index?: number;
     tokens_per_second?: number;
+    time_to_first_token_seconds?: number;
     mmlu_pro?: number;
     gpqa?: number;
+    livecodebench?: number;
+    input_price_per_million?: number;
+    output_price_per_million?: number;
+    provider_name?: string;
+    provider_slug?: string;
+    raw_slug?: string;
   } | null;
   isActive: boolean;
   avgTrustScore: number | null;
@@ -103,6 +114,9 @@ export default function AdminModelsPage() {
     is_active: true,
   });
   const [isSaving, setIsSaving] = useState(false);
+
+  // Benchmarks modal state
+  const [viewingBenchmarks, setViewingBenchmarks] = useState<AdminModel | null>(null);
 
   const fetchModels = useCallback(
     async (page: number = 1, showRefresh = false) => {
@@ -349,7 +363,10 @@ export default function AdminModelsPage() {
                     </TableCell>
                     <TableCell>
                       {model.benchmarks ? (
-                        <div className="text-xs space-y-0.5">
+                        <button
+                          onClick={() => setViewingBenchmarks(model)}
+                          className="text-xs space-y-0.5 text-left hover:bg-muted rounded p-1 -m-1 transition-colors cursor-pointer"
+                        >
                           {formatBenchmark(model.benchmarks.intelligence_index) && (
                             <div className="flex items-center gap-1">
                               <span className="text-muted-foreground">IQ:</span>
@@ -373,7 +390,7 @@ export default function AdminModelsPage() {
                            !formatBenchmark(model.benchmarks.tokens_per_second) && (
                             <span className="text-muted-foreground">-</span>
                           )}
-                        </div>
+                        </button>
                       ) : (
                         <span className="text-muted-foreground">-</span>
                       )}
@@ -511,6 +528,123 @@ export default function AdminModelsPage() {
             <Button onClick={handleSave} disabled={isSaving}>
               {isSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Benchmarks Modal */}
+      <Dialog open={!!viewingBenchmarks} onOpenChange={() => setViewingBenchmarks(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Benchmarks: {viewingBenchmarks?.name}
+            </DialogTitle>
+            <DialogDescription>
+              Benchmark scores from Artificial Analysis
+              {viewingBenchmarks?.benchmarks?.fetched_at && (
+                <span className="block text-xs mt-1">
+                  Last updated: {new Date(viewingBenchmarks.benchmarks.fetched_at).toLocaleString()}
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          {viewingBenchmarks?.benchmarks ? (
+            <div className="grid gap-4 py-4">
+              {/* Intelligence Scores */}
+              <div>
+                <h4 className="text-sm font-semibold mb-2 text-muted-foreground">Intelligence Scores</h4>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold">
+                      {viewingBenchmarks.benchmarks.intelligence_index?.toFixed(1) || '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Intelligence</p>
+                  </div>
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold">
+                      {viewingBenchmarks.benchmarks.coding_index?.toFixed(1) || '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Coding</p>
+                  </div>
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-2xl font-bold">
+                      {viewingBenchmarks.benchmarks.math_index?.toFixed(1) || '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Math</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Individual Benchmarks */}
+              <div>
+                <h4 className="text-sm font-semibold mb-2 text-muted-foreground">Benchmark Scores</h4>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-lg font-bold">
+                      {viewingBenchmarks.benchmarks.mmlu_pro
+                        ? (viewingBenchmarks.benchmarks.mmlu_pro * 100).toFixed(1) + '%'
+                        : '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">MMLU-Pro</p>
+                  </div>
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-lg font-bold">
+                      {viewingBenchmarks.benchmarks.gpqa
+                        ? (viewingBenchmarks.benchmarks.gpqa * 100).toFixed(1) + '%'
+                        : '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">GPQA</p>
+                  </div>
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-lg font-bold">
+                      {viewingBenchmarks.benchmarks.livecodebench
+                        ? (viewingBenchmarks.benchmarks.livecodebench * 100).toFixed(1) + '%'
+                        : '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">LiveCodeBench</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Speed Metrics */}
+              <div>
+                <h4 className="text-sm font-semibold mb-2 text-muted-foreground">Speed Metrics</h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-lg font-bold">
+                      {viewingBenchmarks.benchmarks.tokens_per_second?.toFixed(0) || '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Tokens/sec</p>
+                  </div>
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-lg font-bold">
+                      {viewingBenchmarks.benchmarks.time_to_first_token_seconds
+                        ? (viewingBenchmarks.benchmarks.time_to_first_token_seconds * 1000).toFixed(0) + 'ms'
+                        : '-'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">Time to First Token</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Provider Info */}
+              {viewingBenchmarks.benchmarks.provider_name && (
+                <div className="text-xs text-muted-foreground border-t pt-3">
+                  Source: {viewingBenchmarks.benchmarks.source} •
+                  Provider: {viewingBenchmarks.benchmarks.provider_name} ({viewingBenchmarks.benchmarks.raw_slug})
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-muted-foreground">
+              No benchmark data available for this model.
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setViewingBenchmarks(null)}>
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>
