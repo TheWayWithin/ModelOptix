@@ -62,9 +62,10 @@ Help developers and solopreneurs stop overpaying for AI by providing independent
 | 2 | Portfolio + Model Catalog | complete | 10 | Users can add products, browse models |
 | 3 | Core Value Loop | complete | 15 | Recommendations + Sanity Check |
 | 4 | Monetization | complete | 11 | Stripe subscriptions working |
-| 5 | Polish, Admin & Launch | not_started | 14 | Production-ready |
+| 5 | Polish, Admin & Launch | in_progress | 14 | Production-ready |
+| 6 | OpenRouter Integration | in_progress | 11 | Live data + user import |
 
-**Total: 72 tasks across 7 phases**
+**Total: 83 tasks across 8 phases**
 
 ---
 
@@ -778,13 +779,61 @@ The following tasks have additional acceptance criteria based on multi-LLM valid
 
 ---
 
+## Phase 6: OpenRouter Integration & Live Data (SPRINT-006)
+
+**Status:** in_progress
+**Started:** 2026-01-26
+**Objective:** Connect ModelOptix to live data - OpenRouter import, verified sync jobs, end-to-end data flow.
+**Sprint Document:** `sprint-openrouter-integration.md`
+**Priority:** P0 - Critical for launch
+
+### Context
+
+Audit on 2026-01-25 revealed that while sync job code exists with real API integration, the system operates as an "island":
+- Sync jobs may not have run (need verification)
+- OpenRouter Import (F-003a primary path) was deferred but is critical for "Time to First Insight < 5 min"
+- Users cannot connect their actual usage data
+
+### Tasks
+
+| ID | Task | Agent | Priority | Status |
+|----|------|-------|----------|--------|
+| 6.0.1 | Verify OPENROUTER_API_KEY configured in Railway | operator | p0 | pending |
+| 6.0.2 | Manually trigger model catalog sync, verify data | developer | p0 | pending |
+| 6.0.3 | Verify database has 200+ models after sync | developer | p0 | pending |
+| 6.1.1 | Create Admin Sync API endpoint (POST /api/admin/sync) | developer | p0 | pending |
+| 6.1.2 | Add sync status + manual trigger to Admin Dashboard | developer | p0 | pending |
+| 6.2.1 | Create OpenRouter user import service | developer | p0 | pending |
+| 6.2.2 | Create portfolio import API endpoint | developer | p0 | pending |
+| 6.2.3 | Create OpenRouter import UI flow | developer | p0 | pending |
+| 6.2.4 | Integrate import into onboarding wizard | developer | p0 | pending |
+| 6.3.1 | Test complete user journey end-to-end | tester | p0 | pending |
+| 6.3.2 | Verify error handling for all failure cases | tester | p0 | pending |
+
+### Phase 6 Quality Gates
+
+- [ ] **build:** `pnpm build` passes
+- [ ] **lint:** `pnpm lint` passes
+- [ ] **sync:** Admin can trigger all sync jobs manually
+- [ ] **import:** User can import portfolio via OpenRouter API key
+- [ ] **data:** Database contains 200+ real models from OpenRouter
+- [ ] **e2e:** Time to first insight < 5 minutes (measured)
+
+### Phase 6 Deliverables
+
+- [ ] Admin sync controls functional
+- [ ] OpenRouter Import flow complete
+- [ ] Live model/pricing data flowing
+- [ ] End-to-end user journey verified
+
+---
+
 ## P1 Backlog (Post-MVP)
 
 Features deferred from MVP for future implementation:
 
 | ID | Feature | Notes |
 |----|---------|-------|
-| F-003a+ | OpenRouter Import | Enhancement to Portfolio Quick Start - import usage data |
 | F-036 | Parameter Support Auto-Sync | Sync parameter compatibility data from OpenRouter API to populate parameter_support table |
 | F-024 | Real-time Alerts | Alerts UI and delivery |
 | F-025 | Alert List | View and manage alerts |

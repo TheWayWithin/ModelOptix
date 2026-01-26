@@ -26,7 +26,10 @@ import {
   RefreshCw,
   ArrowRight,
   Sparkles,
+  CloudDownload,
+  Play,
 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface AdminStats {
   users: {
@@ -78,27 +81,103 @@ interface AdminStats {
   };
 }
 
+interface SyncStatus {
+  status: {
+    modelCatalog: {
+      lastSync: string | null;
+      modelCount: number;
+    };
+    pricing: {
+      lastSync: string | null;
+    };
+    benchmarks: {
+      lastSync: string | null;
+    };
+  };
+  openrouterConfigured: boolean;
+}
+
 export default function AdminPage() {
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [syncingJob, setSyncingJob] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const fetchStats = async (showRefresh = false) => {
     if (showRefresh) setIsRefreshing(true);
     try {
-      const res = await fetch('/api/admin/stats');
-      if (!res.ok) {
+      const [statsRes, syncRes] = await Promise.all([
+        fetch('/api/admin/stats'),
+        fetch('/api/admin/sync'),
+      ]);
+
+      if (!statsRes.ok) {
         throw new Error('Failed to fetch stats');
       }
-      const data = await res.json();
-      setStats(data);
+      const statsData = await statsRes.json();
+      setStats(statsData);
+
+      if (syncRes.ok) {
+        const syncData = await syncRes.json();
+        setSyncStatus(syncData);
+      }
+
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
       setIsLoading(false);
       setIsRefreshing(false);
+    }
+  };
+
+  const triggerSync = async (job: 'model-catalog' | 'pricing' | 'benchmarks' | 'all') => {
+    setSyncingJob(job);
+    try {
+      const res = await fetch('/api/admin/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Sync failed');
+      }
+
+      // Format results for toast
+      const results: string[] = [];
+      if (data.results.modelCatalog) {
+        const mc = data.results.modelCatalog.stats;
+        results.push(`Models: ${mc.modelsUpdated} updated, ${mc.providersCreated} new providers`);
+      }
+      if (data.results.pricing) {
+        results.push(`Pricing: ${data.results.pricing.stats.pricingUpdated} updated`);
+      }
+      if (data.results.benchmarks) {
+        results.push(`Benchmarks: ${data.results.benchmarks.stats.benchmarksUpdated} updated`);
+      }
+
+      toast({
+        title: data.success ? 'Sync Complete' : 'Sync Completed with Errors',
+        description: results.join('. ') || `Completed in ${(data.totalDuration / 1000).toFixed(1)}s`,
+        variant: data.success ? 'default' : 'destructive',
+      });
+
+      // Refresh stats
+      await fetchStats(true);
+    } catch (err) {
+      toast({
+        title: 'Sync Failed',
+        description: err instanceof Error ? err.message : 'Unknown error',
+        variant: 'destructive',
+      });
+    } finally {
+      setSyncingJob(null);
     }
   };
 
@@ -417,6 +496,131 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Data Sync */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CloudDownload className="h-5 w-5" />
+            Data Sync
+          </CardTitle>
+          <CardDescription>
+            Sync model catalog, pricing, and benchmarks from external sources
+            {!syncStatus?.openrouterConfigured && (
+              <span className="block mt-1 text-amber-600 dark:text-amber-400">
+                <AlertCircle className="h-3 w-3 inline mr-1" />
+                OPENROUTER_API_KEY not configured
+              </span>
+            )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3">
+            {/* Model Catalog Sync */}
+            <div className="border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">Model Catalog</h4>
+                <Badge variant="outline" className="text-xs">
+                  {syncStatus?.status.modelCatalog.modelCount || 0} models
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                Last sync:{' '}
+                {syncStatus?.status.modelCatalog.lastSync
+                  ? formatRelativeTime(syncStatus.status.modelCatalog.lastSync)
+                  : 'Never'}
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full"
+                onClick={() => triggerSync('model-catalog')}
+                disabled={syncingJob !== null || !syncStatus?.openrouterConfigured}
+              >
+                {syncingJob === 'model-catalog' || syncingJob === 'all' ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 mr-2" />
+                )}
+                Sync Now
+              </Button>
+            </div>
+
+            {/* Pricing Sync */}
+            <div className="border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">Pricing</h4>
+                <Badge variant="outline" className="text-xs">Daily 3am UTC</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                Last sync:{' '}
+                {syncStatus?.status.pricing.lastSync
+                  ? formatRelativeTime(syncStatus.status.pricing.lastSync)
+                  : 'Never'}
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full"
+                onClick={() => triggerSync('pricing')}
+                disabled={syncingJob !== null || !syncStatus?.openrouterConfigured}
+              >
+                {syncingJob === 'pricing' || syncingJob === 'all' ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 mr-2" />
+                )}
+                Sync Now
+              </Button>
+            </div>
+
+            {/* Benchmarks Sync */}
+            <div className="border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-medium">Benchmarks</h4>
+                <Badge variant="outline" className="text-xs">Weekly Sun 4am</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                Last sync:{' '}
+                {syncStatus?.status.benchmarks.lastSync
+                  ? formatRelativeTime(syncStatus.status.benchmarks.lastSync)
+                  : 'Never'}
+              </p>
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full"
+                onClick={() => triggerSync('benchmarks')}
+                disabled={syncingJob !== null}
+              >
+                {syncingJob === 'benchmarks' || syncingJob === 'all' ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Play className="h-4 w-4 mr-2" />
+                )}
+                Sync Now
+              </Button>
+            </div>
+          </div>
+
+          {/* Sync All Button */}
+          <div className="mt-4 pt-4 border-t">
+            <Button
+              variant="default"
+              className="w-full"
+              onClick={() => triggerSync('all')}
+              disabled={syncingJob !== null || !syncStatus?.openrouterConfigured}
+            >
+              {syncingJob === 'all' ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              Sync All Data Sources
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Jobs & Overrides */}
       <div className="grid gap-4 md:grid-cols-2">
