@@ -120,3 +120,82 @@ export interface ParsedModelData {
   capabilities: Record<string, unknown>;
   metadata: Record<string, unknown>;
 }
+
+/**
+ * OpenRouter Auth Key Response
+ * GET /api/v1/auth/key
+ */
+export interface OpenRouterKeyInfo {
+  data: {
+    label?: string;
+    usage: number; // Total credits used
+    limit: number | null; // Credit limit (null = unlimited)
+    is_free_tier: boolean;
+    rate_limit: {
+      requests: number;
+      interval: string;
+    };
+  };
+}
+
+/**
+ * OpenRouter Activity/Generation Response
+ * GET /api/v1/generation?offset=0&limit=50
+ */
+export interface OpenRouterGeneration {
+  id: string;
+  model: string; // Model ID used
+  created_at: string;
+  tokens_prompt: number;
+  tokens_completion: number;
+  native_tokens_prompt?: number;
+  native_tokens_completion?: number;
+  total_cost: number;
+  latency?: number;
+  is_byok?: boolean;
+}
+
+export interface OpenRouterGenerationResponse {
+  data: OpenRouterGeneration[];
+}
+
+/**
+ * User Import Types
+ */
+export interface DetectedUsagePattern {
+  modelId: string; // OpenRouter model ID (e.g., "openai/gpt-4o")
+  modelName: string;
+  totalCalls: number;
+  totalTokens: number;
+  totalCost: number;
+  avgInputTokens: number;
+  avgOutputTokens: number;
+  avgLatency?: number;
+  lastUsed: string;
+}
+
+export interface ImportPreview {
+  keyValid: boolean;
+  keyLabel?: string;
+  totalUsage: number;
+  isFreeTier: boolean;
+  modelsDetected: DetectedUsagePattern[];
+  suggestedProduct: {
+    name: string;
+    useCases: Array<{
+      name: string;
+      modelId: string;
+      taskType: string;
+      avgInputTokens: number;
+      avgOutputTokens: number;
+      monthlyVolume: number;
+    }>;
+  };
+}
+
+export interface ImportResult {
+  success: boolean;
+  productId?: string;
+  useCasesCreated: number;
+  error?: string;
+}
