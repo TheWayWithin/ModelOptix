@@ -19,6 +19,7 @@ import {
   type SyncPricingResult,
   type SyncBenchmarksResult,
 } from '@/lib/jobs';
+import { isAAConfigured } from '@/lib/artificial-analysis';
 
 type JobType = 'model-catalog' | 'pricing' | 'benchmarks' | 'all';
 
@@ -119,6 +120,7 @@ export async function GET() {
         },
       },
       openrouterConfigured: !!process.env.OPENROUTER_API_KEY,
+      aaConfigured: isAAConfigured(),
     });
   } catch (error) {
     console.error('Admin sync status error:', error);

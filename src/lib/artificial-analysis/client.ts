@@ -1,8 +1,8 @@
 /**
  * Artificial Analysis API Client
  *
- * Fetches benchmark data from Artificial Analysis public API.
- * No API key required for public model data.
+ * Fetches benchmark data from Artificial Analysis API.
+ * Requires API key - get one at https://artificialanalysis.ai (Insights Platform)
  */
 
 import type {
@@ -11,7 +11,7 @@ import type {
   AAClientOptions,
 } from './types';
 
-const DEFAULT_BASE_URL = 'https://artificialanalysis.ai/api/v1';
+const DEFAULT_BASE_URL = 'https://artificialanalysis.ai/api/v2';
 const DEFAULT_TIMEOUT = 30000;
 const DEFAULT_MAX_RETRIES = 3;
 const DEFAULT_RETRY_DELAY_MS = 1000;
@@ -43,6 +43,14 @@ export class ArtificialAnalysisClient {
    * Fetch with retry logic and exponential backoff
    */
   private async fetchWithRetry<T>(url: string): Promise<T> {
+    const apiKey = process.env.ARTIFICIAL_ANALYSIS_API_KEY;
+
+    if (!apiKey) {
+      throw new Error(
+        'ARTIFICIAL_ANALYSIS_API_KEY not configured. Get one at https://artificialanalysis.ai'
+      );
+    }
+
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= this.maxRetries; attempt++) {
@@ -55,6 +63,7 @@ export class ArtificialAnalysisClient {
           headers: {
             Accept: 'application/json',
             'User-Agent': 'ModelOptix/1.0',
+            'x-api-key': apiKey,
           },
           signal: controller.signal,
         });
@@ -93,7 +102,7 @@ export class ArtificialAnalysisClient {
   async getModels(): Promise<AAModelResponse[]> {
     console.log('[ArtificialAnalysis] Fetching models from API...');
 
-    const url = `${this.baseUrl}/models`;
+    const url = `${this.baseUrl}/data/llms/models`;
     const response = await this.fetchWithRetry<
       AAApiResponse | AAModelResponse[]
     >(url);
@@ -108,6 +117,13 @@ export class ArtificialAnalysisClient {
 
 // Singleton instance for convenience
 let defaultClient: ArtificialAnalysisClient | null = null;
+
+/**
+ * Check if Artificial Analysis API is configured
+ */
+export function isAAConfigured(): boolean {
+  return !!process.env.ARTIFICIAL_ANALYSIS_API_KEY;
+}
 
 /**
  * Get the default client instance

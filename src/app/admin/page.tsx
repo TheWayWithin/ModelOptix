@@ -95,6 +95,7 @@ interface SyncStatus {
     };
   };
   openrouterConfigured: boolean;
+  aaConfigured: boolean;
 }
 
 export default function AdminPage() {
@@ -638,12 +639,18 @@ export default function AdminPage() {
                   ? formatRelativeTime(syncStatus.status.benchmarks.lastSync)
                   : 'Never'}
               </p>
+              {!syncStatus?.aaConfigured && (
+                <p className="text-xs text-amber-600 dark:text-amber-400 mb-2">
+                  <AlertCircle className="h-3 w-3 inline mr-1" />
+                  ARTIFICIAL_ANALYSIS_API_KEY not configured
+                </p>
+              )}
               <Button
                 size="sm"
                 variant="outline"
                 className="w-full"
                 onClick={() => triggerSync('benchmarks')}
-                disabled={syncingJob !== null}
+                disabled={syncingJob !== null || !syncStatus?.aaConfigured}
               >
                 {syncingJob === 'benchmarks' || syncingJob === 'all' ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

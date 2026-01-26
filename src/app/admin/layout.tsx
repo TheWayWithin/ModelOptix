@@ -64,8 +64,11 @@ export default function AdminLayout({
     router.push('/login');
   };
 
-  // Show loading state while checking auth
-  if (isLoading) {
+  // Show loading state while checking auth OR while profile is still loading
+  // Profile loads async after auth, so we need to wait for it before showing access denied
+  if (isLoading || (profile === null && !isLoading)) {
+    // If we have no profile but auth finished loading, give it a moment to load
+    // This prevents the "Access Denied" flash during profile fetch
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-destructive" />
@@ -73,8 +76,8 @@ export default function AdminLayout({
     );
   }
 
-  // Redirect non-admins
-  if (!profile?.is_admin) {
+  // Redirect non-admins (only after profile has loaded)
+  if (profile && !profile.is_admin) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
         <ShieldAlert className="h-16 w-16 text-destructive" />
