@@ -181,7 +181,7 @@ async function upsertProviders(
 
   for (const slug of providerSlugs) {
     try {
-      // Check if provider exists
+      // Check if provider exists by slug
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: existing, error: selectError } = await (supabase as any)
         .from('providers')
@@ -198,35 +198,58 @@ async function upsertProviders(
         providerIdMap.set(slug, existing.id);
         stats.providersUpdated++;
       } else {
-        // Create new provider with placeholder data
+        // Slug not found - check if provider exists under a different slug
+        // (e.g., seed used "mistral" but OpenRouter uses "mistralai")
         const providerName = formatProviderName(slug);
-        const providerData = {
-          name: providerName,
-          slug: slug,
-          trust_tier: 'unknown',
-          status: 'active',
-          features: {},
-          metadata: {
-            auto_created: true,
-            source: 'openrouter_sync',
-            created_at: new Date().toISOString(),
-          },
-        };
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: created, error: insertError } = await (supabase as any)
+        const { data: byName } = await (supabase as any)
           .from('providers')
-          .insert(providerData)
           .select('id')
-          .single();
+          .eq('name', providerName)
+          .maybeSingle();
 
-        if (insertError) throw insertError;
-        if (!created) throw new Error('Provider insert returned no data');
+        if (byName?.id) {
+          // Found by name - update slug to match OpenRouter and map it
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (supabase as any)
+            .from('providers')
+            .update({ slug })
+            .eq('id', byName.id);
+          providerIdMap.set(slug, byName.id);
+          stats.providersUpdated++;
+          console.log(
+            `[ModelCatalogSync] Updated provider slug: ${providerName} -> ${slug}`
+          );
+        } else {
+          // Create new provider with placeholder data
+          const providerData = {
+            name: providerName,
+            slug: slug,
+            trust_tier: 'unknown',
+            status: 'active',
+            features: {},
+            metadata: {
+              auto_created: true,
+              source: 'openrouter_sync',
+              created_at: new Date().toISOString(),
+            },
+          };
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data: created, error: insertError } = await (supabase as any)
+            .from('providers')
+            .insert(providerData)
+            .select('id')
+            .single();
 
-        providerIdMap.set(slug, (created as { id: string }).id);
-        stats.providersCreated++;
-        console.log(
-          `[ModelCatalogSync] Created new provider: ${providerName} (${slug})`
-        );
+          if (insertError) throw insertError;
+          if (!created) throw new Error('Provider insert returned no data');
+
+          providerIdMap.set(slug, (created as { id: string }).id);
+          stats.providersCreated++;
+          console.log(
+            `[ModelCatalogSync] Created new provider: ${providerName} (${slug})`
+          );
+        }
       }
     } catch (error) {
       console.error(
