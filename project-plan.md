@@ -16,7 +16,7 @@
 | **Type** | saas-mvp |
 | **Repository** | TBD |
 | **Created** | 2026-01-17 |
-| **Last Updated** | 2026-01-22 |
+| **Last Updated** | 2026-02-08 |
 
 ### Source Documents
 
@@ -706,24 +706,25 @@ const modelCosts = { // per 1K tokens
 | 5.11 | Sentry + PostHog Integration | operator | p0 | ✅ complete - 2026-01-24 |
 | 5.12 | Performance Optimization + Security Review | developer | p0 | ✅ complete - 2026-01-23 23:00 |
 | 5.13 | Audit Log Infrastructure | developer | p1 | ✅ complete - 2026-01-23 23:15 |
-| 5.14 | Stripe Live Mode Setup | operator | p0 | pending |
+| 5.14 | Stripe Live Mode Setup | operator | p0 | ✅ complete - 2026-01-31 |
 
 ### Phase 5 Quality Gates
 
-- [ ] **build:** `npm run build` passes
+- [x] **build:** `npm run build` passes
 - [ ] **test:** Test coverage >= 80%
-- [ ] **lint:** `npm run lint` passes
-- [ ] **security:** `npm audit` has no high/critical vulnerabilities
-- [ ] **manual:** Dashboard loads in < 3 seconds
-- [ ] **manual:** All email templates render correctly
+- [x] **lint:** `npm run lint` passes
+- [x] **security:** `npm audit` has no high/critical vulnerabilities
+- [x] **manual:** Dashboard loads in < 3 seconds
+- [x] **manual:** All email templates render correctly
 
 ### Phase 5 Deliverables
 
-- [ ] Admin UI functional
-- [ ] All email flows working
-- [ ] Monitoring in place
-- [ ] Performance targets met
-- [ ] Security review complete
+- [x] Admin UI functional
+- [x] All email flows working
+- [x] Monitoring in place (Sentry + PostHog)
+- [x] Performance targets met
+- [x] Security review complete
+- [x] Stripe live mode configured (products, coupons, webhooks, API keys)
 
 ---
 
@@ -799,7 +800,7 @@ Audit on 2026-01-25 revealed that while sync job code exists with real API integ
 | ID | Task | Agent | Priority | Status |
 |----|------|-------|----------|--------|
 | 6.0.1 | Verify OPENROUTER_API_KEY configured in Railway | operator | p0 | ✅ done (2026-01-26) |
-| 6.0.2 | Manually trigger model catalog sync, verify data | developer | p0 | in_progress |
+| 6.0.2 | Manually trigger model catalog sync, verify data | developer | p0 | pending |
 | 6.0.3 | Verify database has 200+ models after sync | developer | p0 | pending |
 | 6.1.1 | Create Admin Sync API endpoint (POST /api/admin/sync) | developer | p0 | ✅ done (2026-01-26) |
 | 6.1.2 | Add sync status + manual trigger to Admin Dashboard | developer | p0 | ✅ done (2026-01-26) |
@@ -812,8 +813,8 @@ Audit on 2026-01-25 revealed that while sync job code exists with real API integ
 
 ### Phase 6 Quality Gates
 
-- [ ] **build:** `pnpm build` passes
-- [ ] **lint:** `pnpm lint` passes
+- [x] **build:** `pnpm build` passes - verified 2026-02-08
+- [x] **lint:** `pnpm lint` passes (via build) - verified 2026-02-08
 - [ ] **sync:** Admin can trigger all sync jobs manually
 - [ ] **import:** User can import portfolio via OpenRouter API key
 - [ ] **data:** Database contains 200+ real models from OpenRouter
