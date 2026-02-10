@@ -165,6 +165,8 @@
   - [ ] Build connections with ICP founders
 
 ### Posts in Pipeline
+- [ ] **Blog: Ace Training & Day 1** — Setting up Ace in product role, training on the product, Day 1 achievements, roadmap
+- [ ] **Blog: Funding Arbitrage Investigation** — Research into funding rate arbitrage as Trader-7 profit strategy
 - [ ] Cross-post updates to wip.co
 - [ ] Article 3: "How we built and deployed a product in a weekend"
 - [ ] Article 4: "The AI agent's daily routine (heartbeats, proactive checks, memory management)"
@@ -172,6 +174,26 @@
 - [ ] Write LinkedIn + X posts for each article as published
 
 ## 🛠️ Infrastructure
+
+- [ ] **🔄 Mac Mini Agent Migration** 🔴 NEW
+  *Move sub-agents to Mac Mini M4, keep Marvin on AWS*
+  **See:** `docs/MAC-MINI-MIGRATION-PLAN.md`
+  **Day 1:**
+  - [ ] Install Clawdbot on Mac Mini
+  - [ ] Install Tailscale on both AWS and Mac Mini
+  - [ ] Configure Mac Mini to stay awake (pmset)
+  - [ ] Create backup of current AWS agent state
+  - [ ] Test Tailscale connectivity AWS ↔ Mac Mini
+  **Day 2:**
+  - [ ] Copy agent files to Mac Mini
+  - [ ] Create Clawdbot config on Mac Mini
+  - [ ] Authenticate Ace with Anthropic on Mac Mini
+  - [ ] Test Ace responds in AI Search HQ
+  - [ ] Remove Ace from AWS config
+  **Day 3:**
+  - [ ] Set up automated backup cron on AWS
+  - [ ] Set up health check script
+  - [ ] Document and test failover procedure
 
 - [ ] **Update GitHub PAT** *(tonight)* — add `workflow` scope so Marvin can push CI/workflow changes
   - Then push pending llm-txt-mastery CI fix (Node 18→20, audit level fix)
@@ -248,6 +270,12 @@
 
 ## 💹 Trader-7
 
+- [ ] **🔍 Major Strategy Review** 🔴 IN PROGRESS (Feb 10)
+  *Evaluating arbitrage funding as a profit strategy*
+  - [ ] Research funding rate arbitrage mechanics
+  - [ ] Assess risk/reward vs current trading approach
+  - [ ] Define implementation requirements if proceeding
+  - [ ] Update architecture docs with new strategy
 - [ ] Add funding arbitrage capability
 - [ ] Create segregated dev-staging vs prod environments
   - [ ] Paper trading in staging to prove new features before promoting to prod
@@ -303,16 +331,72 @@
 - [x] Published both articles to jamiewatters.work (Jan 28)
 - [x] Project tracker + task system set up (Jan 28)
 
-## 📣 AI Search Mastery Brand
+## 📣 AI Search Mastery Brand & Growth (Ace Owns)
 
-- [ ] **Set up dedicated X account** for AI Search Mastery
-  - Handle ideas: @AIsearchmastery, @AISearchMastery_, @AIMastery_
-  - Focus: LLMtxt Mastery, AImpactScanner, AI search optimization content
-- [ ] **Set up dedicated LinkedIn page** for AI Search Mastery
-  - Company page (already exists: ID 111834980)
-  - Create content strategy separate from Jamie personal brand
-- [ ] Define content pillars for AI Search Mastery vs Jamie Watters personal
-- [ ] Cross-link between personal and business accounts
+*Last updated: 2026-02-10 by Ace*
+
+### Social Media Setup 🔴 IN PROGRESS
+- [ ] **Create @aisearchmastery on X** (Jamie to create, Ace to operate)
+  - Bios/profiles ready: `aisearch/brand/SOCIAL_PROFILES.md`
+  - Need: X API credentials after account created
+- [ ] **Create AI Search Mastery LinkedIn company page**
+  - Company page ID exists: 111834980
+  - Need: Admin access for Ace to post
+- [ ] Set up X API ($200/mo Basic tier) for autonomous posting
+  - Share across all agents (Ace, Marvin, future product agents)
+
+### Outreach Infrastructure ✅ DONE
+- [x] Resend API configured (Feb 10)
+- [x] Verified domains: llmtxtmastery.com, aimpactscanner.com, plebtest.com, modeloptix.com
+- [x] Credentials stored: `.clawdbot/credentials/resend.json` + `aisearch/.env`
+- [x] Shared script: `scripts/send-email.sh`
+
+### Outreach Campaign 🔴 NEXT UP
+- [ ] **Find email addresses for high-priority prospects**
+  - 6 broken-file prospects (highest priority)
+  - 2 bloated-file prospects (high priority)
+- [ ] **A/B test email templates**
+  - Segment A: Broken file messaging
+  - Segment B: Bloated file messaging
+  - Segment C: No file (awareness-first)
+  - Strategy doc: `aisearch/campaigns/OUTREACH_STRATEGY.md`
+- [ ] Send first batch (10 emails) to broken/bloated segment
+- [ ] Track: open rate >40%, reply rate >10%
+
+### Prospect System
+- [x] Prospect database exists: `llm-txt-mastery/prospects/prospects.json` (41 prospects)
+- [x] Segmented by: broken (6), bloated (2), no-file (23), decent (10)
+- [ ] Add email addresses to prospects
+- [ ] Build automated prospect scanner (find more broken/bloated files)
+- [ ] Expand beyond Webflow → general solopreneurs (not WordPress)
+
+### Content Pipeline
+- [ ] Draft first week content calendar for @aisearchmastery
+- [ ] Create educational content: "How to create and add an llms.txt file"
+- [ ] Content pillars: 60% education, 20% social proof, 10% product, 10% founder journey
+
+### Previous Outreach (Feb 8) — Zero Responses
+| Prospect | Method | Status |
+|----------|--------|--------|
+| Paper Tiger | DM | No response |
+| Flow Ninja | Twitter reply | No response |
+| Veza Digital | DM | No response |
+| BRIX Agency | DM | No response |
+| Grafit Agency | Twitter reply | No response |
+
+*Pivot: Webflow agencies may not be ideal ICP. Targeting solopreneurs directly.*
+
+### Blockers for Autonomous Growth
+| Blocker | Status | Solution |
+|---------|--------|----------|
+| X posting | ❌ Blocked | Need X API after account created |
+| LinkedIn posting | ❌ Blocked | Need admin access |
+| Email outreach | ✅ Ready | Resend configured |
+| Prospect emails | ❌ Missing | Need to find email addresses |
+
+---
+
+### Archive: Original Tasks
 - [ ] **Review aisearchmastery.com** — audit current state
   - [ ] Check messaging alignment with LLMtxt Mastery & AImpactScanner
   - [ ] Identify outdated content or positioning
