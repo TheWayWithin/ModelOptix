@@ -78,14 +78,13 @@ test.describe('Public Pages', () => {
   });
 
   test('landing page loads successfully', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForLoadState('domcontentloaded');
+    test.setTimeout(45000);
+    await page.goto('/', { waitUntil: 'networkidle' });
 
-    // Verify the landing page rendered (hero section)
-    await expect(page.locator('body')).not.toBeEmpty();
-    // Check for waitlist or key landing page elements
-    const hasContent = await page.getByText(/modeloptix|save|ai/i).first().isVisible().catch(() => false);
-    expect(hasContent).toBeTruthy();
+    // Verify the landing page rendered - check for hero headline
+    await expect(
+      page.getByRole('heading', { name: /stop overpaying/i })
+    ).toBeVisible({ timeout: 15000 });
   });
 
   test('login page renders', async ({ page }) => {

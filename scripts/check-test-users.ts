@@ -16,14 +16,14 @@ async function check() {
   }
 
   // Try signing in as test user
-  const { data: signIn, error: signInErr } = await sb.auth.signInWithPassword({
+  const { data: _signIn, error: signInErr } = await sb.auth.signInWithPassword({
     email: 'e2e-test@modeloptix.com',
     password: 'TestPass123!',
   });
   console.log('\nSign-in (test user):', signInErr ? `FAILED: ${signInErr.message}` : 'SUCCESS');
 
   // Try signing in as admin
-  const { data: adminSignIn, error: adminErr } = await sb.auth.signInWithPassword({
+  const { data: _adminSignIn, error: adminErr } = await sb.auth.signInWithPassword({
     email: 'e2e-admin@modeloptix.com',
     password: 'AdminPass123!',
   });
