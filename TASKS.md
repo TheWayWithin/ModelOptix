@@ -173,6 +173,17 @@
 
 ## 🌐 JamieWatters.work
 
+- [ ] **Build /metrics page** 🔴 NEW
+  *Public scoreboard for Jamie, Marvin, and Ace*
+  - [ ] Create `/app/metrics/page.tsx`
+  - [ ] Create `/public/data/metrics.json` with initial data
+  - [ ] Build team cards (3 columns: Jamie, Marvin, Ace)
+  - [ ] Add weekly trends chart
+  - [ ] Add monthly goal progress bars
+  - [ ] Style with existing Tailwind theme
+  - [ ] Connect daily cron to update JSON
+  - Spec: `drafts/metrics-page-spec.md`
+
 - [ ] Review project metrics — ensure correct metrics per project
   - [ ] Automate MRR feed from Stripe API
   - [ ] Automate user/signup counts
@@ -368,9 +379,15 @@
 
 ## 📣 AI Search Mastery Brand & Growth (Ace Owns)
 
-*Last updated: 2026-02-10 by Ace*
+*Last updated: 2026-02-11 07:11 UTC by Ace*
 
-### Social Media Setup 🔴 IN PROGRESS
+### Performance Metrics ✅ CREATED
+- [x] Metrics framework: `aisearch/METRICS.md`
+- [x] Tracking directory: `aisearch/metrics/`
+- [ ] Weekly report automation (every Monday)
+- [ ] Connect to Stripe for revenue data
+
+### Social Media Setup 🔴 BLOCKED (waiting on Jamie)
 - [ ] **Create @aisearchmastery on X** (Jamie to create, Ace to operate)
   - Bios/profiles ready: `aisearch/brand/SOCIAL_PROFILES.md`
   - Need: X API credentials after account created
