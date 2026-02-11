@@ -6,6 +6,14 @@
 
 ## 🔥 Today / This Week
 
+- [ ] **📣 Daily WIP.co Progress Posts** 🔴 PRIORITY (ONGOING)
+  *Capture everything we do each day, write pithy progress updates*
+  - Track accomplishments throughout the day in memory files
+  - End of day (or next morning): draft punchy WIP post
+  - Post to wip.co with relevant hashtags
+  - Keep it cool, not corporate — show the real work
+  - Include wins AND fails (authenticity > perfection)
+
 - [ ] **🔑 Set Up X API Access** 🔴 PRIORITY (PREREQUISITE)
   *Required for social engagement monitor*
   - [ ] Sign up for X API Basic tier ($200/mo) — or Free tier if sufficient
