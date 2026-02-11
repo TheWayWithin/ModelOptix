@@ -6,6 +6,22 @@
 
 ## 🔥 Today / This Week
 
+- [ ] **📊 Integrate AI Search Metrics (Marvin)** 🔴 NEW
+  *Ace created metrics framework, needs portfolio integration*
+  - Handoff doc: `aisearch/MARVIN_HANDOFF_METRICS.md`
+  - Metrics: `aisearch/METRICS.md`
+  - [ ] Add to unified portfolio dashboard
+  - [ ] Set up weekly report cron (Monday mornings)
+  - [ ] Connect Stripe revenue data if possible
+
+- [ ] **📊 Monday: Consolidate Metrics & 1-2-1 Reviews** 🔴 RECURRING
+  *Every Monday — performance review day*
+  - [ ] Pull Ace's metrics from `aisearch/METRICS.md`
+  - [ ] Update main `METRICS.md` with consolidated numbers
+  - [ ] Prepare my weekly review for Jamie's 1-2-1
+  - [ ] After Jamie's reviews, update targets if needed
+  - [ ] Archive week's data to `metrics/YYYY-WXX.md`
+
 - [ ] **📣 Daily WIP.co Progress Posts** 🔴 PRIORITY (ONGOING)
   *Capture everything we do each day, write pithy progress updates*
   - Track accomplishments throughout the day in memory files
