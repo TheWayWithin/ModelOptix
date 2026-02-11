@@ -6,6 +6,23 @@
 
 ## 🔥 Today / This Week
 
+- [ ] **💬 Social Engagement Monitor** 🔴 PRIORITY
+  *Auto-check LinkedIn and X posts for new comments, suggest responses*
+  **Capability Build:**
+  - [ ] LinkedIn comment detection (via browser automation or API)
+  - [ ] X/Twitter reply/comment detection (via API or scraping)
+  - [ ] Response suggestion engine (respectful, fun, on-brand)
+  - [ ] Draft response review before posting (semi-autonomous)
+  **Scheduled Checks (via cron):**
+  - [ ] 6 AM UTC — morning check
+  - [ ] 12 PM UTC — midday check  
+  - [ ] 6 PM UTC — evening check
+  **Deliverables:**
+  - [ ] Script/skill for comment fetching
+  - [ ] Response generation with tone guidelines
+  - [ ] Cron jobs configured for 3x daily checks
+  - [ ] Notification to Jamie when responses ready for review
+
 - [ ] **📝 Review aisearchmastery.com Site Improvements** 🟡
   *Site reverted to original design. Recommendations doc created.*
   - [ ] Read `aisearchmastery/SITE_IMPROVEMENT_RECOMMENDATIONS.md`
