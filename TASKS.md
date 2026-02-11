@@ -6,11 +6,21 @@
 
 ## 🔥 Today / This Week
 
+- [ ] **🔑 Set Up X API Access** 🔴 PRIORITY (PREREQUISITE)
+  *Required for social engagement monitor*
+  - [ ] Sign up for X API Basic tier ($200/mo) — or Free tier if sufficient
+  - [ ] Generate API keys (API Key, API Secret, Access Token, Access Token Secret)
+  - [ ] Store credentials securely (`.clawdbot/credentials/x-api.json`)
+  - [ ] Test API connection (fetch recent posts, read replies)
+  - [ ] Document rate limits and capabilities
+
 - [ ] **💬 Social Engagement Monitor** 🔴 PRIORITY
   *Auto-check LinkedIn and X posts for new comments, suggest responses*
+  **Prerequisites:**
+  - [ ] X API access configured (see above)
   **Capability Build:**
-  - [ ] LinkedIn comment detection (via browser automation or API)
-  - [ ] X/Twitter reply/comment detection (via API or scraping)
+  - [ ] LinkedIn comment detection (via browser automation)
+  - [ ] X/Twitter reply/comment detection (via API)
   - [ ] Response suggestion engine (respectful, fun, on-brand)
   - [ ] Draft response review before posting (semi-autonomous)
   **Scheduled Checks (via cron):**
