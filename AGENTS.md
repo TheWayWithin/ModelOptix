@@ -41,16 +41,6 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - When you make a mistake → document it so future-you doesn't repeat it
 - **Text > Brain** 📝
 
-### ⚡ The Real-Time Rule
-Update files **immediately**, not at the end. No batching.
-
-1. **New task identified** → Add to TASKS.md immediately
-2. **Task completed** → Update TASKS.md immediately
-3. **File updated** → Save immediately
-4. **End of work** → Update memory file
-
-Why: Context can be lost mid-session (crashes, timeouts, context limits). If you batch updates for "later," later might never come. Write it down NOW.
-
 ## Safety
 
 - Don't exfiltrate private data. Ever.
