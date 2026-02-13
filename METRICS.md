@@ -66,12 +66,12 @@
 ### Marvin
 | Metric | Mon | Tue | Wed | Thu | Fri | Sat | Sun | Total |
 |--------|-----|-----|-----|-----|-----|-----|-----|-------|
-| Tasks completed | 3 | 4 | - | - | - | - | - | 7 |
-| Blogs drafted | 1 | 1 | - | - | - | - | - | 2 |
-| Social posts | 1 | 3 | - | - | - | - | - | 4 |
-| Emails drafted | 0 | 0 | - | - | - | - | - | 0 |
-| Comments drafted | 0 | 0 | - | - | - | - | - | 0 |
-| Issues caught | 1 | 1 | - | - | - | - | - | 2 |
+| Tasks completed | 3 | 4 | 4 | - | - | - | - | 11 |
+| Blogs drafted | 1 | 1 | 0 | - | - | - | - | 2 |
+| Social posts | 1 | 3 | 3 | - | - | - | - | 7 |
+| Emails drafted | 0 | 0 | 0 | - | - | - | - | 0 |
+| Comments drafted | 0 | 0 | 0 | - | - | - | - | 0 |
+| Issues caught | 1 | 1 | 1 | - | - | - | - | 3 |
 
 ### Ace
 | Metric | Mon | Tue | Wed | Thu | Fri | Sat | Sun | Total |
@@ -101,8 +101,8 @@ Weekly reports stored in: `metrics/YYYY-WXX.md`
 |-------|--------|--------|---------|--------|
 | Jamie | Products shipped | 2 | 0 | 🔴 |
 | Jamie | MRR | $100 | $0 | 🔴 |
-| Marvin | Tasks completed | 40 | 7 | 🟡 |
-| Marvin | Content drafted | 20 | 6 | 🟡 |
+| Marvin | Tasks completed | 40 | 11 | 🟡 |
+| Marvin | Content drafted | 20 | 9 | 🟡 |
 | Ace | Prospects identified | 100 | 68 | 🟡 |
 | Ace | Customers | 2 | 0 | 🔴 |
 | Ace | MRR | $20+ | $0 | 🔴 |
