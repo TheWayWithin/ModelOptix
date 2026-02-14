@@ -66,12 +66,12 @@
 ### Marvin
 | Metric | Mon | Tue | Wed | Thu | Fri | Sat | Sun | Total |
 |--------|-----|-----|-----|-----|-----|-----|-----|-------|
-| Tasks completed | 3 | 4 | 4 | - | - | - | - | 11 |
-| Blogs drafted | 1 | 1 | 0 | - | - | - | - | 2 |
-| Social posts | 1 | 3 | 3 | - | - | - | - | 7 |
-| Emails drafted | 0 | 0 | 0 | - | - | - | - | 0 |
-| Comments drafted | 0 | 0 | 0 | - | - | - | - | 0 |
-| Issues caught | 1 | 1 | 1 | - | - | - | - | 3 |
+| Tasks completed | 3 | 4 | 4 | 0 | 0 | 0 | - | 11 |
+| Blogs drafted | 1 | 1 | 0 | 0 | 0 | 0 | - | 2 |
+| Social posts | 1 | 3 | 3 | 0 | 0 | 0 | - | 7 |
+| Emails drafted | 0 | 0 | 0 | 0 | 0 | 0 | - | 0 |
+| Comments drafted | 0 | 0 | 0 | 0 | 0 | 0 | - | 0 |
+| Issues caught | 1 | 1 | 1 | 0 | 0 | 0 | - | 3 |
 
 ### Ace
 | Metric | Mon | Tue | Wed | Thu | Fri | Sat | Sun | Total |
