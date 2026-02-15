@@ -80,7 +80,7 @@ BEGIN
             'recentRuns', recent_jobs
         ),
         'overrides', jsonb_build_object(
-            'active', (SELECT COUNT(*) FROM editorial_overrides WHERE is_active = true)
+            'active', (SELECT COUNT(*) FROM editorial_overrides WHERE active = true)
         )
     ) INTO result;
     
