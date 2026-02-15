@@ -16,7 +16,6 @@ export interface AdminStats {
   };
   content: {
     products: number;
-    functions: number;
     useCases: number;
   };
   opportunities: {

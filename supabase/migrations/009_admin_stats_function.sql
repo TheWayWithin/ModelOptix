@@ -55,7 +55,6 @@ BEGIN
         ),
         'content', jsonb_build_object(
             'products', (SELECT COUNT(*) FROM products),
-            'functions', (SELECT COUNT(*) FROM functions),
             'useCases', (SELECT COUNT(*) FROM use_cases)
         ),
         'opportunities', jsonb_build_object(

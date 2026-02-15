@@ -45,7 +45,6 @@ interface AdminStats {
   };
   content: {
     products: number;
-    functions: number;
     useCases: number;
   };
   opportunities: {
@@ -73,7 +72,7 @@ interface AdminStats {
       job_name: string;
       status: string;
       started_at: string;
-      completed_at: string | null;
+      finished_at: string | null;
     }>;
   };
   overrides: {
@@ -385,18 +384,12 @@ export default function AdminPage() {
             <CardDescription>User-created content</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold">
                   {stats?.content.products || 0}
                 </div>
                 <p className="text-xs text-muted-foreground">Products</p>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold">
-                  {stats?.content.functions || 0}
-                </div>
-                <p className="text-xs text-muted-foreground">Functions</p>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">
