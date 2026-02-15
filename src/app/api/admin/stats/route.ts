@@ -44,7 +44,7 @@ export interface AdminStats {
       job_name: string;
       status: string;
       started_at: string;
-      completed_at: string | null;
+      finished_at: string | null;
     }>;
   };
   overrides: {

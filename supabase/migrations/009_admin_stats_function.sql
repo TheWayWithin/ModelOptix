@@ -29,12 +29,12 @@ BEGIN
             'job_name', job_name,
             'status', status,
             'started_at', started_at,
-            'completed_at', completed_at
+            'finished_at', finished_at
         ) ORDER BY started_at DESC
     ), '[]'::jsonb)
     INTO recent_jobs
     FROM (
-        SELECT id, job_name, status, started_at, completed_at
+        SELECT id, job_name, status, started_at, finished_at
         FROM job_runs
         ORDER BY started_at DESC
         LIMIT 5
@@ -89,8 +89,9 @@ BEGIN
 END;
 $$;
 
--- Grant execute to authenticated users (auth check happens in API route)
+-- Grant execute to authenticated users and service_role (auth check happens in API route)
 GRANT EXECUTE ON FUNCTION get_admin_stats() TO authenticated;
+GRANT EXECUTE ON FUNCTION get_admin_stats() TO service_role;
 
 -- Add comment for documentation
 COMMENT ON FUNCTION get_admin_stats() IS 'Returns all admin dashboard statistics in a single call. Used by /api/admin/stats endpoint.';
