@@ -103,56 +103,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   /**
    * Initialize auth state and subscribe to changes
-   *
-   * IMPORTANT: We use getUser() instead of getSession() because getSession()
-   * returns cached data from localStorage which can be stale after hard refresh.
-   * getUser() validates the session with the server.
    */
   React.useEffect(() => {
-    let mounted = true;
-
-    // Get and validate current user (not just cached session)
+    // Get initial session
     const initAuth = async () => {
-      try {
-        // First get the session (needed for the session object)
-        const { data: { session: initialSession } } = await supabase.auth.getSession();
+      const {
+        data: { session: initialSession },
+      } = await supabase.auth.getSession();
 
-        // Then validate the user with the server
-        const { data: { user: validatedUser }, error } = await supabase.auth.getUser();
-
-        if (!mounted) return;
-
-        if (error || !validatedUser) {
-          // Session is invalid or expired - clear state
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-          setIsLoading(false);
-          return;
-        }
-
-        // Session is valid
+      if (initialSession) {
         setSession(initialSession);
-        setUser(validatedUser);
+        setUser(initialSession.user);
 
-        // Fetch profile for authenticated user (don't block on this)
-        fetchProfile(validatedUser.id).then((userProfile) => {
-          if (mounted && userProfile) {
-            setProfile(userProfile);
-          }
-        });
-      } catch (err) {
-        console.error('Auth initialization error:', err);
-        if (mounted) {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-        }
-      } finally {
-        if (mounted) {
-          setIsLoading(false);
+        // Fetch profile for authenticated user
+        const userProfile = await fetchProfile(initialSession.user.id);
+        if (userProfile) {
+          setProfile(userProfile);
         }
       }
+
+      setIsLoading(false);
     };
 
     initAuth();
@@ -161,18 +131,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-      if (!mounted) return;
-
       setSession(newSession);
       setUser(newSession?.user ?? null);
 
       if (newSession?.user) {
         // Fetch profile on sign in
-        fetchProfile(newSession.user.id).then((userProfile) => {
-          if (mounted && userProfile) {
-            setProfile(userProfile);
-          }
-        });
+        const userProfile = await fetchProfile(newSession.user.id);
+        if (userProfile) {
+          setProfile(userProfile);
+        }
       } else {
         // Clear profile on sign out
         setProfile(null);
@@ -185,7 +152,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
-      mounted = false;
       subscription.unsubscribe();
     };
   }, [supabase, fetchProfile]);

@@ -1,26 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { usePostHog } from "posthog-js/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
-// Type for window.posthog
-type PostHogCapture = { capture: (event: string, properties?: Record<string, unknown>) => void };
-
-// Helper to safely access posthog from window
-function getPostHog(): PostHogCapture | undefined {
-  if (typeof window !== "undefined") {
-    return (window as unknown as { posthog?: PostHogCapture }).posthog;
-  }
-  return undefined;
-}
-
 export function WaitlistForm() {
   const [email, setEmail] = useState("");
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const posthog = usePostHog();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +32,7 @@ export function WaitlistForm() {
       }
 
       // Track successful signup
-      getPostHog()?.capture("waitlist_signup", {
+      posthog?.capture("waitlist_signup", {
         email_domain: email.split("@")[1],
       });
 
@@ -53,7 +44,7 @@ export function WaitlistForm() {
       setErrorMessage(message);
 
       // Track failed signup attempt
-      getPostHog()?.capture("waitlist_signup_failed", {
+      posthog?.capture("waitlist_signup_failed", {
         error: message,
       });
     }

@@ -17,18 +17,3 @@ export type { CleanupSessionsResult } from './cleanup-expired-sessions';
 
 export { cleanupGuestSanityChecks } from './cleanup-guest-sanity-checks';
 export type { CleanupGuestSanityChecksResult } from './cleanup-guest-sanity-checks';
-
-export { syncModelCatalog } from './sync-model-catalog';
-export type { SyncModelCatalogResult } from './sync-model-catalog';
-
-export { syncPricing } from './sync-pricing';
-export type { SyncPricingResult } from './sync-pricing';
-
-export { syncBenchmarks } from './sync-benchmarks';
-export type { SyncBenchmarksResult } from './sync-benchmarks';
-
-export { generateOpportunities } from './generate-opportunities';
-export type { GenerateOpportunitiesResult } from './generate-opportunities';
-
-export { sendTrialReminders } from './trial-reminder';
-export type { TrialReminderResult } from './trial-reminder';

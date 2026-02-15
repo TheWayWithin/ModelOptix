@@ -8,7 +8,7 @@ import {
   Package,
   Lightbulb,
   FlaskConical,
-  PiggyBank,
+  Bell,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -32,9 +32,9 @@ const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Overview', icon: LayoutDashboard },
   { href: '/products', label: 'Products', icon: Package },
   { href: '/opportunities', label: 'Opportunities', icon: Lightbulb },
-  { href: '/sanity-checks', label: 'Sanity Checks', icon: FlaskConical },
-  { href: '/savings', label: 'Savings', icon: PiggyBank },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  { href: '/sanity-check', label: 'Sanity Check', icon: FlaskConical },
+  { href: '/alerts', label: 'Alerts', icon: Bell },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export default function DashboardLayout({

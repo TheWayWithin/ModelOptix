@@ -32,18 +32,12 @@ export default function MarketingLayout({
 
           <div className="flex items-center gap-4">
             <ThemeToggle />
-            <Link
-              href="/login"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
-            >
-              Login
-            </Link>
-            <Link
-              href="/signup"
+            <a
+              href="#waitlist-form"
               className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
             >
-              Get Started
-            </Link>
+              Join Waitlist
+            </a>
           </div>
         </div>
       </header>

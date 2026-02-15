@@ -1,34 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Playwright configuration
- *
- * Local testing: runs against localhost:3000 (auto-starts dev server)
- * CI/Staging: set BASE_URL=https://staging.modeloptix.com
- */
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? 'github' : 'html',
-  timeout: 30000,
-  expect: {
-    timeout: 10000,
-  },
+  reporter: 'html',
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || 'https://staging.modeloptix.com',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry',
-  },
-  /* Run local dev server before tests (only when not using external BASE_URL) */
-  webServer: process.env.BASE_URL ? undefined : {
-    command: 'pnpm dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120000,
   },
   projects: [
     {

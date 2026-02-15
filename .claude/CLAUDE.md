@@ -41,6 +41,52 @@ This file provides guidance to Claude Code when working with this repository.
    - IMPLEMENT: Choose the solution that maintains system integrity
    - DOCUMENT: Record why decisions were made for future reference
 
+## Environment Management Protocol
+
+**CRITICAL: This project has THREE environments. Changes must be applied to ALL relevant environments.**
+
+### Environment Matrix
+
+| Environment | Branch | Domain | Supabase Project | Railway Service |
+|-------------|--------|--------|------------------|-----------------|
+| **Local** | any | localhost:3000 | Staging (hnjnazfkeaptmfxodzmq) | N/A |
+| **Staging** | `develop` | staging.modeloptix.com | Staging (hnjnazfkeaptmfxodzmq) | ModelOptix (staging) |
+| **Production** | `main` | modeloptix.com | Production (cyodlmpucqfisszcosiw) | ModelOptix (production) |
+
+### Mandatory Environment Checklist
+
+**When configuring external services (OAuth, APIs, webhooks):**
+- [ ] Configure for **Staging** Supabase project
+- [ ] Configure for **Production** Supabase project
+- [ ] Add redirect URLs for **both** domains
+- [ ] Test on staging **before** production
+
+**When adding environment variables:**
+- [ ] Add to **Staging** Railway environment
+- [ ] Add to **Production** Railway environment
+- [ ] Update `.env.example` with documentation
+- [ ] Verify values are environment-specific (URLs, keys)
+
+**Environment-specific values that MUST differ:**
+| Variable | Staging | Production |
+|----------|---------|------------|
+| `NEXT_PUBLIC_APP_URL` | https://staging.modeloptix.com | https://modeloptix.com |
+| `NEXT_PUBLIC_SUPABASE_URL` | Staging project URL | Production project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Staging anon key | Production anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Staging service key | Production service key |
+
+### Before Completing Any Infrastructure Task
+
+Ask yourself:
+1. **Which environment am I working on?** (State it explicitly)
+2. **Does this change need to be applied to other environments?**
+3. **Have I verified the change works on staging before production?**
+
+### Lessons Learned (2026-01-18)
+- OAuth redirect URLs must be configured in BOTH Supabase projects
+- OAuth credentials (Google, GitHub) need callback URLs for BOTH domains
+- `NEXT_PUBLIC_APP_URL` must be set per-environment (Railway uses localhost:8080 internally)
+
 ## Ideation File Concept
 
 The ideation file is a centralized document containing all requirements, context, and vision for a development project. This can include:

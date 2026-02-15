@@ -1,6 +1,6 @@
 ---
 name: bootstrap
-description: Transform foundation YAML extracts into structured project-plan.md with interactive mode selection
+description: Transform foundation summaries into structured project-plan.md with interactive mode selection
 arguments:
   vision_file:
     type: string
@@ -29,48 +29,36 @@ model: opus
 
 ## PURPOSE
 
-Transform foundation YAML extracts (created by `/foundations init`) into a valid, schema-compliant `project-plan.md` with rolling wave planning detail.
+Transform foundation document summaries (created by `/foundations init`) into a valid, schema-compliant `project-plan.md` with rolling wave planning detail.
 
-**Why This Matters**: Foundation documents contain rich context but lack executable structure. Bootstrap bridges the gap between "what we want to build" and "how we'll build it" by generating a phased execution plan using machine-readable YAML extracts.
+**Why This Matters**: Foundation documents contain rich context but lack executable structure. Bootstrap bridges the gap between "what we want to build" and "how we'll build it" by generating a phased execution plan.
 
-## EXECUTION PROTOCOL
+## MODE SELECTION (First Step)
 
-**CRITICAL**: This command MUST prompt for mode selection before doing any work (unless `--mode` flag is provided).
-
-### Step 1: Check for --mode Flag
-
-If `--mode auto` → Skip to AUTO MODE section
-If `--mode engaged` → Skip to ENGAGED MODE section
-If `--mode preview` → Skip to PREVIEW MODE section
-If no --mode flag → Continue to Step 2
-
-### Step 2: Present Mode Selection (MANDATORY)
-
-**Use AskUserQuestion tool** to present this choice:
+When you run `/bootstrap` without flags, you'll be asked to choose a mode:
 
 ```
-question: "How would you like to generate your project plan?"
-header: "Mode"
-options:
-  - label: "Engaged Mode (Recommended)"
-    description: "Walk through PRD assumptions together - validate tech stack, features, and phases before generating"
-  - label: "Auto Mode"
-    description: "Generate immediately from foundation YAMLs using sensible defaults - fast, no questions"
-  - label: "Preview Mode"
-    description: "Show what would be generated without writing files - good for review before committing"
+┌─────────────────────────────────────────────────────────────────┐
+│ 🏗️ Bootstrap: Project Plan Generation                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│ How would you like to proceed?                                  │
+│                                                                 │
+│ ○ Auto Mode (Recommended for complete, validated PRDs)         │
+│   Generates plan immediately from your foundations             │
+│   Fast, no questions asked                                     │
+│                                                                 │
+│ ○ Engaged Mode (Recommended for first-time users)              │
+│   Reviews PRD assumptions with you first                       │
+│   Validates tech stack, phases, priorities                     │
+│   Decision checkpoints before generating                       │
+│                                                                 │
+│ ○ Preview Mode                                                  │
+│   Shows what would be generated without writing files          │
+│   Good for reviewing before committing                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
-
-**WAIT for user response before proceeding.**
-
-### Step 3: Execute Selected Mode
-
-- If user selects "Engaged Mode" → Execute ENGAGED MODE section
-- If user selects "Auto Mode" → Execute AUTO MODE section
-- If user selects "Preview Mode" → Execute PREVIEW MODE section
-
----
-
-## MODE SELECTION REFERENCE
 
 **Skip mode selection**: Use `--mode` flag to go directly to a mode:
 ```bash
@@ -84,14 +72,13 @@ options:
 Before running `/bootstrap`, ensure:
 
 1. **`/foundations init` has completed successfully**
-   - `.context/structured/` directory exists
-   - `handoff-manifest.yaml` exists with checksums
+   - `.context/summaries/` directory exists
+   - `handoff-manifest.json` exists with checksums
 
-2. **Required YAML extracts are present**:
-   - `.context/structured/prd.yaml` (REQUIRED)
-   - `.context/structured/vision.yaml` (REQUIRED for saas-* types)
-   - `.context/structured/roadmap.yaml` (optional, enhances phase planning)
-   - `.context/structured/icp.yaml` (optional, enhances user story quality)
+2. **Required summaries are present**:
+   - `.context/summaries/prd-summary.md` (REQUIRED)
+   - `.context/summaries/vision-summary.md` (REQUIRED for saas-* types)
+   - `.context/summaries/icp-summary.md` (optional, enhances user story quality)
 
 3. **No conflicting project-plan.md exists**
    - If exists, command will prompt for confirmation before overwriting
@@ -274,7 +261,7 @@ Auto Mode generates the plan immediately without consultation. Use this when:
 
 **What happens**:
 1. Validates prerequisites
-2. Loads foundation YAML extracts
+2. Loads foundation summaries
 3. Infers project type
 4. Generates plan immediately
 5. Writes files
@@ -300,17 +287,14 @@ Preview Mode shows exactly what would be generated without writing any files. Us
 
 ```yaml
 validation_checks:
-  - check: handoff-manifest.yaml exists
+  - check: handoff-manifest.json exists
     fail_action: "Run /foundations init first"
 
-  - check: .context/structured/prd.yaml exists
-    fail_action: "PRD extraction missing - run /foundations init with PRD"
+  - check: .context/summaries/prd-summary.md exists
+    fail_action: "PRD summary missing - run /foundations init with PRD"
 
-  - check: .context/structured/vision.yaml exists
-    fail_action: "Vision extraction missing - required for project planning"
-
-  - check: .context/structured/roadmap.yaml exists (optional)
-    fail_action: "Roadmap extraction missing - recommended for phase planning"
+  - check: .context/summaries/vision-summary.md exists
+    fail_action: "Vision summary missing - required for project planning"
 
   - check: project-plan.md does not exist OR user confirms overwrite
     fail_action: "Existing plan found - confirm overwrite or backup first"
@@ -318,40 +302,34 @@ validation_checks:
 
 ### Phase 2: Context Loading
 
-**Load Foundation YAML Extracts**:
+**Load Foundation Summaries**:
 ```
-Read .context/structured/prd.yaml
-Read .context/structured/vision.yaml
-Read .context/structured/roadmap.yaml (if exists)
-Read .context/structured/icp.yaml (if exists)
-Read handoff-manifest.yaml for checksums
+Read .context/summaries/prd-summary.md
+Read .context/summaries/vision-summary.md
+Read .context/summaries/icp-summary.md (if exists)
+Read handoff-manifest.json for checksums
 ```
 
-**YAML Extract Structure**:
-Each YAML extract provides machine-readable structured data:
-```yaml
-# Example: prd.yaml structure
-metadata:
-  source_file: foundations/prd.md
-  checksum: sha256-xxx
-  extracted: ISO-8601 timestamp
+**Parse Summary Structure**:
+Each summary follows this format:
+```markdown
+# [Document Type] Summary
 
-product:
-  name: "Product Name"
-  description: "..."
+## Source
+- File: original/path.md
+- Checksum: sha256-xxx
+- Extracted: ISO-8601 timestamp
 
-features:
-  p0_must_have: [...]
-  p1_should_have: [...]
+## Key Points
+[Bullet list of critical information]
 
-tech_stack:
-  frontend: {...}
-  backend: {...}
+## For Planning
+[Structured data relevant to project planning]
 ```
 
 ### Phase 3: Project Type Inference
 
-If `--type auto` (default), infer from PRD YAML extract:
+If `--type auto` (default), infer from PRD summary:
 
 ```yaml
 type_inference_rules:
@@ -380,10 +358,10 @@ type_inference_rules:
 
 **Inference Prompt**:
 ```
-Based on the PRD YAML extract, determine the project type:
+Based on the PRD summary, determine the project type:
 
-PRD YAML:
-{prd_yaml_content}
+PRD SUMMARY:
+{prd_summary_content}
 
 Analyze for:
 1. Number of MVP features mentioned
@@ -411,17 +389,14 @@ Generate a project plan following this schema and rolling wave principle.
 
 FOUNDATION CONTEXT:
 
-VISION YAML:
-{vision_yaml_content}
+VISION SUMMARY:
+{vision_summary_content}
 
-PRD YAML:
-{prd_yaml_content}
+PRD SUMMARY:
+{prd_summary_content}
 
-ROADMAP YAML (if available):
-{roadmap_yaml_content}
-
-ICP YAML (if available):
-{icp_yaml_content}
+ICP SUMMARY (if available):
+{icp_summary_content}
 
 PROJECT PARAMETERS:
 - Type: {project_type}
@@ -571,17 +546,18 @@ quality_requirements:
 2. `.context/phase-1-context.yaml` - Phase 1 execution context
 
 **Update Manifest**:
-Add to `handoff-manifest.yaml`:
-```yaml
-generated_plans:
-  project_plan:
-    path: project-plan.md
-    generated: "ISO-8601"
-    from_extracts:
-      - prd.yaml
-      - vision.yaml
-      - roadmap.yaml
-    project_type: saas-mvp
+Add to `handoff-manifest.json`:
+```json
+{
+  "generated_plans": {
+    "project_plan": {
+      "path": "project-plan.md",
+      "generated": "ISO-8601",
+      "from_summaries": ["prd-summary.md", "vision-summary.md"],
+      "project_type": "saas-mvp"
+    }
+  }
+}
 ```
 
 ## ERROR HANDLING
@@ -589,19 +565,19 @@ generated_plans:
 ### Missing Prerequisites
 
 ```
-Error: Foundation YAML extracts not found
+Error: Foundation summaries not found
 
-Bootstrap requires foundation YAML extracts to generate a project plan.
+Bootstrap requires foundation summaries to generate a project plan.
 
 Missing:
-- .context/structured/prd.yaml
-- .context/structured/vision.yaml
+- .context/summaries/prd-summary.md
+- .context/summaries/vision-summary.md
 
 Run first:
-  /foundations init
+  /foundations init ideation/
 
 Or specify documents directly:
-  /foundations init --prd foundations/prd.md --vision foundations/vision.md
+  /foundations init --prd ideation/PRD.md --vision ideation/vision.md
 ```
 
 ### Existing Plan Conflict
@@ -665,10 +641,9 @@ Retrying generation with explicit constraints...
 ======================================
 
 Prerequisites:
-  [OK] handoff-manifest.yaml found
-  [OK] prd.yaml (checksum: abc123)
-  [OK] vision.yaml (checksum: def456)
-  [OK] roadmap.yaml (checksum: ghi789)
+  [OK] handoff-manifest.json found
+  [OK] prd-summary.md (checksum: abc123)
+  [OK] vision-summary.md (checksum: def456)
 
 How would you like to proceed?
 
@@ -833,8 +808,8 @@ Cached summary will be updated after successful generation.
 
 ### Depends On
 
-- `/foundations init` - Must run first to create YAML extracts
-- Foundation documents in `foundations/` or specified paths
+- `/foundations init` - Must run first to create summaries
+- Foundation documents in `ideation/` or specified paths
 
 ## SCHEMA COMPLIANCE
 
@@ -914,7 +889,7 @@ quality_gates:
 To regenerate plan after foundation updates:
 
 ```bash
-# Update YAML extracts first
+# Update summaries first
 /foundations refresh
 
 # Then regenerate plan

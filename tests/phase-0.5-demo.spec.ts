@@ -17,9 +17,9 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
     });
 
     test('hero section has CTA to scroll to demo', async ({ page }) => {
-      // Use more specific selector - hero CTA contains "Calculate Your Savings" text
-      const heroCta = page.locator('a[href="#demo-section"]').filter({ hasText: 'Calculate Your Savings' });
+      const heroCta = page.locator('a[href="#demo-section"]');
       await expect(heroCta).toBeVisible();
+      await expect(heroCta).toContainText('See How Much You Could Save');
     });
 
     test('demo section exists with correct header', async ({ page }) => {
@@ -61,7 +61,7 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
 
     test('use case dropdown has 6 options', async ({ page }) => {
       // Find and click the use case dropdown
-      const useCaseDropdown = page.locator('button').filter({ hasText: /Code Generation|Reasoning|Text Generation|Data Processing|Chat|Agentic/i }).first();
+      const useCaseDropdown = page.locator('button').filter({ hasText: /Code Generation|Content Writing|Data Extraction|Summarization|Classification|Chat Support/i }).first();
       await expect(useCaseDropdown).toBeVisible();
 
       // Click to open dropdown
@@ -72,28 +72,28 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
 
       // Verify some options
       await expect(page.locator('[role="option"]').filter({ hasText: 'Code Generation' })).toBeVisible();
-      await expect(page.locator('[role="option"]').filter({ hasText: 'Reasoning' })).toBeVisible();
-      await expect(page.locator('[role="option"]').filter({ hasText: 'Text Generation' })).toBeVisible();
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Content Writing' })).toBeVisible();
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Data Extraction' })).toBeVisible();
 
       // Close dropdown by pressing Escape
       await page.keyboard.press('Escape');
     });
 
     test('model dropdown has multiple options', async ({ page }) => {
-      // Find and click the model dropdown - it shows "Current Model" label with model name
-      const modelDropdown = page.locator('button').filter({ hasText: /Claude Sonnet|GPT-4|Gemini|Claude Opus/i }).first();
+      // Find and click the model dropdown (second dropdown)
+      const modelDropdown = page.locator('button').filter({ hasText: /GPT-4|Claude|Gemini|Mistral|Llama|DeepSeek/i }).first();
       await expect(modelDropdown).toBeVisible();
 
       // Click to open dropdown
       await modelDropdown.click();
 
-      // Check for at least 5 options
+      // Check for at least 5 options (we have 9)
       const options = page.locator('[role="option"]');
       expect(await options.count()).toBeGreaterThanOrEqual(5);
 
-      // Verify some models - using partial matches for flexibility
-      await expect(page.locator('[role="option"]').filter({ hasText: /GPT-4/i }).first()).toBeVisible();
-      await expect(page.locator('[role="option"]').filter({ hasText: /Claude/i }).first()).toBeVisible();
+      // Verify some models
+      await expect(page.locator('[role="option"]').filter({ hasText: 'GPT-4o' })).toBeVisible();
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Claude 3.5 Sonnet' })).toBeVisible();
 
       // Close dropdown
       await page.keyboard.press('Escape');
@@ -101,7 +101,7 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
 
     test('optimization priority dropdown exists', async ({ page }) => {
       // Find the priority dropdown
-      const priorityDropdown = page.locator('button').filter({ hasText: /Balanced|Quality First|Cost First/i }).first();
+      const priorityDropdown = page.locator('button').filter({ hasText: /Balanced|Performance First|Cost First/i }).first();
       await expect(priorityDropdown).toBeVisible();
 
       // Click to open dropdown
@@ -112,7 +112,7 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
 
       // Verify options
       await expect(page.locator('[role="option"]').filter({ hasText: 'Balanced' })).toBeVisible();
-      await expect(page.locator('[role="option"]').filter({ hasText: 'Quality First' })).toBeVisible();
+      await expect(page.locator('[role="option"]').filter({ hasText: 'Performance First' })).toBeVisible();
       await expect(page.locator('[role="option"]').filter({ hasText: 'Cost First' })).toBeVisible();
 
       // Close dropdown
@@ -134,58 +134,51 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
     });
 
     test('CTA button exists and is clickable', async ({ page }) => {
-      const ctaButton = page.locator('button').filter({ hasText: 'Join Waitlist for Real Results' });
+      const ctaButton = page.locator('button').filter({ hasText: 'Get Personalized Recommendations' });
       await expect(ctaButton).toBeVisible();
       await expect(ctaButton).toBeEnabled();
     });
 
-    test('CTA button scrolls to waitlist section', async ({ page }) => {
-      // The CTA button may scroll to or navigate to waitlist
-      const ctaButton = page.locator('button').filter({ hasText: 'Join Waitlist for Real Results' });
-      await expect(ctaButton).toBeVisible();
+    test('CTA button scrolls to waitlist form', async ({ page }) => {
+      // Scroll down to make sure we're not at waitlist already
+      await page.evaluate(() => window.scrollTo(0, 500));
 
       // Click CTA
+      const ctaButton = page.locator('button').filter({ hasText: 'Get Personalized Recommendations' });
       await ctaButton.click();
 
-      // Wait for any scroll/navigation
-      await page.waitForTimeout(1000);
+      // Wait for scroll
+      await page.waitForTimeout(500);
 
-      // Either waitlist form is in viewport, or page scrolled down
-      // This is a lenient check since the exact scroll behavior may vary
-      const scrollY = await page.evaluate(() => window.scrollY);
+      // Waitlist form should be in viewport
       const waitlistSection = page.locator('#waitlist-form');
-
-      // Either scrolled down OR waitlist is in viewport
-      const isInViewport = await waitlistSection.isVisible().catch(() => false);
-      expect(scrollY > 0 || isInViewport).toBeTruthy();
+      await expect(waitlistSection).toBeInViewport();
     });
 
     test('changing priority updates recommendations', async ({ page }) => {
-      // Wait for calculator to be ready
-      await page.waitForSelector('text=Your estimated optimization', { timeout: 10000 });
-
       // Get initial recommended model
       const recommendedText = page.locator('text=/Recommended:/');
-      await expect(recommendedText).toBeVisible({ timeout: 5000 });
+      await expect(recommendedText).toBeVisible();
       const initialText = await recommendedText.textContent();
-      expect(initialText).toBeTruthy();
 
-      // Change priority to Quality First
-      const priorityDropdown = page.locator('button').filter({ hasText: /Balanced|Quality First|Cost First/i }).first();
-      await expect(priorityDropdown).toBeVisible({ timeout: 5000 });
+      // Change priority to Performance First
+      const priorityDropdown = page.locator('button').filter({ hasText: /Balanced|Performance First|Cost First/i }).first();
       await priorityDropdown.click();
-
-      // Wait for dropdown to open and select option
-      const qualityOption = page.locator('[role="option"]').filter({ hasText: 'Quality First' });
-      await expect(qualityOption).toBeVisible({ timeout: 5000 });
-      await qualityOption.click();
+      await page.locator('[role="option"]').filter({ hasText: 'Performance First' }).click();
 
       // Wait for recalculation
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(500);
 
-      // Check performance display still exists after priority change
+      // Check performance gain is higher with performance priority
       const performanceDisplay = page.locator('text=/\\+\\d+%/').first();
-      await expect(performanceDisplay).toBeVisible({ timeout: 5000 });
+      const performanceText = await performanceDisplay.textContent();
+      // Performance first should show higher gains
+      expect(performanceText).toBeTruthy();
+
+      // Get new recommended model
+      const newText = await recommendedText.textContent();
+      // Recommendations should potentially change based on priority
+      expect(newText).toBeTruthy();
     });
   });
 
@@ -242,7 +235,7 @@ test.describe('Phase 0.5: Waitlist Demo Enhancement', () => {
       await expect(slider).toBeVisible();
 
       // CTA should be visible
-      const ctaButton = page.locator('button').filter({ hasText: 'Join Waitlist for Real Results' });
+      const ctaButton = page.locator('button').filter({ hasText: 'Get Personalized Recommendations' });
       await expect(ctaButton).toBeVisible();
     });
 

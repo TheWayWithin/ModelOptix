@@ -45,10 +45,7 @@ const PUBLIC_API_ROUTES = [
   '/api/waitlist',
   '/api/auth',
   '/api/health',
-  '/api/public', // Public endpoints (models list for guest sanity checks, etc.)
-  '/api/sanity-checks', // Sanity checks (includes guest flow)
-  '/api/checkout/success', // Stripe redirect URL - webhook handles actual update
-  '/api/webhooks', // Stripe webhooks - verified by signature, not auth
+  '/api/sanity-check/guest', // Guest sanity check allowed
 ];
 
 /**
@@ -163,6 +160,13 @@ function isAdminApiRoute(pathname: string): boolean {
  */
 function isApiRoute(pathname: string): boolean {
   return pathname.startsWith('/api/');
+}
+
+/**
+ * Check if route is a dashboard route
+ */
+function isDashboardRoute(pathname: string): boolean {
+  return pathname.startsWith('/dashboard');
 }
 
 /**
@@ -307,23 +311,19 @@ export async function middleware(request: NextRequest) {
     }
 
     // Dashboard and other protected routes redirect to login
-    // IMPORTANT: Copy cookies from Supabase response to preserve any session refresh attempts
+    if (isDashboardRoute(pathname)) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      console.info(
+        `[${requestId}] Redirecting unauthenticated user to login from ${pathname}`
+      );
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Other protected routes also redirect
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
-    console.info(
-      `[${requestId}] Redirecting unauthenticated user to login from ${pathname}`
-    );
-    const redirectResponse = NextResponse.redirect(loginUrl);
-
-    // Copy cookies from Supabase response (preserves session refresh tokens)
-    response.cookies.getAll().forEach((cookie) => {
-      redirectResponse.cookies.set(cookie.name, cookie.value, {
-        ...cookie,
-      });
-    });
-    redirectResponse.headers.set('X-Request-Id', requestId);
-
-    return redirectResponse;
+    return NextResponse.redirect(loginUrl);
   }
 
   // ---------------------------------------------------------------------------
