@@ -8,6 +8,7 @@ import {
   Users,
   Database,
   ShieldAlert,
+  ShieldCheck,
   Activity,
   Settings,
   ChevronLeft,
@@ -16,6 +17,8 @@ import {
   Menu,
   X,
   Loader2,
+  ClipboardList,
+  Sliders,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -32,7 +35,10 @@ const navItems: NavItem[] = [
   { href: '/admin', label: 'Overview', icon: LayoutDashboard },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/models', label: 'Model Catalog', icon: Database },
+  { href: '/admin/parameters', label: 'Parameters', icon: Sliders },
+  { href: '/admin/trust', label: 'Trust Queue', icon: ShieldCheck },
   { href: '/admin/overrides', label: 'Editorial Overrides', icon: ShieldAlert },
+  { href: '/admin/audit', label: 'Audit Logs', icon: ClipboardList },
   { href: '/admin/jobs', label: 'Jobs', icon: Activity },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
@@ -58,8 +64,11 @@ export default function AdminLayout({
     router.push('/login');
   };
 
-  // Show loading state while checking auth
-  if (isLoading) {
+  // Show loading state while checking auth OR while profile is still loading
+  // Profile loads async after auth, so we need to wait for it before showing access denied
+  if (isLoading || (profile === null && !isLoading)) {
+    // If we have no profile but auth finished loading, give it a moment to load
+    // This prevents the "Access Denied" flash during profile fetch
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-destructive" />
@@ -67,8 +76,8 @@ export default function AdminLayout({
     );
   }
 
-  // Redirect non-admins
-  if (!profile?.is_admin) {
+  // Redirect non-admins (only after profile has loaded)
+  if (profile && !profile.is_admin) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4">
         <ShieldAlert className="h-16 w-16 text-destructive" />

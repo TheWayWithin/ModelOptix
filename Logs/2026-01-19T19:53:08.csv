@@ -1,0 +1,24 @@
+2026-01-19T19:53:08.000000000Z [inf]  Starting Container
+2026-01-19T19:53:09.720550026Z [inf]  
+2026-01-19T19:53:09.720561026Z [inf]   ✓ Starting...
+2026-01-19T19:53:09.720569345Z [inf]  [Instrumentation] Initializing cron jobs...
+2026-01-19T19:53:09.720594606Z [inf]  
+2026-01-19T19:53:09.720603969Z [inf]  > modeloptix@0.1.0 start /app
+2026-01-19T19:53:09.720611019Z [inf]  > next start
+2026-01-19T19:53:09.720618637Z [inf]  
+2026-01-19T19:53:09.720625419Z [inf]    ▲ Next.js 14.2.35
+2026-01-19T19:53:09.720631010Z [inf]    - Local:        http://localhost:8080
+2026-01-19T19:53:09.730272008Z [inf]  [Instrumentation] Cron jobs initialized:
+2026-01-19T19:53:09.730276863Z [inf]    - cleanup-expired-sessions: 0 1 * * * (daily 1am UTC)
+2026-01-19T19:53:09.730283191Z [inf]    - cleanup-guest-sanity-checks: 0 6 * * * (daily 6am UTC)
+2026-01-19T19:53:09.730288935Z [inf]    - reaper: */5 * * * * (every 5 minutes)
+2026-01-19T19:53:09.730297737Z [inf]   ✓ Ready in 393ms
+2026-01-19T19:55:01.158453886Z [err]  [2026-01-19T19:55:00.332Z] [PID: 21] [32m[NODE-CRON][32m [31m[ERROR][0m [object Object] 
+2026-01-19T19:55:01.158463204Z [err]    hint: null,
+2026-01-19T19:55:01.158467689Z [inf]  [Reaper] Checking for jobs with heartbeat older than 2026-01-19T19:50:00.036Z
+2026-01-19T19:55:01.158469829Z [err]    message: "Could not find the table 'public.job_runs' in the schema cache"
+2026-01-19T19:55:01.158475533Z [err]  }
+2026-01-19T19:55:01.158482522Z [err]  [Reaper] Failed to query stale jobs: {
+2026-01-19T19:55:01.158491778Z [err]    code: 'PGRST205',
+2026-01-19T19:55:01.158500748Z [err]    details: null,
+2026-01-19T19:55:01.158506344Z [inf]  [Cron] Running reaper

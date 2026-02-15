@@ -2,7 +2,15 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialized Resend client (avoids build-time crash when env var missing)
+let _resend: Resend | null = null;
+
+function getResend(): Resend {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 export async function POST(request: Request) {
   try {
@@ -40,7 +48,7 @@ export async function POST(request: Request) {
 
     // Send confirmation email
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: "ModelOptix <hello@modeloptix.com>",
         to: normalizedEmail,
         subject: "You're on the ModelOptix waitlist",
