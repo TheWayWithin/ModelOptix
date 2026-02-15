@@ -10,6 +10,7 @@ build
 # Environment variables
 .env
 .env.local
+.env.test
 .env.production.local
 .env.development.local
 
@@ -25,3 +26,18 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# Claudbot operational files
+AGENTS.md
+HEARTBEAT.md
+IDENTITY.md
+MEMORY.md
+METRICS.md
+OVERNIGHT.md
+SOUL.md
+TASKS.md
+TOOLS.md
+WEEKLY-REVIEW.md
+aisearch/
+drafts/
+memory/
