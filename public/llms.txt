@@ -1,0 +1,21 @@
+# modeloptix.com
+
+> ModelOptix is an AI model optimisation platform. It helps developers and teams compare, benchmark, and select the right AI models for their use case. Track cost, latency, quality, and performance across providers.
+
+## What ModelOptix Does
+
+- Compare AI models across providers (OpenAI, Anthropic, Google, etc.)
+- Benchmark cost, latency, and output quality
+- Track model performance over time
+- Help teams make data-driven decisions about which AI model to use
+
+## Who It's For
+
+- Developers building AI-powered products
+- Teams evaluating AI model providers
+- Anyone spending money on AI APIs who wants to optimise cost vs quality
+
+## Built By
+
+Jamie Watters. Part of a portfolio of AI micro-businesses.
+- Website: https://jamiewatters.work
