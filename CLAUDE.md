@@ -1,5 +1,7 @@
 # ModelOptix - Project Instructions
 
+<!-- AGENTS.md-not-loaded: this repo's AGENTS.md is a separate workspace-persona experiment (reads SOUL.md), not repo instructions. Claude Code never reads AGENTS.md; it is deliberately NOT imported here. Kept for other tools. Reviewed 2026-08-03. -->
+
 This file contains **project-specific instructions** that persist across AGENT-11 updates.
 
 > **File Hierarchy:**
