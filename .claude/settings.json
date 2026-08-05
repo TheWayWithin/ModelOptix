@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_comment": "AGENT-11 default Claude Code settings. Hooks below are advisory by default — they run linters/typecheckers and output results, but do not block edits. To promote a hook to blocking, change `|| true` at the end of its command to `|| exit 2`. To disable a hook entirely, remove its entry from the array.",
+  "_comment": "AGENT-11 default Claude Code settings. Hooks below are advisory by default \u2014 they run linters/typecheckers and output results, but do not block edits. To promote a hook to blocking, change `|| true` at the end of its command to `|| exit 2`. To disable a hook entirely, remove its entry from the array.",
   "env": {
     "ENABLE_TOOL_SEARCH": "auto"
   },
@@ -42,9 +42,29 @@
             "if": "Bash(rm -rf *)|Bash(git push --force*)|Bash(git push -f *)|Bash(git reset --hard*)|Bash(git clean -f*)|Bash(git branch -D*)",
             "prompt": "This command is destructive and hard to reverse. Confirm to proceed: $ARGUMENTS",
             "timeout": 60
+          },
+          {
+            "type": "command",
+            "command": "if [ -f .claude/hooks/destructive-guard.sh ]; then sh .claude/hooks/destructive-guard.sh; fi",
+            "statusMessage": "destructive-command guard",
+            "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "if [ -f .claude/hooks/gate-guard.sh ]; then sh .claude/hooks/gate-guard.sh; fi",
+            "statusMessage": "read-only gate guard",
+            "timeout": 10
           }
         ]
       }
+    ]
+  },
+  "permissions": {
+    "deny": [
+      "Edit(.quality-gates.json)",
+      "Edit(**/*.quality-gates.json)",
+      "Edit(gates/**)",
+      "Edit(.gates/**)"
     ]
   }
 }
