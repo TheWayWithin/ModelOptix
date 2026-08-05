@@ -41,3 +41,7 @@ WEEKLY-REVIEW.md
 aisearch/
 drafts/
 memory/
+test-results/
+playwright-report/
+Logs/
+supabase/.temp/
